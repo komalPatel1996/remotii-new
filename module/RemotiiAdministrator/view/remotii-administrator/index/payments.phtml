@@ -1,0 +1,61 @@
+<style>
+<!--
+.red, .red a, .red span {color:red;}
+-->
+</style>
+
+    	<div class="pageInfo">
+	      <div class="fr seldate">   
+	      	<form method="post">             
+	          <input type="text" class="datepicker" name="fromDate" placeholder="From" value="<?php echo $fromDate?>"/>
+	          <input type="text" class="datepicker" name="toDate" placeholder="To" value="<?php echo $toDate?>"/>
+	          <input type="submit" class="btn3" name="filterSubmit" value="Go"/>
+	        </form>
+	     </div>       
+
+     	 <h1>Payments</h1>
+     	</div>
+
+      <div class="widget">       
+        <div id="dyn" class="hiddenpars"> <a class="tOptions" title="Options"><img src="images/icons/options" alt="" /></a>
+          <table cellpadding="0" cellspacing="0" border="0" class="dTable" id="dynamic">
+            <thead>
+              <tr>
+                <th>Name<span class="sorting" style="display: block;"></span></th>
+                <th> Type</th>
+                <th> Date</th>
+                <th>Amount Paid</th>
+                <th>Credits Used</th>
+                <th>Source</th>
+                <th>Mode</th>
+                <th>Status</th>                
+                <th>Stripe Ref. Id</th>                
+              </tr>
+            </thead>
+            <tbody>
+            <?php foreach($payments as $payment):?>
+              <?php if( $payment->payment_status == 0 ){$class='red';}else{$class="";}?>
+              <tr class="<?php echo $class;?>">
+                <td><?php echo $payment->user_name;?></td>
+                <td><?php echo ($payment->user_type==1 ? "RSP" : "End User");?>  </td>
+                <td><a href="#"><?php echo date('m/d/Y',$payment->executed_on);?></a>  </td>
+                <td><a href="#" style="float: right;">$<?php echo number_format((float) abs($payment->amount),2)?></a></td>
+                <td><a href="#" style="float: right;">$<?php echo number_format((float) abs($payment->credit),2)?></a></td>
+                <td><a href="#"><?php echo $payment->payment_source?></td>   
+                <td><a href="#"><?php echo $payment->payment_flag?></td>   
+                <td>
+                	<?php if( $payment->payment_status ):?>
+                	<span class="success">Success</span>
+                	<?php else:?>
+                	<span class="success">Failure</span>
+                	<?php endif;?>
+                </td>
+                <td><?php ($payment->amount==0 ? "" : print $payment->trans_id) ;?></td>  
+              </tr>
+
+              <?php endforeach;?>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <!-- /widget --> 

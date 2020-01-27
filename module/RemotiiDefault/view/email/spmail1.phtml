@@ -1,0 +1,97 @@
+This email is to inform you that one or more of your <?php print $bitInfo['remotii_name']; ?> Remotii trigger conditions have been met at 
+<?php
+//$timestamp = strtotime($time);
+//$timMinus = 60 * 60 * 5;
+//$newTime = $timestamp - $timMinus;
+//$outTime = date('m/d/Y h:i:s A', $newTime);
+print '<b>' . $outTime . '</b>';
+?>
+.
+
+<br />
+<br />
+[Outputs]
+<br />
+
+<?php
+$j = 1;
+foreach ($outputConfig as $outConfig) {
+    if ($j == 1) {
+        if ($outState & 1) {
+            //active
+//                if($pinOutStatus == 1) {
+//                    print $inHt =  '<span style="color:red; font-weight:bold">' . $outConfig['name'] . ' : ' . $outConfig['active_label_text'] . '</span><br />';
+//                } else {
+            print $inHt = $outConfig['name'] . ' : ' . $outConfig['active_label_text'] . '<br />';
+//                }
+        } else {
+            //inactive
+            print $inHt = $outConfig['name'] . ' : ' . $outConfig['inactive_label_text'] . '<br />';
+        }
+    }
+
+    if ($j == 2) {
+        if ($outState & 2) {
+            //active
+//                if($pinOutStatus == 2) {
+//                    print $inHt =  '<span style="color:red; font-weight:bold">' . $outConfig['name'] . ' : ' . $outConfig['active_label_text'] . '</span><br />';
+//                } else {
+            print $inHt = $outConfig['name'] . ' : ' . $outConfig['active_label_text'] . '<br />';
+//                }
+        } else {
+            //inactive
+            print $inHt = $outConfig['name'] . ' : ' . $outConfig['inactive_label_text'] . '<br />';
+        }
+    }
+
+    if ($j == 3) {
+        if ($outState & 4) {
+            //active
+//                if($pinOutStatus == 3) {
+//                    print $inHt =  '<span style="color:red; font-weight:bold">' . $outConfig['name'] . ' : ' . $outConfig['active_label_text'] . '</span><br />';
+//                } else {
+            print $inHt = $outConfig['name'] . ' : ' . $outConfig['active_label_text'] . '<br />';
+//                }
+        } else {
+            //inactive
+            print $inHt = $outConfig['name'] . ' : ' . $outConfig['inactive_label_text'] . '<br />';
+        }
+    }
+
+    $j++;
+}
+?>
+
+<br />
+<br />
+
+[Inputs]
+<br />
+
+<?php
+$i = 1;
+$inHt = '';
+foreach ($inputConfig as $inConfig) {
+    if ($inState & pow(2, ((int) $inConfig['pin_number']) - 1)) {
+        $inHt = $inConfig['name'] . ' : ' . $inConfig['active_label_text'];
+    } else {
+        $inHt = $inConfig['name'] . ' : ' . $inConfig['inactive_label_text'];
+    }
+    if ($trigger_pin == $inConfig['pin_number']) { // trigger
+        $inHt = '<span style="color:red; font-weight:bold">' . $inHt . '</span>';
+    }
+    print $inHt = $inHt . '<br/>';
+    $i++;
+}
+?>
+
+<br />
+<br />
+<br />
+The Remotii Team
+<br />
+<br />
+<p style="font-size: 10px;">
+    If you no longer wish to receive notification emails, you may disable future notifications by logging in to your 
+    Remotii account and stepping through the Remotii configuration wizard for the Remotii(s) in question.
+</p>

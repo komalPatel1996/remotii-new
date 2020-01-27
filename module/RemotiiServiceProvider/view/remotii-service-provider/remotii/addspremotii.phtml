@@ -1,0 +1,73 @@
+<?php
+    $title = 'Add Remotii';
+    $this->headTitle($title);
+    $basePath = BASE_URL . '/assets/b';
+?>
+<div class="pageInfo">
+    <div class="dataTables_filter fr mt0" id="dynamic_filter">
+        <input type="text" placeholder="Search" aria-controls="dynamic"><div class="srch"></div>
+    </div>
+    <div class="fr w150">
+        <select>
+            <option value="">All</option>
+            <option value="">Active Remotii</option>
+            <option value="">Inactive Remotii</option>
+        </select>
+    </div>
+    <h1>Remotii's</h1>
+</div>
+<div class="widget">
+    <?php
+        if(!empty($response)) {
+    ?>
+        <span id="response" style="position: absolute; margin-left: 30%; width: 58%;" class="<?php echo $response['status']; ?>"><?php echo $response['message']; ?></span>
+    <?php
+        }
+    ?>
+    
+    <form id="formAddRemotii" method="POST">
+        <div class="serviceProvider">
+            <div class="inner">
+                <div class="box1 col1">
+                    <ul class="list1">
+                        <li><input name="macId[]" id="macId1" type="text" placeholder="01-23-aF-67-89-AB" /></li>
+                        <li><input name="macId[]" id="macId1" type="text" placeholder="01-23-aF-67-89-AB" /></li>
+                        <li><input name="macId[]" id="macId1" type="text" placeholder="01-23-aF-67-89-AB" /></li>
+                        <li><input name="macId[]" id="macId1" type="text" placeholder="01-23-aF-67-89-AB" /></li>
+                        <li><input name="macId[]" id="macId1" type="text" placeholder="01-23-aF-67-89-AB" /></li>
+                        <li><input name="macId[]" id="macId1" type="text" placeholder="01-23-aF-67-89-AB" /></li>
+                        <li><input name="macId[]" id="macId1" type="text" placeholder="01-23-aF-67-89-AB" /></li>
+                        <li><input name="macId[]" id="macId1" type="text" placeholder="01-23-aF-67-89-AB" /></li>
+                        <li id="macId"><input name="macId[]" id="macId2" type="text" placeholder="01-23-aF-67-89-AB" /></li>
+                        <li><input type="button" id="addMore" value="add more" class="btn1" /></li>
+                    </ul>
+                </div>
+                <input type="submit" id="submit" value="Add >>" class="btn1 fl" />
+                <div class="box1 col2">
+                    <ul class="list1 alter">
+                        <li><a href="#" class="fr"><img src="<?php print $basePath; ?>/images/crose.png" alt=""></a> 01 - 23 - 45 - 67 - 89 - AB <a href="end-user-info.html" class="name">Thomas_k</a></li>
+                        <li><a href="#" class="fr"><img src="<?php print $basePath; ?>/images/crose.png" alt=""></a> 01 - 23 - 45 - 67 - 89 - AB <a href="end-user-info.html" class="name">Thomas_k</a></li>
+                        <li><a href="#" class="fr"><img src="<?php print $basePath; ?>/images/crose.png" alt=""></a> 01 - 23 - 45 - 67 - 89 - AB <a href="end-user-info.html" class="name">Thomas_k</a></li>
+                        <li><a href="#" class="fr"><img src="<?php print $basePath; ?>/images/crose.png" alt=""></a> 01 - 23 - 45 - 67 - 89 - AB <a href="end-user-info.html" class="name">Thomas_k</a></li>
+                        <li><a href="#" class="fr"><img src="<?php print $basePath; ?>/images/crose.png" alt=""></a> 01 - 23 - 45 - 67 - 89 - AB <a href="#" class="name">Thomas_k</a></li>
+                        <li><a href="#" class="fr"><img src="<?php print $basePath; ?>/images/crose.png" alt=""></a> 01 - 23 - 45 - 67 - 89 - AB <a href="#" class="name">Thomas_k</a></li>
+                        <li><a href="#" class="fr"><img src="<?php print $basePath; ?>/images/crose.png" alt=""></a> 01 - 23 - 45 - 67 - 89 - AB <a href="#" class="name">Thomas_k</a></li>
+                        <li><a href="#" class="fr"><img src="<?php print $basePath; ?>/images/crose.png" alt=""></a> 01 - 23 - 45 - 67 - 89 - AB <a href="#" class="name">Thomas_k</a></li>
+                        <li><a href="#" class="fr"><img src="<?php print $basePath; ?>/images/crose.png" alt=""></a> 01 - 23 - 45 - 67 - 89 - AB <a href="#" class="name">Thomas_k</a></li>
+                        <li><a href="#" class="fr"><img src="<?php print $basePath; ?>/images/crose.png" alt=""></a> 01 - 23 - 45 - 67 - 89 - AB <a href="#" class="name">Thomas_k</a></li>
+                    </ul>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+    </form>
+</div>
+<!-- /widget --> 
+<script>
+    jQuery(function() {
+        var macMoreAdd = jQuery("[id=macId]");
+        jQuery("#addMore").click(function() {
+            macMoreAdd.after(macMoreAdd.clone());
+        });
+    });
+</script>

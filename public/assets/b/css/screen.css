@@ -1,0 +1,104 @@
+
+	pre{
+		display:block;
+		font:12px "Courier New", Courier, monospace;
+		padding:10px;
+		border:1px solid #bae2f0;
+		background:#e3f4f9;	
+		margin:.5em 0;
+		width:252px;
+		}	
+			
+    /* image replacement */
+        .graphic, #prevBtn, #nextBtn, #slider1prev, #slider1next{
+            margin:0;
+            padding:0;
+            display:block;
+            overflow:hidden;
+            text-indent:-8000px;
+            }
+    /* // image replacement */
+			
+
+/* Easy Slider */
+
+	#slider ul, #slider li,
+	#slider2 ul, #slider2 li{
+		margin:0;
+		padding:0;
+		list-style:none;
+		}
+	#slider2{margin-top:1em;}
+	#slider li, #slider2 li{ 
+		/* 
+			define width and height of list item (slide)
+			entire slider area will adjust according to the parameters provided here
+		*/ 
+		width:696px;
+		height:500px;
+		overflow:hidden; 
+		text-align: center;
+		}	
+	#prevBtn, #nextBtn,
+	#slider1next, #slider1prev{ 
+		display:block;
+		width:30px;
+		height:77px;
+		position:absolute;
+		left:-30px;
+		top:71px;
+		z-index:1000;
+		}	
+	#nextBtn, #slider1next{ 
+		left:696px;
+		}														
+	#prevBtn a, #nextBtn a,
+	#slider1next a, #slider1prev a{  
+		display:block;
+		position:relative;
+		width:30px;
+		height:77px;
+		background:url(../images/btn_prev.gif) no-repeat 0 0;	
+		}	
+	#nextBtn a, #slider1next a{ 
+		background:url(../images/btn_next.gif) no-repeat 0 0;	
+		}	
+		
+	/* numeric controls */	
+
+	ol#controls{
+		margin:1em 0;
+		padding:0;
+		height:28px;	
+		}
+	ol#controls li{
+		margin:0 10px 0 0; 
+		padding:0;
+		float:left;
+		list-style:none;
+		height:28px;
+		line-height:28px;
+		}
+	ol#controls li a{
+		float:left;
+		height:15px;
+		width:15px;				
+		text-decoration:none;
+		background: url(../images/slider-count.png) -27px 0px  no-repeat;
+		text-indent: -10000px;
+		}
+	ol#controls li.current a{
+		background: url(../images/slider-count.png) 0px 0px  no-repeat;
+		}
+	ol#controls li a:focus, #prevBtn a:focus, #nextBtn a:focus{outline:none;}
+	
+/* // Easy Slider */
+
+#slider li div.s-content{width: 1000px; margin:0 auto; padding-top: 100px;}
+#slider .s-content h2{font-size: 60px; color: #fff; text-shadow:0px 2px 1px #173e55; margin-bottom: 20px; text-transform: uppercase; }
+#slider .s-content p{font-size: 24px; color: #fff; text-shadow:0px 1px 1px #173e55; margin-bottom: 40px; }
+#slider li.one{background: url(../images/slide1.jpg) 50% 0px  no-repeat;	}
+
+.slider-container{background: url(../images/slider-bg.jpg) 0px 0px repeat-x;}
+.slider-container{position: relative; margin-bottom: 55px;}
+.slider-container #controls{position: absolute; left: 45%;}

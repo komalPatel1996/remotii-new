@@ -1,0 +1,76 @@
+<?php
+$title = "Error's";
+$this->headTitle($title);
+$base_url = BASE_URL . '/assets/b';
+?>
+<body>
+<style  type="text/css">
+ .submit-btn {
+border-radius: 5px 5px 5px 5px;
+color: #FFFFFF;
+display: inline-block;
+font-size: 16px;
+height: 32px;
+line-height: 30px;
+padding: 0 20px;
+text-decoration: none;
+background: #1567a5;
+margin-left: 826px;
+/*background: -moz-linear-gradient(#1567a5, #12578b);
+background: -webkit-linear-gradient(#1567a5, #12578b);
+background: -o-linear-gradient(#1567a5, #12578b);
+background: -ms-linear-gradient(#1567a5, #12578b);
+background: linear-gradient(#1567a5, #12578b);*/
+ }
+.w150 {
+width: 982px;
+}.fr {
+float: right!important;
+position: relative;
+top: -33px;
+}
+</style></body>
+<div class="pageInfo"><h1>Error's</h1><div class="fr w150"><form action="<?php echo BASE_URL;?>/admin/index/clear-errors" method="post">
+         <input class="submit-btn" type="submit" value="Clear Error Log " name="submit"></form></div></div>
+<?php if (!empty($response)) { ?>
+    <div id="response" class="<?php echo $response['status']; ?>"><?php echo $response['message']; ?></div>
+<?php } ?>
+
+
+<div class="widget listselect">       
+    <div id="dyn" class="hiddenpars">      
+<!--        <a href="<?php //echo BASE_URL;?>/admin/index/clear-errors" style="
+    margin-left: 879px" >Clear Error Log </a>-->
+  
+        <table cellpadding="0" cellspacing="0" border="0" class="dTable2" id="dynamic2">
+            <thead>
+                <tr>
+                    <th  style="width:132px !important;">MAC ID</th>
+                    <th style="width:132px !important;">Direction</th>
+                    <th style="width:132px !important;"> Error Time</th>
+                    <th style="width:132px !important;">Error Kind</th>
+                    <th style="width:auto !important;">Error Message</th>
+
+                </tr>
+            </thead>
+
+            <tbody>
+                <?php
+                foreach ($errorsArray as $errors) {
+                    ?>
+<tr>
+                <td><?php print $errors['mac_address']; ?></td>
+                <td align="center"><?php print $errors['xmit_direction']; ?></td>
+                <td><?php print $errors['error_time']; ?></td>
+                <td ><?php print $errors['error_kind']; ?></td>
+                <td><?php print $errors['error_message']; ?></td>
+</tr>
+                <?php
+            }
+            ?>
+
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- /widget --> 

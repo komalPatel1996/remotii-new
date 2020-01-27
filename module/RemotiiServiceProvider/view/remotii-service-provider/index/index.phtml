@@ -1,0 +1,55 @@
+<?php 
+$summery = $this->summery;
+
+?>
+
+<div class="pageInfo"><h1>Summary</h1></div>
+<div class="widget"> 
+	<ul class="twocolumnList alter">
+         <li> <span><?php echo $summery['totalClient'];?></span> Current Number of End Users</li>
+         <li> <span><?php echo $summery['activeRemotiis'];?></span> Current Number of Active Remotii</li>
+         <li> <span><?php echo $summery['inActiveRemotiis'];?></span> Current Number of Inactive Remotii</li>
+         <li> 
+         	<span><?php echo $summery['netIncomeInPBC'];?></span>
+         	Net Income in Previous Billing Cycle
+		</li>
+         <li> 
+         	<span>$<?php echo $summery['expectedIncomeInNBC'];?> 
+         	(Excluding $<?php echo $summery['expectedIncomeInNBCSF']?> service fee)
+         	</span>
+         	Expected Income in Next Billing Cycle
+         </li>
+          <li> 
+         	<span>$<?php echo $summery['expectedAmountInNBC'];?></span>
+         	Expected billing in next payment cycle
+         </li>
+         <li> <span>$<?php echo $summery['inActiveIncome'];?></span>Inactive Income</li>
+         <li> <span>$<?php echo $this->sp_credit;?></span>Available Credit</li>
+	</ul>
+</div>
+
+<h2>Delinquent End Users</h2>
+                <div class="widget">
+                    <ul class="twocolumnList alter">
+                    	<?php 
+                    		if(!empty($delinquentClients)){
+
+                    			foreach($delinquentClients as $dc ){
+                    	?>
+                                            <li><span>
+                                                    <a href="<?php print BASE_URL . '/admin/index/clientinfo/' . $dc['user_id']; ?>">
+                                                        <?php echo $dc['username']?>
+                                                    </a>
+                                                </span> 
+                                                    <?php echo $dc['fname'].' '.$dc['lname']; ?>
+                                            </li>
+                    	<?php 		
+                    			}
+                    		} else {
+                    	?>
+                    	<li> No delinquent client </li>
+                    	<?php		
+                    		}	
+                    	?>
+                    </ul>
+                </div>

@@ -1,0 +1,33 @@
+<?php
+$title = 'Admin Settings';
+$this->headTitle($title);
+//  define the base url
+$base_url = BASE_URL . '/assets/b';
+if ($data <> '') {
+    $data = $data;
+} else {
+    $data = $responseData[0];
+}
+?>
+<div class="pageInfo"><h1>Admin Settings</h1></div>
+<!-- widget -->
+<div class="widget">
+    <div class="formWrap">
+        <form action="" id="formAddNagScreen" method="post">
+            <div style="font-size:14px;padding-bottom: 10px;font-weight: 15px;">Contracted Wholesale Price Per Remotii</div>
+
+
+            <input type="text" name="contracted_price" value="<?php print $data['contracted_price']; ?>" placeholder="$ (USD)" class="formInput" /> 
+            <?php if ($responseData['contracted_price'] == 2) { ?>
+                <span class="infoMsg error"><?php print 'Value cannot be negative'; ?></span>
+            <?php } ?>
+            <?php if ($responseData['contracted_price'] == 1) { ?>
+                <span class="infoMsg error"><?php print 'Value not in correct format'; ?></span>
+            <?php } ?>  
+           
+            <div class="cl"></div>
+            <input class="submit-btn" type="submit" value="Submit" name="submit" title="Add Nag Screen">
+        </form>
+    </div>
+</div>
+<!-- /widget -->

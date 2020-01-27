@@ -1,0 +1,56 @@
+<div class="pageInfo">
+    <div class="fr seldate">
+        <form method="post">
+            <input type="text" class="datepicker" name="fromDate" placeholder="From" value="<?php echo $fromDate?>"/>
+            <input type="text" class="datepicker" name="toDate" placeholder="To" value="<?php echo $toDate?>"/>
+            <input type="submit" class="btn3" name="filterSubmit" value="Go"/>
+        </form>
+    </div>
+    <h1>Payments</h1>
+</div>
+
+<div class="widget">
+    <div id="dyn" class="hiddenpars"> <a class="tOptions" title="Options"><img src="images/icons/options" alt="" /></a>
+        <table cellpadding="0" cellspacing="0" border="0" class="dTable" id="dynamic">
+            <thead>
+                <tr>
+                    <th>Name<span class="sorting" style="display: block;"></span></th>
+                    <th> Billing Cycle</th>
+                    <th>Amount Paid</th>
+                    <th>Credits Used</th>
+                    <th>Payment mode</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+            <?php foreach($payments as $payment): ?>
+              <?php 
+                if( $payment->acc_status == DELINQUENT ) {
+                    $class = 'class="red"';
+                } else {
+                    $class = '';
+                }
+                ?>
+                <tr <?php print $class; ?>>
+                    <td><?php echo ucwords($payment->completeName);?></td>
+                    <td>
+                        <?php echo substr($payment->payment_cycle, -2) . '/' . substr($payment->payment_cycle, 0, 4); ?>
+                    </td>
+                    <td>$<?php echo $payment->amount?></td>
+                    <td>$<?php echo $payment->credit?></td>
+                    <td><?php echo $payment->payment_source?></td>   
+                    <td>
+                	<?php if( $payment->payment_status ):?>
+                        <span class="success">Success</span>
+                	<?php else:?>
+                        <span class="success">Failure</span>
+                	<?php endif;?>
+                    </td>
+                </tr>
+
+              <?php endforeach;?>
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- /widget -->

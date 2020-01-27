@@ -1,0 +1,86 @@
+<?php
+$baseUrl = BASE_URL . '/assets/f';
+echo $this->doctype();
+?>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <?php echo $this->headTitle('Remotii')->setSeparator(' - ')->setAutoEscape(false) ?>
+
+        <?php echo $this->headMeta()->appendName('viewport', 'width=device-width, initial-scale=1.0') ?>
+
+        <!-- Le styles -->
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'>
+        <?php
+        echo $this->headMeta()->appendName("width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0", "viewport");
+        echo $this->headLink()->appendStylesheet($baseUrl . '/css/reset.css')
+                ->appendStylesheet($baseUrl . '/css/main.css')
+                ->appendStylesheet($baseUrl . '/css/main-2.css')
+                ->appendStylesheet($baseUrl . '/css/buttons.css')
+                ->appendStylesheet($baseUrl . '/css/colorbox.css')
+                ->appendStylesheet($baseUrl . '/css/screen.css');
+
+
+        echo $this->headScript()
+                ->prependFile($baseUrl . '/js/jquery.min.js')
+                ->appendFile($baseUrl . '/js/jquery-1.7.1.min.js')
+                ->appendFile($baseUrl . '/js/custom.js')
+                ->appendFile($baseUrl . '/js/easySlider1.7.js')
+
+                //  Added for remotii setup page
+                ->appendFile(BASE_URL . '/assets/b/js/plugins/ui/jquery.colorpicker.js')
+                ->appendFile(BASE_URL . '/assets/b/js/jquery.colorbox.js')
+                ->prependScript('BASE_URL = "' . BASE_URL . '";');
+        echo $this->headStyle();
+        echo $this->session()->warningBeforeSessionTimeout(array(
+							'sls'=>EU_SESSION_TIMEOUT,
+							'wls'=>SESSION_TIMEOUT_WARNING_LENGTH,
+							'logoutUrl'=>BASE_URL.'/logout'));
+        ?>
+<script>
+var opts = {
+		  lines: 8, // The number of lines to draw
+		  length: 4, // The length of each line
+		  width: 5, // The line thickness
+		  radius: 5, // The radius of the inner circle
+		  corners: 1, // Corner roundness (0..1)
+		  rotate: 0, // The rotation offset
+		  direction: 1, // 1: clockwise, -1: counterclockwise
+		  color: '#000', // #rgb or #rrggbb or array of colors
+		  speed: 1, // Rounds per second
+		  trail: 60, // Afterglow percentage
+		  shadow: false, // Whether to render a shadow
+		  hwaccel: false, // Whether to use hardware acceleration
+		  className: 'spinner', // The CSS class to assign to the spinner
+		  zIndex: 2e9, // The z-index (defaults to 2000000000)
+		  top: 'auto', // Top position relative to parent in px
+		  left: 'auto' // Left position relative to parent in px
+		};
+		        
+  $(document).ready(function() {
+    $(".iframe2").colorbox({iframe: true, width: "800px", height: "500px"});
+
+  });
+ 
+</script>
+    </head>
+    <body >
+        <!--container start-->
+        <div class="container">
+            <!-- Header Added -->
+
+            <?php
+            echo $this->partial("layout/_front_header");
+            ?>
+
+            <!-- Content Block added here -->
+            <?php echo $this->content; ?>
+
+            <!-- Footer added -->
+            <?php echo $this->partial("layout/_front_footer"); ?>
+
+        </div>
+        <!--container end-->
+    </body>
+</body>
+</html>

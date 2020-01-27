@@ -1,0 +1,74 @@
+<script type="text/javascript">
+    $(document).ready(function() {
+        var w = $(document).width();
+        $("#slider ul li").css("width", w);
+        $("#slider").easySlider({
+            auto: true,
+            continuous: true,
+            numeric: true,
+            pause:5000
+        });
+    });
+</script>
+<?php
+$imgPath = BASE_URL . '/assets/f';
+?>
+<div class="slider-container">
+    <div id="slider">
+        <ul>				
+            <li class="one">
+                <div class="s-content">
+                </div>					
+            </li>
+            <li class="two">
+                <div class="s-content">
+                </div>					
+            </li>
+            <li class="three">
+                <div class="s-content">
+                </div>					
+            </li>
+            <li class="four">
+                <div class="s-content">
+                </div>					
+            </li>
+        </ul>
+    </div>
+</div>
+<!--slider end-->
+<!--dashboard start-->
+<div class="dashboard">
+    <div class="threeColumn">
+        <div class="img"><img src="<?php print $imgPath; ?>/images/about.png" alt=""></div>
+        <h2>About Remotii</h2>
+        <p> Remotii is a way to bring sophisticated remote internet control and detailed logging to a 
+            lot of things that you already have that are not able to be seen or controlled on the web.
+        </p>
+        <a href="<?php echo BASE_URL . '/about-remotii' ?>" class="more">Read More</a>
+    </div>
+    <div class="threeColumn">
+        <div class="img"><img src="<?php print $imgPath; ?>/images/news.png" alt=""></div>
+        <h2>News</h2>
+        <ul class="list1">
+            <li>
+                <h4>Remotii grows with new ideas.</h4>
+                Remotii functionality is constantly expanding. As we continue to grow, we pledge to bring new and exciting features to your interactive page.
+            </li>			
+        </ul>
+    </div>
+    <div class="threeColumn last">
+
+
+        <div class="img"><img src="<?php print $imgPath; ?>/images/service-provider.png" alt=""></div>
+        <h2>Become a Service Provider</h2>
+        <p> There's money to be made! Remotii is for everyone but not everyone will want to install 
+            them. Remotii is sold through techs in each trade that know how to make the most of 
+            your systems. <br>
+            <a class="more" href="<?php echo BASE_URL . '/info-rsp' ?>">Click here and become an RSP today.</a>
+            <!--            If you would like to become a RSP (Remotii Service Provider) - you can 
+                        do it! Send an email to info@remotii.com to inquire.-->
+        </p>
+    </div>
+    <div class="cl"></div>
+</div>
+<!--dashboard end-->

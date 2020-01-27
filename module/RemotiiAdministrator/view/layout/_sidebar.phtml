@@ -1,0 +1,61 @@
+<?php
+$nav = array(
+    'index' => array('RemotiiAdministrator\Controller\Index' => array('index', 'listadminuser', 'manageadmin', 'listserviceprovider',
+            'addserviceprovider', 'listclient', 'serviceproviderdetail', 'clientinfo', 'payments', 'listremotii', 'listofflineremotii', 'errors','settings')),
+);
+
+$active = $this->IsActive($nav);
+//_pre($active);
+?>
+
+<div id="sidebar">
+    <div class="mainNav"> 
+
+        <!-- Responsive nav -->
+        <div class="altNav">
+            <div class="userSearch">
+                <form action="">
+                    <input type="text" placeholder="search..." name="userSearch" />
+                    <input type="submit" value="" />
+                </form>
+            </div>
+        </div>
+
+        <!-- Main nav -->
+        <ul class="nav">
+            <li <?php if ($active['index_index']) {
+    print 'class="active"';
+} ?>><a href="<?php print BASE_URL . '/admin/index/index'; ?>">Statistics</a></li>
+            <li <?php if ($active['index_listadminuser']) {
+    print 'class="active"';
+} ?>><a href="<?php print BASE_URL . '/admin/index/listadminuser'; ?>" title=""><span>Admin Users</span></a> </li>
+            <li <?php if ($active['index_manageadmin']) {
+    print 'class="active"';
+} ?>><a href="<?php print BASE_URL . '/admin/index/manageadmin'; ?>" title=""><span>Add New Admin</span></a> </li>
+            <li <?php if ($active['index_listserviceprovider'] || $active['index_serviceproviderdetail']) {
+    print 'class="active"';
+} ?>><a href="<?php print BASE_URL . '/admin/index/listserviceprovider'; ?>" title=""><span>Service Providers</span></a></li>
+            <li <?php if ($active['index_addserviceprovider']) {
+    print 'class="active"';
+} ?>><a href="<?php print BASE_URL . '/admin/index/addserviceprovider'; ?>" title=""><span>Add New Service Provider</span></a></li>
+            <li <?php if ($active['index_listclient'] || $active['index_clientinfo']) {
+    print 'class="active"';
+} ?>><a href="<?php print BASE_URL . '/admin/index/listclient'; ?>" title=""><span>End Users </span></a></li>
+            <li <?php if ($active['index_listremotii']) {
+    print 'class="active"';
+} ?>><a href="<?php print BASE_URL . '/admin/index/listremotii'; ?>" title=""><span>Remotii's </span></a></li>
+            <li <?php if ($active['index_listofflineremotii']) {
+    print 'class="active"';
+} ?>><a href="<?php print BASE_URL . '/admin/index/listofflineremotii'; ?>" title=""><span>Offline Devices </span></a></li>
+            <li <?php if ($active['index_payments']) {
+    print 'class="active"';
+} ?>><a href="<?php print BASE_URL . '/admin/index/payments'; ?>" title=""><span>Payments </span></a></li>
+            <li <?php if ($active['index_errors']) {
+    print 'class="active"';
+} ?>><a href="<?php print BASE_URL . '/admin/index/errors'; ?>" title=""><span>Errors </span></a></li>
+            <li <?php if ($active['index_settings']) {
+    print 'class="active"';
+} ?>><a href="<?php print BASE_URL . '/admin/index/settings'; ?>" title=""><span>Admin Settings </span></a></li>
+        </ul>
+    </div>
+</div>

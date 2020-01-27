@@ -1,0 +1,365 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Remotii Enduser</title>
+        <?php $baseUrl = BASE_URL . "/assets/f"; ?>
+        <link href="<?php echo $baseUrl; ?>/css/reset.css" type="text/css" rel="stylesheet">
+        <link href="<?php echo $baseUrl; ?>/css/main.css" type="text/css" rel="stylesheet" charset="utf-8">
+        <?php echo $this->headLink()->appendStylesheet($baseUrl . '/css/main-phase2.css'); ?>
+        <link href="<?php echo $baseUrl; ?>/css/main-phase2.css" type="text/css" rel="stylesheet" charset="utf-8">
+        <link href="<?php echo $baseUrl; ?>/css/buttons.css" type="text/css" rel="stylesheet" charset="utf-8">
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'>
+        <link href="<?php echo $baseUrl; ?>/css/screen.css" rel="stylesheet" type="text/css" media="screen" />
+        <link href="<?php echo $baseUrl; ?>/css/colorbox.css" rel="stylesheet" type="text/css" media="screen" />
+        <link href="<?php echo $baseUrl; ?>/css/jquery-ui.css" rel="stylesheet" type="text/css" media="screen" />
+        <script src="<?php echo $baseUrl; ?>/js/jquery-1.7.1.min.js" type="text/javascript"></script>
+        <script src="<?php echo $baseUrl; ?>/js/jquery-ui.js" type="text/javascript"></script>
+        <script  type="text/javascript" src="<?php echo $baseUrl; ?>/js/custom.js"></script>
+        <script type="text/javascript" src="<?php echo $baseUrl; ?>/js/easySlider1.7.js"></script>
+    </head>
+
+    <body>
+        <div class="remotii-setup modify scheduler" style="overflow: hidden;">
+            <div id="slider">
+                <ul>
+                    <li>
+                        <h2>Chained Event Summary - <span><?php echo $remotiiMacData[0]['remotii_name']; ?></span></h2>
+                        <div class="form rinput  add-event-wrap">
+                            <table width="100%" cellspacing="0" cellpadding="0">
+                                <tr>
+                                    <th width="130">Event Name</th>
+                                    <th width="130">Trigger Remotii</th>
+                                    <th width="150">Destination Remotii</th>
+                                    <th width="120">Status</th>
+                                    <th width="130">Action</th>
+                                </tr>
+                                <?php foreach ($data as $evnts) { ?>
+                                    <tr>
+                                        <td width="130"><?php echo $evnts['event_name']; ?></td>
+                                        <td width="130"><?php echo $evnts['src_remotii_name']; ?></td>
+                                        <td width="130"><?php echo $evnts['dest_remotii_name']; ?></td>
+                                        <td width="130"><?php echo ($evnts['event_status'] == 1) ? 'Enabled' : 'Disabled'; ?></td>
+                                        <td><a href="<?php echo $this->url('remotiifrontend', array('action' => 'chained-event-scheduler-edit', 'id' => $evnts['ce_id'])); ?>" class="next-slide-btn3">
+                                                <img src="<?php echo $baseUrl . "/images/edit-icon.png"; ?>" title="Edit"></a>
+                                            <a href="javascript:void(0);" class="mlr5 active"  data="<?php echo $evnts['event_status'] ?>"
+                                               id="<?php echo $evnts['ce_id'] ?>">         
+                                                   <?php if ($evnts['event_status'] == 1) { ?>
+
+                                                    <img src="<?php echo $baseUrl . "/images/enable.png"; ?>" title="Disable">
+                                                <?php } else { ?>
+
+                                                    <img src="<?php echo $baseUrl . "/images/right.png"; ?>" title="Enable">
+                                                <?php }
+                                                ?></a> 
+
+                                            <input type="hidden" id="id" val>
+                                            <a href="javascript:void(0);"  class=" delrow" post="<?php echo $post; ?>" value="<?php echo $evnts['ce_id']; ?>" >
+                                                <img src="<?php echo $baseUrl . "/images/delete-icon.png"; ?>" title="Delete"></a>
+
+                                        </td>
+                                    </tr>
+                                <?php } ?>
+                            </table>
+                        </div>
+                        <a href="javascript:void(0);" class="btn2 add-event next-slide-btn " >Add Event</a>
+                    </li>
+                    <!--                    <li>
+                                            <h2>Warning</h2>
+                                            <div class="warning">
+                                                <p>
+                                                    I hereby agree to the Remotii terms of service and understand that by using the Remotii Event Scheduler, I am requesting the Remotii server system to generate a controlling event for my Remotii, on my behalf, that may modify the output state of the selected Remotii and any equipment that it may be connected to.  
+                    
+                                                    I  <br>further acknowledge that the fulfillment of the controlling event request is on a best effort basis and cannot be 100% guaranteed to take place or execute precisely on time.  I understand that any event that cannot be scheduled within a 5 minute window shall be discarded and the state of my Remotii and its connected equipment shall remain unchanged.
+                                                </p>
+                    
+                                            </div>
+                                            <div class="al"><a href="javascript:void(0);" class="btn3  next-slide-btn">I Agree</a> <a href="javascript:void(0);" class="btn2 prev-slide-btn" >Cancel</a></div>
+                                        </li>-->
+                    <?php
+                    $form = $this->form;
+
+                    $form->prepare();
+
+                    $form->setAttribute('action', $this->url('remotiifrontend', array(
+                                'action' => 'chained-event-scheduler',
+                                'id' => $this->rid,
+                    )));
+                    $form->setAttribute('method', 'post');
+                    echo $this->form()->openTag($form);
+                    ?>
+                    <li>
+                        <h2>Add New Chained Event For <span><?php echo ($remotiiMacData[0]['remotii_name']); ?></span></h2>
+                        <input type="hidden" name="src_remotii_id" id="src_remotii_id" value="<?php echo $remotiiMacData[0]['remotii_id'] ?>">
+                        <div class="chained_event_list">
+                            <div class="input-div">
+                                <label>Event</label>
+                                <input type="text" name="event_name" class="small">
+                                <span id="lable" class="hidden span-error" style="color:red; font-size: 10pt">Cannot be empty</span>
+                            </div>
+                            <div class="input-div">
+                                <label>Destination</label>
+                                <select name="triggering_remotii" class="small" id="triggering_remotii">
+                                    <option value="0">Select Remotii</option>
+                                    <?php foreach ($userRemotii as $remotii) { ?>
+                                        <option value="<?php echo $remotii->remotii_id; ?>"><?php echo $remotii->remotii_name; ?></option>
+                                    <?php } ?>
+                                </select>
+                                <span id="lable2" class="hidden span-error" style="color:red; font-size: 10pt">Select A Remotii</span>
+
+                            </div>
+                            <div class="input-div">
+                                <label>Condition</label>
+                                <select name="condition" class="small" id="condition">
+                                    <option value="0">Any</option>
+                                    <option value="1">All</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="timimg" style="padding: 0px 15px 15px 15px !important;overflow: auto;height: 300px;">
+                            <span id="chainedError" class="hidden" style="color:red; font-size: 10pt">The Remotii Selected causes a closed chained event </span>
+                            <h3 class="m0" style="text-align: center">Trigger Condition ( <?php echo ($remotiiMacData[0]['remotii_name']); ?> )</h3>
+                            <h5 class="m0">Input</h5>
+                            <table width="100%" cellspacing="0" class="table chained_event_list_table">
+                                <?php
+                                $i = 0;
+                                foreach ($InputConfig as $inputconfig) {
+                                    ?>
+                                    <tr>
+                                        <td class="column">
+                                            <input type="hidden" name="pin_input_config_id[<?php echo $inputconfig['config_id'] ?>]" value="<?php echo $inputconfig[pin_number] ?>">
+                                            <input type="hidden" name="pin_number1[]" value="<?php echo $inputconfig[pin_number] ?>">
+                                            <?php
+                                            $form->get('inputname[]')->setCheckedValue($inputconfig['config_id']);
+                                            echo $this->formRow($form->get('inputname[]'));
+                                            ?> 
+                                            <span><?php echo $inputconfig['name']; ?></span>
+                                        </td>
+                                        <td class="column">
+                                            <div class="colorbox"
+                                                 style="background:<?php echo $inputconfig['active_label_color'] ?>" >
+                                            </div>
+                                            <input type="radio" class="radio r1 radio_space_after" name="radio1[<?php echo $inputconfig['config_id'] ?>]" value="1"  disabled><?php echo $inputconfig['active_label_text']; ?>
+                                        </td>
+                                        <td class="column">
+                                            <div class="colorbox" style="background:<?php echo $inputconfig['inactive_label_color'] ?>" ></div>
+                                            <input type="radio"  class="radio radio_space_after" name="radio1[<?php echo $inputconfig['config_id'] ?>]" disabled value="0" ><?php echo $inputconfig['inactive_label_text']; ?>
+                                        </td>
+                                    </tr>
+                                    <?php
+                                }
+                                ?></table>
+                            <div id="output">
+                                <h5 class="m0">Output</h5>
+                                <table width="100%" cellspacing="0" class="table chained_event_list_table">
+                                    <?php
+                                    $i = 0;
+                                    foreach ($OutputConfig as $outputconfig) {
+                                        ?>
+                                        <tr>
+
+                                        <input type="hidden" name="pin_output_config_id[<?php echo $outputconfig['config_id'] ?>]" value="<?php echo $outputconfig[pin_number] ?>">
+                                        <input type="hidden" name="pin_number[]" value="<?php echo $outputconfig[pin_number] ?>">
+                                        <input type="hidden" name="IsMomentary[<?php echo $outputconfig['config_id'] ?>]" value="<?php echo $outputconfig[is_output_momentary] ?>">
+
+                                        <?php if ($outputconfig[is_output_momentary] != 1) { ?>
+                                            <td class="column">
+                                                <?php
+                                                $form->get('outputname[]')->setCheckedValue($outputconfig['config_id']);
+                                                ?>
+                                                <?php echo $this->formRow($form->get('outputname[]')); ?>
+                                                <span> <?php echo $outputconfig['name']; ?></span></td>
+                                            <td class="column">
+                                                <div class="colorbox" style="background:<?php echo $outputconfig['active_label_color'] ?>" ></div>
+                                                <input type="radio" class ="radio r1 radio_space_after"  name="radioState[<?php echo $outputconfig['config_id'] ?>]" value="1"  disabled><?php echo $outputconfig['active_label_text'] ?>
+                                            </td>
+                                            <td class="column">
+                                                <div class="colorbox " style="background:<?php echo $outputconfig['inactive_label_color'] ?>" ></div>
+                                                <input type="radio" class ="radio radio_space_after" name="radioState[<?php echo $outputconfig['config_id'] ?>]" value="0" disabled><?php echo $outputconfig['inactive_label_text'] ?>
+                                            <?php } ?>
+                                        </td>
+
+                                        </tr>
+                                        <?php
+                                    }
+                                    ?>
+                                </table>
+                            </div>
+
+                            <div class="alL modal-footer">
+                                
+                                <!--<a href="javascript:void(0);"  class="btn2 prev-slide-btn" style="background:#4c4c4c !important;">Cancel</a>-->
+                                <?php echo $this->formSubmit($form->get('save')); ?> 
+                                <a href="javascript:void(0);" class="btn2 next-slide-btn hidden" id="result_action" >Set Resulting Action</a>
+                            </div>
+                        </div>
+
+                    </li>
+                    <li>
+                        <h2 id="tr_remotii"></h2>
+                        <div class="timimg hidden" id="dest_remotii" style="padding: 0px 15px 15px 15px !important">
+
+                            <!--<h3 class="m0" ></h3>-->
+                            <table width="100%" cellspacing="0" class="table" id="tr_remotii_output">
+
+                            </table>
+                        </div>
+                        <div class="alL modal-footer">
+                            <a href="javascript:void(0);"  class="btn2 prev-slide-btn" >Back</a>
+                        </div>
+                    </li>
+
+
+
+                </ul>
+
+            </div>
+
+        </div>
+    </body>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#result_action').hide();
+            $("#slider ul li").css({width: '750px', height: '420px'});
+            $("#slider").easySlider({controlsShow: false});
+            $(document).on('change', '.check', function () {
+                if ($(this).is(":checked")) {
+                    $(this).parent('td').siblings().find('.radio').removeAttr('disabled');
+                    $(this).parent('td').siblings().find('.r1').attr("checked", "checked");
+                } else {
+                    $(this).parent('td').siblings().find('.radio').attr('disabled', 'disabled');
+                    $(this).parent('td').siblings().find('.r1').removeAttr("checked", "checked");
+                }
+            });
+            $('#triggering_remotii').on('change', function () {
+                var remotiiId = $('#triggering_remotii').val();
+//                if(remotiiId== $('#src_remotii_id').val()){
+//                    $('#output').hide();
+//                }else{
+//                    $('#output').show();
+//                }
+                if (remotiiId != 0) {
+                    $('#lable2').addClass('hidden');
+                    $('#result_action').show();
+                } else {
+                    $('#lable2').removeClass('hidden');
+                    $('#result_action').hide();
+                }
+
+                var remotiiName = $('#triggering_remotii option:selected').text();
+                loadRemotiiOutputConfig(remotiiId, remotiiName);
+            });
+            function loadRemotiiOutputConfig(remotiiId, remotiiName) {
+                $.ajax({
+                    type: "POST",
+                    data: "remotiiId=" + remotiiId,
+                    datatype: "text",
+                    url: '/client/get-remotii-output-config',
+                    success: function (result) {
+                        // <div class="hidden" id="tr_remotii_output">
+                        $('#tr_remotii').html('Set Resulting Action For - <span> ' + remotiiName + '</span>');
+                        $('#tr_remotii_output').html(result);
+                        $('#dest_remotii').removeClass('hidden');
+//                        $('.alL').removeClass('hidden');
+                    }
+                });
+            }
+            $(".save").click(function (e) {
+                e.preventDefault();
+                if ($('input[name="event_name"]').val() == '') {
+                    $('#lable').removeClass('hidden');
+                } else if ($('#triggering_remotii').val() == 0) {
+                    $('#lable').addClass('hidden');
+                    $('#lable2').removeClass('hidden');
+                    return false;
+                } else if ($('body .outputname:checked').length <= 0 && $('body .inputname:checked').length <= 0) {
+                    $('#lable').addClass('hidden');
+                    alert('Atleast select one Input/Output pin for the Trigger Condition');
+                    return false;
+                } else if ($('body .dest_output:checked').length <= 0) {
+                    $('#lable').addClass('hidden');
+                    alert('Atleast select one output pin for the Resulting Action');
+                    return false;
+                } else {
+                    $(this).unbind('click').click();
+                    return true;
+                }
+            });
+//            $("#result_action").click(function(){
+//                 es.preventDefault();
+//                 if($('#triggering_remotii').val() == 0){
+//                   $('#lable2').removeClass('hidden');
+//                    return false; 
+//                 }else{
+//                      $('#lable2').addClass('hidden');
+////                     $(this).unbind('click').click();
+//                     return true;
+//                 }
+//            })
+            $('.active').click(function () {
+                var val = null;
+                var up_id = $(this).attr('id');
+                var values = $(this).attr('data');
+
+                if (values == 0) {
+                    val = 1;
+
+                } else {
+
+                    val = 0;
+                }
+
+                $.post("<?php echo BASE_URL . "/client/iajax"; ?>",
+                        {
+                            action: "active",
+                            params: {
+                                value: val,
+                                id: up_id,
+                                table: 'chained_event'
+                            }
+                        }
+                ,
+                        function (data) {
+                            if (data.status == "success") {
+
+                                window.location.reload();
+                            } else {
+                                alert(data.message);
+                            }
+                        },
+                        "json");
+            });
+            $('.delrow').click(function () {
+                var id = $(this).attr('value');
+                var $ele = $(this).parent().parent();
+
+                if (confirm("Are you sure you want to delete this event?")) {
+                    $.post("<?php echo BASE_URL . "/client/iajax"; ?>",
+                            {
+                                action: "delete",
+                                params: {
+                                    iddel: id,
+                                    table: 'chained-event'
+                                }
+                            }
+                    ,
+                            function (data) {
+
+                                if (data == true) {
+                                    $ele.remove();
+//                                    location.reload();
+                                } else {
+                                    alert("can't delete the row")
+                                    $('#response').attr("class", "error m0");
+                                    $('#response').html(data.result);
+                                }
+                            }, 'json');
+                }
+            });
+            $('.close').on('click', function () {
+                $("#cboxClose", parent.document).trigger('click');
+            });
+            //
+        });
+    </script>

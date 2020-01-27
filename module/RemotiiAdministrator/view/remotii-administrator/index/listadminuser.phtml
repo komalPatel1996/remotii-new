@@ -1,0 +1,48 @@
+<?php
+$title = 'Admin Users';
+$this->headTitle($title);
+//  define the base url
+$base_url = BASE_URL . '/assets/b';
+//_pr($response);
+?>
+
+<div class="pageInfo"><h1>Admin Users</h1></div>
+<!-- widget -->
+<div class="widget users"> 
+    <?php if (!empty($response[1])) { ?>
+        <div id="response" class="<?php echo $response[1]->status; ?>"><?php echo $response[1]->message; ?></div>
+    <?php } ?>
+
+    <table cellpadding="0" cellspacing="0" border="0" class="dTable" id="dynamic">
+        <thead>
+            <tr>
+                <th>Username<span class="sorting" style="display: block;"></span></th>
+                <th>Last Name/First Name</th>
+                <th>Contact Number</th>
+                <th>Email</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            $i = 1;
+            foreach ($data as $userData) {
+                ?>
+                <tr>
+                	<td><a href="<?php echo BASE_URL.'/admin/index/manageadmin/'.$userData->user_id?>"><?php echo $userData->username?></a></td>
+                    <td><?php $name = $userData->lname . '/' . $userData->fname; if(trim($name)!='/'){ echo $name;}?> </td>
+                    <td><?php echo $userData->phone;?></td>
+                    <td><?php echo $userData->email;?></td>
+                    <td><a href="<?php echo BASE_URL . '/admin/index/manageadmin/' . $userData->user_id; ?>"><img src="<?php print $base_url; ?>/images/edit-icon.png" alt=""></a>&nbsp;&nbsp;
+                        <a href="<?php echo BASE_URL . '/admin/index/deleteadminuser/' . $userData->user_id; ?>" onclick="return confirm('Are you sure you wish to delete?');"><img src="<?php print $base_url; ?>/images/delete-icon.png" alt="delete"></a>
+                    </td>
+                </tr>
+                <?php
+                $i++;
+            }
+            ?>
+        </tbody>
+    </table>              
+
+</div>
+<!-- /widget --> 

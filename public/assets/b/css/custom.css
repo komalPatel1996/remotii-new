@@ -1,0 +1,43 @@
+@charset "utf-8";
+/* CSS Document */
+
+.serviceProvider .btn1 {
+    margin: 28px 0;
+    position: relative;
+    top:0 !important;
+    
+}
+.ajx-time{position: relative; width: 400px; display: inline-block; float: right; margin-top: -40px;}
+.ajx-time h4{ display: inline;} 
+.rsw_v6 input[type="text"] {
+    width: 160px !important;
+}
+.ri_ntfn_trigger > label {
+    display: inline-block;
+    width: 45px;
+}
+.ri_ntfn_trigger span{ display: block; margin-right:3px; min-width: 40px;}
+.ri_ntfn_trigger label{ vertical-align: top; line-height: 18px;}
+
+#dynamic2_wrapper table.dataTable td{ padding: 5px 3px;word-break: break-all;}
+*:disabled {opacity: 0.6;}
+.evo-pop.ui-widget.ui-widget-content.ui-corner-all{
+    margin-top: -50px !important;
+    /*margin-left:*/ 
+}
+div.box8[disabled="disabled"] {
+    opacity: 0.6;
+}
+.notes-popup{width: 100%; position: fixed; top: 0; left: 0px; height:100%; display: none; z-index: 9999; background: rgba(0, 0, 0, 0.5) !important;}
+.notes-popup-inner{width: 450px; margin:160px auto; text-align: center; background: #fff; position: relative; padding:40px 20px;}
+.notes-popup a.close{width: 22px; height: 22px; line-height: 22px;position: absolute; top: -13px; right: -12px; border: 1px solid #787878; background:#e2e2e2; border-radius: 50px;}
+.notes-popup textarea{min-height:95px;}
+.notes-popup .submit-btn{border: 0; font-family: arial; width: auto;}
+.notes-popup h2{text-align: left}
+
+/*.listRemotii th:nth-child(6), .listRemotii td:nth-child(6){display:none;}
+.listServiceProvider th:nth-child(4), .listServiceProvider td:nth-child(4){display:none;}
+.remotiis th:nth-child(3), .remotiis td:nth-child(3){display:none;}
+notes-popup .submit-btn {
+    width: auto;*/
+/*}*/

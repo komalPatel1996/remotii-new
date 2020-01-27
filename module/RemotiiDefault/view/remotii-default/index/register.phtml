@@ -1,0 +1,205 @@
+<script src="https://www.google.com/recaptcha/api.js"></script>
+<?php
+$data = $responseData[0];
+//_pr($pResponse);
+?>
+<!-- Tag line  -->
+<div class="tag-line">
+    <div class="wrapper">
+        <h2>Register</h2>
+    </div>
+</div>
+<!-- Tag line ends -->
+<div class="content">
+    <div class="wrapper">
+        <form method="post" name="regFrm" id="regFrm">
+            <div class="box1">
+                <div class="inner form">
+                    <?php if ($pResponse[1]['errorBillingDetails'] == 3) { ?>
+                        <div class="error-msg">Error occured while processing transaction</div>
+                    <?php } ?>
+
+                    <?php if (!empty($errdata[1])) { ?>
+                        <div id="response" class="<?php echo $errdata[1]->status; ?>"><?php echo $errdata[1]->message; ?></div>
+                    <?php } ?>
+
+                    <?php if (!empty($pResponse[1][1])) { ?>
+                        <div id="response" class="<?php echo $pResponse[1][1]->status; ?>"><?php echo $pResponse[1][1]->message; ?></div>
+                    <?php } ?>
+
+                    <h4>Your Account Info <span>(All fields are required)</span></h4>
+                    <ul>
+                        <li>
+                            <input type="text" name="userName" value="<?php print $data->username; ?>" placeholder="Username" autocomplete="off">
+                            <?php if ($responseData['erruserName'] <> '') { ?>
+                                <span class="infoMsg error"><?php print 'Please enter user name'; ?></span>
+                            <?php } ?>
+                            <?php if ($responseData['errUsernameDuplicasy'] <> '') { ?>
+                                <span class="infoMsg error"><?php print 'User name already exist. Please use another'; ?></span>
+                            <?php } ?>
+                        </li>
+                        <li>
+                            <input type="text" name="fName" value="<?php print $data->fname; ?>" placeholder="First Name">
+                            <?php if ($responseData['errfName'] <> '') { ?>
+                                <span class="infoMsg error"><?php print 'Please enter first name'; ?></span>
+                            <?php } ?>
+                        </li>
+                        <li>
+                            <input type="text" name="lName" value="<?php print $data->lname; ?>" placeholder="Last Name">
+                            <?php if ($responseData['errlName'] <> '') { ?>
+                                <span class="infoMsg error"><?php print 'Please enter last name'; ?></span>
+                            <?php } ?>
+                        </li>
+                        <li>
+                            <input type="text" name="phoneNumber" value="<?php print $data->phone; ?>" placeholder="Phone Number">
+                            <?php if ($responseData['errphoneNumber'] <> '') { ?>
+                                <span class="infoMsg error"><?php print 'Please enter valid phone number'; ?></span>
+                            <?php } ?>
+                        </li>
+                        <li>
+                            <input type="text" name="emailId" value="<?php print $data->email; ?>" placeholder="Email Address" autocomplete="off">
+                            <?php if ($responseData['erremailId'] <> '') { ?>
+                                <span class="infoMsg error"><?php print 'Please enter valid email id'; ?></span>
+                            <?php } ?>
+                            <?php if ($responseData['errEmailDuplicasy'] <> '') { ?>
+                                <span class="infoMsg error"><?php print 'Email id already exist. Please use another'; ?></span>
+                            <?php } ?>
+                        </li>
+                    </ul>
+                    <h4>Set Password</h4>
+                    <ul>
+                        <li><input type="password" name="password" placeholder="Password" value="<?php print $data->password; ?>" autocomplete="off">
+                            <?php if ($responseData['errpassword'] <> '') { ?>
+                                <span class="infoMsg error"><?php print 'Passwords must be at least 8 characters and include at least one number, special characters, or upper case letter.'; ?></span>
+                            <?php } ?>
+                            <span>
+                                Passwords must be at least 8 characters and include at least one number, special characters, or upper case letter.
+                            </span>
+                        </li>
+                        <li>
+                            <input type="password" name="cnfrmPassword" placeholder="Verify Password" value="<?php print $data->cnfrmPassword; ?>" autocomplete="off">
+                            <?php if ($responseData['errcnfrmPassword'] <> '') { ?>
+                                <span class="infoMsg error"><?php print 'Password and confirm password do not match'; ?></span>
+                            <?php } ?>
+
+                        </li>
+                    </ul>
+                    <h4>Address</h4>
+                    <ul>
+                        <li><input type="text" name="street" value="<?php print $data->street; ?>" placeholder="Street"></li>
+                        <li><input type="text" name="city" value="<?php print $data->city; ?>" placeholder="City"></li>
+                        <li>
+                            <input type="text" name="state" value="<?php print $data->state; ?>" placeholder="State" class="half"> 
+                            <input type="text" name="zip_code" value="<?php print $data->zip_code; ?>" placeholder="Zip Code"  class="half">
+                        </li>
+                        <li><input type="text" name="country" value="<?php print $data->country; ?>" placeholder="Country"></li>
+                    </ul>
+                    <?php /* ?>
+                      <h4>Payment Source Details </h4>
+                      <ul>
+                      <li>
+                      <label class="sel">
+                      <select name="cardType">
+                      <option value="Visa" <?php echo $data->cardType=='Visa'?'selected':""?>>Visa</option>
+                      <option value="American Express" <?php echo $data->cardType=='American Express'?'selected':""?>>American Express</option>
+                      <option value="Carte Blanche" <?php echo $data->cardType=='Carte Blanche'?'selected':""?>>Carte Blanche</option>
+                      <option value="Diners Club" <?php echo $data->cardType=='Diners Club'?'selected':""?>>Diners Club</option>
+                      <option value="Discover" <?php echo $data->cardType=='Discover'?'selected':""?>>Discover</option>
+                      <option value="Enroute" <?php echo $data->cardType=='Enroute'?'selected':""?>>enRoute</option>
+                      <option value="JCB" <?php echo $data->cardType=='JCB'?'selected':""?>>JCB</option>
+                      <option value="Maestro" <?php echo $data->cardType=='Maestro'?'selected':""?>>Maestro</option>
+                      <option value="MasterCard" <?php echo $data->cardType=='MasterCard'?'selected':""?>>MasterCard</option>
+                      <option value="Solo" <?php echo $data->cardType=='Solo'?'selected':""?>>Solo</option>
+                      <option value="Switch" <?php echo $data->cardType=='Switch'?'selected':""?>>Switch</option>
+                      <option value="Visa Electron" <?php echo $data->cardType=='Visa Electron'?'selected':""?>>Visa Electron</option>
+                      <option value="LaserCard" <?php echo $data->cardType=='LaserCard'?'selected':""?>>Laser</option>
+                      </select>
+                      </label>
+                      </li>
+                      <li>
+                      <input type="text" name="card_holder" placeholder="Card Holder" value="<?php echo $data->card_holder?>" class="half" maxlength="150" autocomplete="off">
+                      <input type="text" name="card_number" placeholder="Credit Card Number" value="<?php echo $data->card_number?>" class="half" maxlength="16" autocomplete="off">
+                      </li>
+                      <li>
+                      <input type="text" name="cvv" placeholder="CVV" class="one-third" maxlength="4" autocomplete="off">
+                      <label class="sel">
+                      <select name="expMonth">
+                      <option value="">Expiry Month</option>
+                      <option value="01" <?php echo $data->expMonth=='01'?'selected':""?>>January</option>
+                      <option value="02" <?php echo $data->expMonth=='02'?'selected':""?>>February</option>
+                      <option value="03" <?php echo $data->expMonth=='03'?'selected':""?>>March</option>
+                      <option value="04" <?php echo $data->expMonth=='04'?'selected':""?>>April</option>
+                      <option value="05" <?php echo $data->expMonth=='05'?'selected':""?>>May</option>
+                      <option value="06" <?php echo $data->expMonth=='06'?'selected':""?>>June</option>
+                      <option value="07" <?php echo $data->expMonth=='07'?'selected':""?>>July</option>
+                      <option value="08" <?php echo $data->expMonth=='08'?'selected':""?>>August</option>
+                      <option value="09" <?php echo $data->expMonth=='09'?'selected':""?>>September</option>
+                      <option value="10" <?php echo $data->expMonth=='10'?'selected':""?>>October</option>
+                      <option value="11" <?php echo $data->expMonth=='11'?'selected':""?>>November</option>
+                      <option value="12" <?php echo $data->expMonth=='12'?'selected':""?>>December</option>
+                      </select>
+                      </label>
+                      <label class="sel">
+                      <select name="expYear">
+                      <option value="">Expiry Year</option>
+                      <?php
+                      $year = date('Y');
+                      $newYear = $year + 15;
+                      for($i=1; $year<=$newYear; $year++) {
+                      $option .= '<option value="'.$year.'" '.($data->expYear==$year ? "selected":"").'>'.$year.'</option>';
+                      }
+                      print $option;
+                      ?>
+                      </select>
+                      </label>
+                      </li>
+                      </ul>
+                      <?php
+                     */
+                    ?>
+                    <!--<ul>-->
+                    <!--                        <li>
+                    
+                    <?php
+                    $captcha = new Zend\Form\Element\Captcha('captcha');
+                    $ca = new Zend\Captcha\Image(array(
+                        'font' => $dirdata . BASE_PATH . '/assets/c/css/fonts/Roboto-Regular.ttf',
+                        'width' => 180,
+                        'height' => 60,
+                        'fontSize' => 20,
+                        'dotNoiseLevel' => 25,
+                        'lineNoiseLevel' => 1));
+
+                    $ca->setImgDir(BASE_PATH . '/images/captcha');
+                    $ca->setImgUrl(BASE_URL . '/images/captcha');
+
+                    $captcha->setCaptcha($ca)
+                            ->setAttributes(array('class' => 'one-third', 'style' => 'margin-left: 90px;'))
+                            ->setLabel('Please verify you are human');
+
+                    echo $this->formCaptcha($captcha);
+
+                    $_SESSION['old_captcha'] = $captcha->getCaptcha()->getId() . $captcha->getCaptcha()->getSuffix();
+                    ?>
+                    
+                    <?php if ($pResponse[1]['errCaptcha'] <> '') { ?>
+                                                                <font color="red">Captcha code not matched</font>
+                    <?php } ?>
+                    
+                                            </li>-->
+                    <div class="g-recaptcha" data-sitekey="<?php echo GOOGLE_CAPTCHA_SECRET;?>"></div>
+
+
+                    <?php if ($pResponse[1]['errCaptcha'] <> '') { ?>
+                        <span class="infoMsg error"><?php print 'Please re-enter your reCAPTCHA'; ?></span>
+                    <?php } ?>
+                    <div class="clear h20"></div>
+                    <!--</ul>-->
+
+                    <input type="submit" title="Update Account" name="submit" value="Submit" class="submit-btn">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<!--/content-->

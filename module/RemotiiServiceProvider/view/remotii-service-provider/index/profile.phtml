@@ -1,0 +1,68 @@
+<div class="pageInfo"><h1> My Profile </h1></div>
+<!-- widget -->
+<div class="widget"> 
+
+<?php if (!empty($responseData[1])) { ?>
+        <div id="response" class="<?php echo $responseData[1]->status; ?>"><?php echo $responseData[1]->message; ?></div>
+    <?php } ?>
+    <?php if (!empty($responseData)) { ?>
+        <div id="response" class="<?php echo $responseData['status']; ?>"><?php echo $responseData['message']; ?></div>
+    <?php } ?>
+ 
+ <div class="box1 hidePars form_add_sp" style="<?php echo $style;?>">
+					    <div class="formWrap" >
+					        <form action="" id="formAddNagScreen" method="post">
+					            <input type="text" name="userName" value="<?php print $spUserDetails->username; ?>" placeholder="Username" class="formInput <?php if($responseData['erruserName'] <> '') { print 'error'; } ?>" maxlength="100" />
+					            <?php if($responseData['erruserName'] <> '') { ?>
+					                <span class="infoMsg"><?php print 'Please enter user name'; ?></span>
+					            <?php } ?>
+					            <?php if($responseData['errUsernameDuplicasy'] <> '') { ?>
+					                <span class="infoMsg"><?php print 'User name already exist. Please use another'; ?></span>
+					            <?php } ?>
+					
+					            <input type="text" name="fName" value="<?php print $spUserDetails->fname; ?>" placeholder="First Name" class="formInput <?php if($responseData['errfName'] <> '') { print 'error'; } ?>" maxlength="100" />
+					            <?php if($responseData['errfName'] <> '') { ?>
+					                <span class="infoMsg"><?php print 'Please enter first name'; ?></span>
+					            <?php } ?>
+					
+					            <input type="text" name="lName" value="<?php print $spUserDetails->lname; ?>" placeholder="Last Name" class="formInput <?php if($responseData['errlName'] <> '') { print 'error'; } ?>" maxlength="100" />
+					            <?php if($responseData['errlName'] <> '') { ?>
+					                <span class="infoMsg"><?php print 'Please enter last name'; ?></span>
+					            <?php } ?>
+					
+					            <input type="text" name="phoneNumber" value="<?php print $spUserDetails->phone; ?>" placeholder="Phone Number" class="formInput <?php if($responseData['errphoneNumber'] <> '') { print 'error'; } ?>" maxlength="12" />
+					            <?php if($responseData['errphoneNumber'] <> '') { ?>
+					                <span class="infoMsg"><?php print 'Please enter valid phone number'; ?></span>
+					            <?php } ?>
+					
+					            <input type="text" name="emailId" value="<?php print $spUserDetails->email; ?>" placeholder="Email Address" class="formInput <?php if($responseData['erremailId'] <> '' || $responseData['errEmailDuplicasy'] <> '') { print 'error'; } ?>" maxlength="200" />
+					            <?php if($responseData['erremailId'] <> '') { ?>
+					                <span class="infoMsg"><?php print 'Please enter valid email id'; ?></span>
+					            <?php } ?>
+					            <?php if($responseData['errEmailDuplicasy'] <> '') { ?>
+					                <span class="infoMsg"><?php print 'Email id already exist. Please use another'; ?></span>
+					            <?php } ?>
+					
+					            <input type="password" name="password" placeholder="Password" class="formInput <?php if($responseData['errpassword'] <> '') { print 'error'; } ?>" maxlength="100" />
+					            <?php if($responseData['errpassword'] <> '') { ?>
+					                <span class="infoMsg"><?php print 'Either passowrd is less than 8 character or password is empty'; ?></span>
+					            <?php } ?>
+					
+					            <input type="password" name="cnfrmPassword" placeholder="Verify Password" class="formInput <?php if($responseData['errcnfrmPassword'] <> '') { print 'error'; } ?>" maxlength="100" />
+					            <?php if($responseData['errcnfrmPassword'] <> '') { ?>
+					                <span class="infoMsg"><?php print 'Password and confirm password do not match'; ?></span>
+					            <?php } ?>
+					
+					            <div class="cl"></div>
+					            <br />
+					            <input class="submit-btn" type="submit" value="Submit" name="submit_user" title="Add new user">
+					            <?php 
+					            	if(!$uid){
+					            ?>
+					            <input class="btn" type="reset" value="Cancel">
+					            <?php }?>
+					        </form>
+					    </div>
+					    </div>
+					    
+</div>					    

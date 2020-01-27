@@ -1,0 +1,85 @@
+<?php 
+	$userCreated = $spUserDetails->created_on ? date( 'm/d/Y', $spUserDetails->created_on ):"";
+	//_pre($userRemotiis);
+?>
+    <div class="pageInfo">
+    	<h1>End User Information</h1>
+    </div>
+
+      <!-- widget -->
+      <div class="widget"> 
+        <div class="inner">
+          <h2><?php echo $spUserDetails->username?> 
+          <?php if($userCreated):?>
+          <br> 
+          <small class="size12">
+          (Account Creation Date- <?php echo $userCreated; ?>)</small>
+          <?php endif;?>
+          </h2>
+          <div class="rowsec">      
+      <p>Remotii : </p>
+      <form method="post">
+	     
+	      		<?php 
+	      		if(!empty($userRemotiis)){
+		      		foreach( $userRemotiis as $userRemotii )
+		      		{
+		      			if(!$shutOffStatus) {
+		      				$shutOffStatus = $userRemotii['remotii_status'];
+		      			}
+		      	?>
+		      	 	<p>	
+		      	 	
+		      		<input type="checkbox" name="remotiis[]" <?php if($shutOffStatus == SUSPENDED_BY_ADMIN){echo 'disabled';}?> value="<?php echo $userRemotii['remotii_id'];?>" <?php echo $userRemotii['remotii_status'] <> ACTIVE ? '':""?>/> 
+		      		<?php if($userRemotii['remotii_status'] <> ACTIVE):?>
+		      		<span style="font-style: italic;color:#808080;"><?php echo $userRemotii['mac_address']?></span>
+		      		<?php else:?>
+		      		<?php echo $userRemotii['mac_address']?>
+		      		<?php endif;?>
+		      		<br />
+		      		
+		      	<?php	
+		      		}
+		      		
+		      		if(!($shutOffStatus == SUSPENDED_BY_ADMIN)){
+		      	?>
+		      		<p class="check"><input type="checkbox" name="shutOffAllRemotiis" class="shutOffAllRemotiis" id="lable1" class="check" <?php //if($shutOffStatus <> 1) { print 'checked="checked"';} ?>>
+		      		 <label name="label1"><a href="#">Shut off all Remotii’s</a></label>
+		      		</p>
+	      		<?php
+	      			} else {
+	      				echo '<p style="color:green">Remotii\'s suspended by admin and can not be enabled.</p>';
+	      			}
+	      		}else{
+	      		?>
+	      			No Remotii found
+	      			<br>
+	      	<?php 
+	      		}
+	      		
+	      		if(!($shutOffStatus == SUSPENDED_BY_ADMIN)){
+	      	?>
+	      
+	     
+	      <br>
+	      <input type="submit" class="btn1" name="submit" value="Suspend / Resume" />
+	      <?php } ?>
+      </form>
+    </div>
+        </div>
+      </div>
+      <!-- /widget -->
+<script type="text/javascript">
+<!--
+/*
+$(".shutOffAllRemotiis").change(function(){
+	if($(".shutOffAllRemotiis:checked").val())
+	{
+		$('input[name="remotiis[]"]').attr("checked",true);
+	} else {
+		$('input[name="remotiis[]"]').attr("checked",false);
+	}
+});
+*/
+//-->
+</script>       

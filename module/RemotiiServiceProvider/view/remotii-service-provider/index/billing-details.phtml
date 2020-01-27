@@ -1,0 +1,227 @@
+<div class="pageInfo"><h1> My Profile </h1></div>
+<script>
+
+    function edSF(o)
+    {
+        if (o.checked) {
+            $("#service_fee").removeAttr('disabled');
+            $("#service_fee").val("");
+            $("#payaccdetails").show('slow');
+        } else {
+            $("#service_fee").attr('disabled', 'disabled');
+            $("#service_fee").val("");
+            $("#payaccdetails").hide('slow');
+        }
+    }
+
+    function showHideBillingDetails(obj)
+    {
+        if (obj.checked) {
+            $("#billingDetails").show('slow');
+        } else {
+            $("#billingDetails").hide('slow');
+        }
+    }
+    function showHidePaymentFrm() {
+        jQuery('#ccFrm').show();
+        jQuery('#ccChange').hide();
+        jQuery('input[name=shbillingDetails]').val('1');
+    }
+    function cancelChange() {
+        jQuery('#ccFrm').hide();
+        jQuery('#ccChange').show();
+        jQuery('input[name=shbillingDetails]').val('0');
+        jQuery('select[name=cardType]').val('');
+        jQuery('select[name=expMonth]').val('');
+        jQuery('select[name=expYear]').val('');
+        jQuery('input[name=card_holder]').val('');
+        jQuery('input[name=card_number]').val('');
+
+    }
+</script>
+<!-- widget -->
+<div class="widget"> 
+
+    <?php
+    $spinfo = $data[0];
+    
+    foreach ($flashMessages as $k => $msg) {
+    if (array_key_exists('stripeErrors', $msg)) {
+        $stripeErrors = $msg['stripeErrors'];
+        break;
+    }
+}
+if ($responseData[0] <> '') {
+    $data = $responseData[0];
+} else {
+    $data = $data[0];
+}
+     if (!empty($responseData[1])) { ?>
+    <div id="response" class="<?php echo $responseData[1]->status; ?>"><?php echo $responseData[1]->message; ?></div>
+<?php } ?>
+<?php if (!empty($responseData)) { ?>
+    <div id="response" class="<?php echo $responseData['status']; ?>"><?php echo $responseData['message']; ?></div>
+<?php } ?>
+
+<?php if (!empty($stripeErrors)) { ?>
+    <div id="response" class="error-msg"><?php echo $stripeErrors['message']; ?></div>
+<?php } ?>
+
+    <div class="box1 hidePars form_add_sp" style="<?php echo $style; ?>">
+        <div class="formWrap" >
+            <form action="" id="formAddNagScreen" method="post">
+
+                <h2>Billing Details</h2>
+
+                <?php
+                $ccChangeDisplay = "block";
+                $ccFrmDisplay = "none";
+                if ($data->card_number <> '' && empty($data->shbillingDetails)) {
+                    $ccChangeDisplay = "block";
+                } else {
+                    if (empty($data->shbillingDetails)) {
+                        $data->shbillingDetails = 1;
+                        $ccChangeDisplay = "none";
+                        $ccFrmDisplay = "block";
+                    } else {
+                        $ccChangeDisplay = "none";
+                        $ccFrmDisplay = "block";
+                    }
+                }
+                ?>
+
+
+
+
+                <input type="hidden" name="shbillingDetails" value ="<?php echo (int) $data->shbillingDetails; ?>">
+                <div id="ccChange" style="display:<?php echo $ccChangeDisplay ?>;">
+                    <input type="text" name="old_card_number" value="<?php print $data->old_card_number? : $data->card_number; ?>" placeholder="Credit Card Number" class="formInput" maxlength="16" disabled="disabled" />
+                    <input type="hidden" name="old_card_number" value="<?php print $data->old_card_number? : $data->card_number; ?>" maxlength="16"/>
+                    <a href="javascript:void(0);" id="pmntFrm2" onclick='showHidePaymentFrm();'>Change</a>
+                </div>
+                <div id="ccFrm" style="display:<?php echo $ccFrmDisplay ?>;">
+                    <?php if (!empty($data->old_card_number) || !empty($data->card_number)) { ?>
+                    <a href="javascript:void(0);" id="pmntFrm" onclick='cancelChange();' style="top: -32px;">Cancel</a>
+                    <?php } ?>
+
+                    <select name="cardType">
+                        <option <?php echo ($data->shbillingDetails == 1 && $data->cardType == '' ? 'selected="selected"' : ''); ?> value="">Card Type</option>
+                        <option <?php echo ($data->shbillingDetails == 1 && $data->cardType == 'American Express' ? 'selected="selected"' : ''); ?> value="American Express">American Express</option>
+                        <option <?php echo ($data->shbillingDetails == 1 && $data->cardType == 'Carte Blanche' ? 'selected="selected"' : ''); ?> value="Carte Blanche">Carte Blanche</option>
+                        <option <?php echo ($data->shbillingDetails == 1 && $data->cardType == 'Diners Club' ? 'selected="selected"' : ''); ?> value="Diners Club">Diners Club</option>
+                        <option <?php echo ($data->shbillingDetails == 1 && $data->cardType == 'Discover' ? 'selected="selected"' : ''); ?> value="Discover">Discover</option>
+                        <option <?php echo ($data->shbillingDetails == 1 && $data->cardType == 'Enroute' ? 'selected="selected"' : ''); ?> value="Enroute">enRoute</option>
+                        <option <?php echo ($data->shbillingDetails == 1 && $data->cardType == 'JCB' ? 'selected="selected"' : ''); ?> value="JCB">JCB</option>
+                        <option <?php echo ($data->shbillingDetails == 1 && $data->cardType == 'Maestro' ? 'selected="selected"' : ''); ?> value="Maestro">Maestro</option>
+                        <option <?php echo ($data->shbillingDetails == 1 && $data->cardType == 'MasterCard' ? 'selected="selected"' : ''); ?> value="MasterCard">MasterCard</option>
+                        <option <?php echo ($data->shbillingDetails == 1 && $data->cardType == 'Solo' ? 'selected="selected"' : ''); ?> value="Solo">Solo</option>
+                        <option <?php echo ($data->shbillingDetails == 1 && $data->cardType == 'Switch' ? 'selected="selected"' : ''); ?> value="Switch">Switch</option>
+                        <option <?php echo ($data->shbillingDetails == 1 && $data->cardType == 'Visa' ? 'selected="selected"' : ''); ?> value="Visa">Visa</option>
+                        <option <?php echo ($data->shbillingDetails == 1 && $data->cardType == 'Visa Electron' ? 'selected="selected"' : ''); ?> value="Visa Electron">Visa Electron</option>
+                        <option <?php echo ($data->shbillingDetails == 1 && $data->cardType == 'LaserCard' ? 'selected="selected"' : ''); ?> value="LaserCard">Laser</option>
+                    </select>
+
+                    <input type="text" name="card_holder" value="<?php print $data->shbillingDetails == 1 ? $data->card_holder : ""; ?>" placeholder="Card Holder Name" class="formInput" maxlength='16' autocomplete="off"/>
+                    <?php if ($responseData['err_card_holder'] <> '') { ?>
+                        <span class="infoMsg"><?php print 'Please enter card holder name'; ?></span>
+                    <?php } ?>
+
+                    <input type="text" name="card_number" value="<?php print $data->shbillingDetails == 1 ? $data->card_number : ""; ?>" placeholder="Credit Card Number" class="formInput" maxlength='16' autocomplete="off"/>
+                    <?php if ($responseData['errcnCC'] <> '') { ?>
+                        <span class="infoMsg"><?php print 'Please enter valid credit card number'; ?></span>
+                    <?php } ?>
+
+                    <div class="clear"></div>
+                    <input type="text" style="display:none;">
+                    <input type="password" name="cvv" placeholder="CVV" class="formInput onethird" style="width: 50px;" maxlength="4"  autocomplete="off"/> 
+                    <select name="expMonth">
+                        <option value="">Expiry Month</option>
+                        <?php
+                        for ($i = 1; $i <= 12; $i++) {
+                            $option .= '<option ' . ($data->shbillingDetails == 1 && $data->expMonth == $i ? 'selected="selected"' : '') . ' value="' . str_pad($i, 2, "0", STR_PAD_LEFT) . '">' . date('F', strtotime(date('Y-' . str_pad($i, 2, "0", STR_PAD_LEFT) . '-01'))) . '</option>';
+                        }
+                        print $option;
+                        ?>
+                    </select>
+                    <select name="expYear">
+                        <option value="">Expiry Year</option>
+                        <?php
+                        $year = date('Y');
+                        $newYear = $year + 15;
+                        $option = '';
+                        for ($i = 1; $year <= $newYear; $year++) {
+                            $option .= '<option ' . ($data->shbillingDetails == 1 && $data->expYear == $year ? 'selected="selected"' : '') . ' value="' . $year . '">' . $year . '</option>';
+                        }
+                        print $option;
+                        ?>
+                    </select>
+
+                    <div class="cl"></div>
+                </div>
+
+
+                <br/>
+                <h2>Contracted Wholesale Price Per Remotii</h2>
+                <input type="text" name="contracted_price" value="<?php print $data->contracted_price; ?>" placeholder="$ (USD)" class="formInput" /> 
+                <div class="clear"></div>
+
+                <h2>End User Price Per Remotii </h2>
+                <input type="text" name="end_user_price" value="<?php print $data->end_user_price; ?>" placeholder="$ (USD)" class="formInput" />
+                <div class="clear"></div>
+
+                <div class="clear h20"></div>
+                <input onchange="edSF(this);" type="checkbox" id="allow_end_user_billing" name="allow_end_user_billing" value="1" <?php if ($data->allow_end_user_billing == 1) print 'checked=checked'; ?> class="check"><label>Allow automated billing for end users</label>
+                <div class="clear h20"></div>
+
+                <div id="payaccdetails" style="<?php
+                if ($data->allow_end_user_billing == 1) {
+                    echo 'display:block;';
+                } else {
+                    echo 'display:none;';
+                }
+                ?>">
+                    <h2>Service Fee</h2>
+                    <input type="text" id="service_fee" name="service_fee" value="<?php print $data->service_fee; ?>" placeholder="Service Fee" class="formInput half" <?php
+                    if ($data->allow_end_user_billing != 1) {
+                        print 'disabled="disabled"';
+                    }
+                    ?>/> &nbsp;% 
+
+                    <!--  receiving payment details start  -->
+                    <h2>Receiving Payment details</h2>
+                    <label <?php
+                    if ($spinfo->acc_status == DELINQUENT) {
+                        print 'class="hred"';
+                    }
+                    ?>>The account fields below are for <?php print ucwords($spinfo->company_name); ?> payment system</label>
+                    <input type="text" name="routing_number" placeholder="Routing number" class="formInput" maxlength="200" value="<?php echo $data->routing_number; ?>"/>
+                    <select name="account_type">
+                        <option value="">Account Type</option>
+                        <option value="individual" <?php
+                        if ($data->account_type == 'individual') {
+                            echo 'selected';
+                        }
+                        ?>>Individual</option>
+                        <option value="corporation" <?php
+                        if ($data->account_type == 'corporation') {
+                            echo 'selected';
+                        }
+                        ?>>Corporation</option>
+                    </select>
+                    <input type="text" name="account_number" placeholder="Account Number" class="formInput" maxlength="200" value="<?php echo $data->account_number; ?>"/>
+                    <input type="text" name="name_on_bank" placeholder="Firstname Lastname" class="formInput" maxlength="200" value="<?php echo $data->name_on_bank; ?>"/>
+                    <!--  receiving payment details end  -->
+                </div>
+
+                <div class="clear h20"></div>
+                <input class="submit-btn" type="submit" value="Submit" name="submit_user" title="Add new user">
+                <?php
+                if (!$uid) {
+                    ?>
+                    <input class="btn" type="reset" value="Cancel">
+                <?php } ?>
+            </form>
+        </div>
+    </div>
+
+</div>					    

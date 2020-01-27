@@ -1,0 +1,93 @@
+@charset "utf-8";
+/* CSS Document */
+
+@import "custom.css";
+
+/*---------face 2 style------------*/
+.remotii-setup .scheduler{text-align: left;}
+.scheduler h2{}
+.remotii-setup h2 span{font-weight: 300; vertical-align: top;}
+.scheduler {text-align: left;}
+.scheduler .form{width: 100%;}
+.scheduler table td{text-align: left;}
+.scheduler .warning{padding: 0px; height:280px; overflow-y: scroll;  text-align: left; margin-bottom: 20px;line-height: 25px;}
+.scheduler .warning p{font-size: 14px;color: #656565;}
+.colorbox{width: 22px; height: 22px; background: #FF0000; border-radius: 50%; display: inline-block; margin-right: 5px; vertical-align: middle;
+          border:#333 2px solid;}
+.colorbox.blue{background: #1567a5;}
+.colorbox.yellow{background: #ffcc00;}
+.colorbox.white{background: #fff;}
+
+.scheduler input[type="text"], .scheduler input[type="password"]{height: 37px; line-height: 37px;}
+.scheduler h3{font-size: 16px;}
+.scheduler .timimg{text-align: left;}
+.scheduler .inputStatus{text-align: left;}
+.scheduler .btn3{padding: 0 12px;}
+.scheduler select{width: 182px;padding: 5px 3px;}
+.scheduler select[name="triggering_remotii"]{width: 167px;padding: 5px 3px;}
+.scheduler select.timing{width: 57px; padding: 5px 3px;}
+.modify table th{padding-bottom: 5px;}
+.modify table th:last-child{ text-align: left;}
+.al{text-align: left !important;}
+.pl20{padding-left: 20px;}
+.scheduler #nextBtn, .scheduler #prevBtn{top: 380px; left: 658px;}
+.scheduler #prevBtn{left: 550px;}
+.scheduler .form{padding: 0}
+.setting-btn span{font-size: 14px; line-height: 26px;}
+.timingSet span{color: #656565; font-size: 14px; margin-right: 5px;}
+.timingSet label{color: #656565; font-size: 14px; margin-right: 5px;}
+.ml10{margin-left: 38px;}
+.timingSet{display: none;}
+
+.sharing{text-align: left; }
+.sharing h2{text-align: center;}
+.sharing h4{font-size: 18px;}
+.sharing table tr td{border-bottom: 1px solid #C4C4C4; padding: 5px;}
+.sharing input[type="text"]{ height: 37px;    line-height: normal; width: 300px;}
+.sharebox{padding: 20px;}
+.sharebox select{width: 120px; margin: 0 5px;}
+.sharebox .btn3{line-height: 37px; height: 37px; vertical-align: top; padding: 0 20px;}
+.sharebox  .err{font-size: 12px; color: #ff0000; display: block; margin: 3px 0 0 80px;}
+.shareWrap{height: 200px; overflow: scroll; overflow-x:hidden;}
+.add-event-wrap{position: relative; height: 290px; overflow-y:auto;overflow-x:hidden; }
+.add-event{ position: absolute;left: 0px;    top: 380px; }
+.scheduler ul li{position: relative;}
+.alL{text-align: left;}
+.ui-timepicker-wrapper{width: 204px !important;}
+.t label{ font-size: 14px;color: #656565; display:inline-block; width: 80px; text-align:right; margin: 0 !important;}
+
+.all-remotii{}
+.all-remotii .box1.half:nth-child(even){ margin-left: 12px;}
+.box1.half{width:490px; display: inline-block; vertical-align: top;}
+.box1.half p{ padding: 5px 10px; border-bottom: 0; background: #1567A5; border-radius: 6px 6px 0 0; color: #fff; margin: 0;}
+.box1.half p a{color: #fff;}
+.box1.half .remotii-wrap{ display: none;}
+.box1.closeaction .remotii-wrap{ display: block;}
+.box1.closeaction p{ border-bottom: 1px solid #DDDDDD;}
+.remotii-action{ background: url(../images/collaps-down.png) 0 0 no-repeat; display: inline-block; width: 21px; height: 21px;}
+.remotii-action:hover{opacity: 0.8;}
+.closeaction .remotii-action{ background: url(../images/collaps-up.png) 0 0 no-repeat;}
+.remotii-setup p.t{ margin-bottom: 10px;}
+.remotii-setup p.timingSet input[type="text"]{ width: 103px; margin-right: 10px; height: 28px; line-height: 28px;}
+.mlr5{ margin: 0 5px;}
+
+/*.input-color-wrap.brdr{border-top:1px solid #DDDDDD;}*/
+.remotii-wrap{height: 320px;}
+.scheduler select.d{width:50px;}
+.scheduler select.m{width:64px;}
+.mon{margin-left: 2px;}
+
+.column{
+    width:24% !important;
+}
+#cboxWrapper{
+    height :550px !important;
+}
+#cboxMiddleLeft{height :550px !important;}
+
+
+#cboxContent{height :550px !important;}
+ 
+#cboxLoadedContent{height :540px !important;}
+#slider{height:520px !important;}
+#slider li{height:515px !important;}

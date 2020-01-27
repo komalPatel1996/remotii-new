@@ -1,0 +1,56 @@
+
+<div class="tag-line">
+    <div class="wrapper">   
+        <h2>Forgot your password?</h2>
+    </div>
+</div>
+
+<div class="wrapper" style="min-height: 400px;">
+    <div class="box1" style="width:650px;">
+        <div class="inner form" style="padding:40px 30px;">
+
+            <?php
+            $form = $this->forgotForm;
+            $form->prepare();
+            $form->setAttribute('action', $this->url('zfcuser/forgotpassword'));
+            $form->setAttribute('method', 'post');
+            $form->get('submit')->setAttribute('class', 'btn1');
+            ?>
+
+            <?php echo $this->form()->openTag($form) ?>
+            <div>
+                <?php if (!empty($this->error)) { ?>
+                    <ul class="error">
+                        <li><?php echo $this->error; ?></li>
+                    </ul>
+                <?php } ?>
+                <p>
+                    <strong><?php echo $this->formLabel($form->get('email')) ?></strong>
+                <p>
+
+                <p>
+                    <?php echo $this->formInput($form->get('email')) ?>
+                </p>
+                <?php echo $this->formElementErrors($form->get('email'), array('class' => 'error')) ?>
+
+                <p>
+                    <strong><?php echo $this->formLabel($form->get('username')) ?></strong>
+                <p>
+
+                <p>
+                    <?php echo $this->formInput($form->get('username')) ?>
+                </p>
+
+                <?php echo $this->formElementErrors($form->get('username'), array('class' => 'error')) ?>
+
+                <?php echo $this->formButton($form->get('submit')) ?> 
+                &nbsp;&nbsp;&nbsp;
+                <a href="<?php echo $this->url('zfcuser/login') ?>">Back to login?</a>
+            </div>
+
+            <?php echo $this->form()->closeTag() ?>
+
+        </div>
+
+    </div>
+</div>

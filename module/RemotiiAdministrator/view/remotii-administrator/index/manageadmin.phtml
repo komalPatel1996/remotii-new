@@ -1,0 +1,65 @@
+<?php
+    $title = 'Add New Admin Users';
+    $this->headTitle($title);
+    //  define the base url
+    $base_url = BASE_URL . '/assets/b';
+    if($data[0] <> '') {
+        $data = $data[0];
+    } else {
+        $data = $responseData[0];
+    }
+?>
+<div class="pageInfo"><h1>Add New Admin User</h1></div>
+<!-- widget -->
+<div class="widget">
+    <div class="formWrap">
+        <form action="" id="formAddNagScreen" method="post">
+            <input type="text" name="userName" value="<?php print $data->username; ?>" placeholder="Username" class="formInput <?php if($responseData['erruserName'] <> '') { print 'error'; } ?>" maxlength="100" />
+            <?php if($responseData['erruserName'] <> '') { ?>
+                <span class="infoMsg"><?php print 'Please enter user name'; ?></span>
+            <?php } ?>
+            <?php if($responseData['errUsernameDuplicasy'] <> '') { ?>
+                <span class="infoMsg"><?php print 'User name already exist. Please use another'; ?></span>
+            <?php } ?>
+<!--                <img src="<?php print $base_url; ?>/images/right-icon.png" alt="">
+                class = ok-->
+
+            <input type="text" name="fName" value="<?php print $data->fname; ?>" placeholder="First Name" class="formInput <?php if($responseData['errfName'] <> '') { print 'error'; } ?>" maxlength="100" />
+            <?php if($responseData['errfName'] <> '') { ?>
+                <span class="infoMsg"><?php print 'Please enter first name'; ?></span>
+            <?php } ?>
+
+            <input type="text" name="lName" value="<?php print $data->lname; ?>" placeholder="Last Name" class="formInput <?php if($responseData['errlName'] <> '') { print 'error'; } ?>" maxlength="100" />
+            <?php if($responseData['errlName'] <> '') { ?>
+                <span class="infoMsg"><?php print 'Please enter last name'; ?></span>
+            <?php } ?>
+
+            <input type="text" name="phoneNumber" value="<?php print $data->phone; ?>" placeholder="Phone Number" class="formInput <?php if($responseData['errphoneNumber'] <> '') { print 'error'; } ?>" maxlength="12" />
+            <?php if($responseData['errphoneNumber'] <> '') { ?>
+                <span class="infoMsg"><?php print 'Please enter valid phone number'; ?></span>
+            <?php } ?>
+
+            <input type="text" name="emailId" value="<?php print $data->email; ?>" placeholder="Email Address" class="formInput <?php if($responseData['erremailId'] <> '' || $responseData['errEmailDuplicasy'] <> '') { print 'error'; } ?>" maxlength="200" />
+            <?php if($responseData['erremailId'] <> '') { ?>
+                <span class="infoMsg"><?php print 'Please enter valid email id'; ?></span>
+            <?php } ?>
+            <?php if($responseData['errEmailDuplicasy'] <> '') { ?>
+                <span class="infoMsg"><?php print 'Email id already exist. Please use another'; ?></span>
+            <?php } ?>
+
+            <input type="password" name="password" placeholder="Password" class="formInput <?php if($responseData['errpassword'] <> '') { print 'error'; } ?>" maxlength="100" />
+            <?php if($responseData['errpassword'] <> '') { ?>
+                <p class="infoMsg"><?php print 'Passwords must be at least 8 characters and include at least one number, special characters, or upper case letter.'; ?></p>
+            <?php } ?>
+
+            <input type="password" name="cnfrmPassword" placeholder="Verify Password" class="formInput <?php if($responseData['errcnfrmPassword'] <> '') { print 'error'; } ?>" maxlength="100" />
+            <?php if($responseData['errcnfrmPassword'] <> '') { ?>
+                <span class="infoMsg"><?php print 'Password and confirm password do not match'; ?></span>
+            <?php } ?>
+
+            <div class="cl"></div>
+            <input class="submit-btn" type="submit" value="Submit" name="submit" title="Add Nag Screen">
+        </form>
+    </div>
+</div>
+<!-- /widget -->

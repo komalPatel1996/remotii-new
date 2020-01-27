@@ -1,0 +1,101 @@
+<?php
+$title = "Offline Remotii's";
+$this->headTitle($title);
+
+$base_url = BASE_URL . '/assets/b';
+?>
+
+<div class="pageInfo"><h1>Offline Remotii's</h1></div>
+<?php if (!empty($response)) { ?>
+    <div id="response" class="<?php echo $response['status']; ?>"><?php echo $response['message']; ?></div>
+<?php } ?>
+
+<div class="widget listselect">       
+    <div id="dyn" class="hiddenpars"> 
+        <?php
+        if (!empty($spRemotii)) {
+            ?>
+            <table cellpadding="0" cellspacing="0" border="0" class="dTable2 listRemotii" id="dynamic2">
+                <thead>
+                    <tr>
+                        <th width="120">Remotii Account Name</th>
+                        <th width="140">Remotii Name</th>
+                        <th style="width:150px !important;">Detection Time</th>
+                        <th style="width:150px !important;">Last Communication Time</th>
+                        <th style="width:150px !important;">Private IP Address</th>
+
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <?php
+                    foreach ($spRemotii as $rData) {
+                        
+                        ?>
+                        <tr>
+                            <td>
+                                <a href="<?php print BASE_URL . '/sp/active-deactive-remotii/' . $rData['user_id']; ?>"><?php if ($rData['user_role'] != 2) print $rData['uname']; ?></a>
+                            </td> 
+
+                            <td><?php print $rData['remotii_name']; ?></td>
+
+
+                            <td><?php
+                                $MaxTime = $rData['last_offline_detection_timestamp'] + (int) $rData['offset'] * 60;
+                                if ($MaxTime > 0 && $rData['last_offline_detection_timestamp'] > 0) {
+                                    $FormattedTime = date('m/d/Y H:i:s', $MaxTime);
+                                    $time_with_space = '';
+                                    for ($i = 0; $i < strlen($FormattedTime); $i++) {
+                                        if ($FormattedTime{$i} == ' ' && $i <= 15) {
+                                            $time_with_space = $time_with_space . '&nbsp&nbsp' . $FormattedTime{$i};
+                                        } else {
+                                            $time_with_space = $time_with_space . $FormattedTime{$i};
+                                        }
+                                    }
+
+                                    print $time_with_space .($rData['abbr']?" (" . $rData['abbr'] . ")":'');
+                                } else {
+                                    print $rData['last_offline_detection_timestamp'];
+                                }
+                                ?>
+                            </td>
+
+                            <td><?php
+                                $MaxTime = $rData['remotii_last_received_time'] + (int) $rData['offset'] * 60;
+                                if ($MaxTime > 0 && $rData['remotii_last_received_time'] > 0) {
+                                    $FormattedTime = date('m/d/Y H:i:s', $MaxTime);
+                                    $time_with_space = '';
+                                    for ($i = 0; $i < strlen($FormattedTime); $i++) {
+                                        if ($FormattedTime{$i} == ' ' && $i <= 15) {
+                                            $time_with_space = $time_with_space . '&nbsp&nbsp' . $FormattedTime{$i};
+                                        } else {
+                                            $time_with_space = $time_with_space . $FormattedTime{$i};
+                                        }
+                                    }
+                                    print $time_with_space .($rData['abbr']?" (" . $rData['abbr'] . ")":'');
+                                } else {
+                                    print $rData['remotii_last_received_time'];
+                                }
+                                ?>
+                            </td>
+                            <td><?php print $rData['local_ip_address'] ? $rData['local_ip_address'] : '';
+                        ?>
+                            </td>
+
+                        </tr>
+                        <?php
+                    }
+                    ?>
+
+                </tbody>
+            </table><?php
+            } else {
+                    ?>
+            <ul class="twocolumnList alter">
+                <li class="odd last"> No End User Remotii’s are configured to generate RSP offline notification data.</li>
+            </ul>
+        <?php }
+        ?>
+    </div>
+</div>
+<!--/widget --> 

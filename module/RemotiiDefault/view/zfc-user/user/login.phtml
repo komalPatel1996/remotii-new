@@ -1,0 +1,71 @@
+<div class="tag-line">
+    <div class="wrapper">   
+        <h2><?php echo $this->translate('Sign-In to your account'); ?></h2>
+    </div>
+</div>
+
+<div class="wrapper" style="min-height: 400px;">
+    <h2></h2>
+    <div class="box1" style="width:650px;margin-top: 30px;">
+        <div class="inner form">
+            <?php
+            $regSuccMsg = $_SESSION['SUCC_REG_MSG'];
+            if ($regSuccMsg != '') {
+                ?>
+                <div id="response" class="success-msg"><?php echo $regSuccMsg; ?></div>
+                <?php
+            }
+            $_SESSION['SUCC_REG_MSG'] = '';
+            ?>
+
+            <?php
+            $form = $this->loginForm;
+            $form->prepare();
+            $form->setAttribute('action', $this->url('zfcuser/login'));
+            $form->setAttribute('method', 'post');
+            $form->get('remember_me')->setLabel('Keep me signed in');
+            //$form->get('identity')->setAttribute('placeholder','Username');
+            //$form->get('credential')->setAttribute('placeholder','Password');
+            ?>
+
+            <?php echo $this->form()->openTag($form) ?>
+            <ul>
+                <li class="error">
+                    <?php
+                    if ($_GET['msg'] == 'as') {
+                        echo 'Your account has been suspended by admin';
+                    }
+                    ?>
+                    <?php echo $this->formElementErrors($form->get('identity')) ?>
+                </li>
+
+                <li><?php echo $this->formLabel($form->get('identity')) ?></li>
+                <li><?php echo $this->formInput($form->get('identity')) ?></li>
+                <li><?php echo $this->formLabel($form->get('credential')) ?></li>
+                <li><?php echo $this->formInput($form->get('credential')) ?></li>
+                <li>
+                    <?php echo $this->formCheckbox($form->get('remember_me')) ?>
+                    <?php echo $this->formLabel($form->get('remember_me')) ?>
+                    <a href="<?php echo $this->url('zfcuser/forgotpassword') ?>" class="forgot" style="float: right;margin-right: 82px;">Forgot your password?</a>
+                </li>
+            </ul>
+
+            <?php //if ($this->redirect): ?>
+            <input type="hidden" name="redirect" value="<?php echo $this->redirect ? $this->escapeHtml($this->redirect) : $this->url('redirect-remotii') ?>" />
+            <?php //endif ?>
+
+            <?php echo $this->formButton($form->get('submit')->setLabel('Login')->setAttribute('class', 'btn1')) ?>
+
+            <?php echo $this->form()->closeTag() ?>
+
+            <?php if ($this->enableRegistration) : ?>
+                <?php echo $this->translate('Not registered?'); ?> <a href="<?php echo $this->url('zfcuser/register') . ($this->redirect ? '?redirect=' . $this->redirect : '') ?>"><?php echo $this->translate('Sign up!'); ?></a>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+
+
+
+
+

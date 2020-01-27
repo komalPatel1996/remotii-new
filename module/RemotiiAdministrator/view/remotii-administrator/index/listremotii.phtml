@@ -1,0 +1,447 @@
+<?php
+$title = "Remotii's";
+$this->headTitle($title);
+
+$base_url = BASE_URL . '/assets/b';
+?>
+
+<script type="text/javascript">
+
+    var poll = [];
+    var poll_time = [];
+    var poll_callback = [];
+    var startPoll = function(id, callback, time)
+    {
+//        if (typeof poll_callback[id] === "function") {
+//            stopPoll(id);
+//        }
+        poll_callback[id] = callback;
+//        console.log("starting timer");
+        poll[id] = setTimeout(function() {
+            if (time % 5000 == 0) {
+                poll_callback[id](id, $('table.dataTable tr[remotii_mac=' + id + '] td .text_hidden').val());
+            }
+            if (time > 0) {
+//                console.log(id + " :  " + time);
+                time -= 1000;
+                poll_time[id] = time;
+//                console.log(id);
+                startPoll(id, poll_callback[id], poll_time[id]);
+            } else {
+                stopPoll(id);
+            }
+
+        }, 1000);
+    }
+
+    var stopPoll = function(id)
+    {
+        console.log("Stopping timer for " + id);
+        clearTimeout(poll[id]);
+    }
+
+
+    $(document).ready(function() {
+        oTable = $('#dynamic1').dataTable({
+            "bJQueryUI": false,
+            "bAutoWidth": false,
+            "sPaginationType": "full_numbers",
+            "sDom": '<"H"fl>t<"F"ip>',
+            "aoColumns": [
+                {"sWidth": "132px"},
+                {"sWidth": "200px"},
+                {"sWidth": "95px"},
+                {"sWidth": "200px"},
+                {"sWidth": "90px"},
+                {"sWidth": "45px"},
+                {"sWidth": "62px", 'bSortable': false},
+            ]
+        });
+
+        $(".editok").hide();
+        $(".editCancel_fw").hide();
+        $(".editok_fw").hide();
+        $(".text").hide();
+        $("a.editCname").live('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var name = $(this).parent().find(".cname-sec").text();
+            $(this).parent().find(".cname-sec").html("<select id='uniqueselect' class='select1'><?php foreach ($SpData as $dData) { ?><option value=<?php print $dData['service_provider_id']; ?>><?php print $dData['company_name']; ?></option> <?php } ?></select>");
+            $(this).parent().children('.cname-sec').children('.select1').val($(this).attr('provider_id'));
+            $(this).hide();
+            $(this).parent().find(".editok").show();
+
+        });
+
+        $("a.editCnameFw").live('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $(this).parent('div').find('.text').show();
+            $(this).parent('div').find('.text_span').hide();
+            $(this).parent('div').find('.editok_fw').show();
+            $(this).parent('div').find('.editCancel_fw').show();
+            $(this).hide();
+        });
+        $(".editCancel_fw").live('click', function(e) {
+            obj = $(this);
+            text = $(this).parent('div').find('.text').val();
+            $(this).parent('div').find('.text').hide();
+            $(this).parent('div').find('.text_span').show();
+            //  $(this).parent('div').append("<span class='text_span'>"+text+"</span>");
+            $(this).hide();
+            $(this).parent('div').find('.editok_fw').hide();
+            $(this).parent('div').find('.editCnameFw').show();
+
+        });
+
+
+        $(".editok_fw").live('click', function(e) {
+            obj = $(this);
+            $('.editCancel_fw').hide();
+            text = $(this).parent('div').find('.text').val();
+            text_last = $(this).parent('div').find('.text_last').val();
+//            if (text == text_last) {
+//                obj.parent('div').find('.text').hide();
+//                obj.parent('div').find('.text_span').show();
+//                obj.parent('div').find('.editok_fw').hide();
+//                obj.parent('div').find('.editCnameFw').show();
+//                return false;
+//            }
+            $(this).parent('div').find('.text_last').val(text);
+            mac_add = $(this).attr('mac_address');
+            //console.log(mac_add);
+            $.post("<?php echo BASE_URL . "/admin/index/iajax"; ?>",
+                    {
+                        action: "updateFirmware",
+                        params: {
+                            text: text,
+                            mac_add: mac_add,
+                        }
+                    },
+            function(data) {
+                //console.log(data);
+                if (data.status == "success") {
+                    obj.parent('div').find('.text').hide();
+                    obj.parent('div').find('.editok_fw').hide();
+                    obj.parent('div').find('.editCnameFw').show();
+                    obj.parent('div').find('.text_span').show();
+                    text = obj.parent('div').find('.text_hidden').val();
+                    stopPoll(mac_add);
+                    console.log("Starting timer for " + mac_add);
+                    startPoll(mac_add, function(mac_add, text) {
+                        //console.log("Checking firmware");
+                        $.ajax({
+                            url: "<?php echo BASE_URL . "/admin/index/iajax"; ?>",
+                            data: {
+                                action: "checkRemotiiFirmwareStatus",
+                                params: {
+                                    mac_add: mac_add,
+                                    text: text,
+                                }
+                            },
+                            dataType: "json",
+                            type: "POST",
+                            async: false,
+                            success: function(data) {
+                                //console.log(data);
+
+                                if (data.status == "success") {
+                                    stopPoll(data.params.mac_add);
+                                    $('table.dataTable tr[remotii_mac=' + data.params.mac_add + '] td .text_hidden').val(data.result);
+                                    $('table.dataTable tr[remotii_mac=' + data.params.mac_add + '] td .text_last').val(data.result);
+                                    $('table.dataTable tr[remotii_mac=' + data.params.mac_add + '] td .text').val(data.result);
+                                    $('table.dataTable tr[remotii_mac=' + data.params.mac_add + '] td .text_span').html(data.result);
+//                                window.location.reload();
+                                } else {
+                                    console.log(data.result);
+//                                alert(data.result);
+                                }
+                            },
+                        });
+//                        $.post("<?php echo BASE_URL . "/admin/index/iajax"; ?>",
+//                                {
+//                                    action: "checkRemotiiFirmwareStatus",
+//                                    params: {
+//                                        text: text,
+//                                        mac_add: mac_add,
+//                                    }
+//                                },
+//                        function(data) {
+//                            //console.log(data);
+//
+//                            if (data.status == "success") {
+////                                window.location.reload();
+//                            } else {
+//                                //console.log(data.result);
+////                                alert(data.result);
+//                            }
+//                        },
+//                                "json");
+                    }, 60000);
+//                    window.location.reload();
+                } else {
+                    alert(data.result);
+                }
+            },
+                    "json");
+        });
+
+        $("a.editok").live('click', function(e) {
+            remotii_id = $(this).attr('remotii_id');
+            service_provider_id = $(this).parent().children('.cname-sec').children('.select1').val();
+            $.post("<?php echo BASE_URL . "/admin/index/iajax"; ?>",
+                    {
+                        action: "changeServiceProvider",
+                        params: {
+                            remotii_id: remotii_id,
+                            service_provider_id: service_provider_id,
+                        }
+                    },
+            function(data) {
+                //console.log(data);
+
+                if (data.status == "success") {
+                    window.location.reload();
+                } else {
+                    alert(data.result);
+                }
+            },
+                    "json");
+        });
+        
+      $("a.notes-btn").click(function () {
+        // alert("#notes-popup_"+$(this).attr('id'));
+        
+        $("#notes-popup_"+$(this).attr('id')).show();
+    });     
+     
+    //close custom popup  
+    $(".submit-btn").live('click',function(){ 
+//    val=$(this).parent('div').children('textarea').attr();
+     text= $(this).prev('textarea').val();
+     id= $(this).prev('textarea').attr('id');
+     console.log(text);
+     //if(text!=""){ 
+     $.post("<?php echo BASE_URL . "/admin/index/iajax"; ?>",
+                    {
+                        action: "addNoteToAdmin",
+                        params: {
+                            remotii_id: id,
+                            note: text,
+                        },
+                        params1: {
+                            remotii_id: id,
+                            note: text,
+                        }
+                    },
+            function(data) {
+                //console.log(data);
+
+                if (data.status == "success") {
+                    window.location.reload();
+                } else {
+                    alert(data.result);
+                }
+            },
+                    "json");
+     //}
+     
+     
+//    console.log(text);
+    });
+        
+    $(".notes-popup a.close, .notes-popup .submit-btn").click(function () {
+        $(".notes-popup").hide();
+    });  
+        
+    });
+
+
+</script>
+<div class="pageInfo"><h1>Remotii's</h1></div>
+<?php if (!empty($response)) { ?>
+    <div id="response" class="<?php echo $response['status']; ?>"><?php echo $response['message']; ?></div>
+<?php } ?>
+
+<div class="widget listselect">       
+    <div id="dyn" class="hiddenpars"> 
+        <table cellpadding="0" cellspacing="0" border="0" class="dTable2 listRemotii" id="dynamic2">
+            <thead>
+                <tr>
+                    <th width="140">MAC Address<span class="sorting" style="display: block;"></span></th>
+                    <th width="140">Remotii Name</th>
+                    <th width="140"> Company Name</th>
+                    <th width="120"> End User</th>
+                    <th width="120">Firmware Version</th>
+                    <th style="display:none">Notes</th>
+                    <th style="width:150px !important;">Last Received Time</th>
+                    <th class="noShort" width="70">Status</th>
+                    <th class="noShort" width="125">Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <?php
+                foreach ($data as $rData) {// _pre($rData);
+                    ?>
+                    <tr remotii_mac="<?php print $rData['mac_address']; ?>">
+                        <td><?php print $rData['mac_address']; ?></td>
+                        <td><?php print $rData['remotii_name']; ?></td>
+                        <td>
+                            <div class="cname">
+                                <span class="cname-sec">
+                                    <a href="<?php print BASE_URL . '/admin/index/serviceproviderdetail/' . $rData['service_provider_id']; ?>">
+                                        <?php print $rData['company_name']; ?>
+                                    </a>
+                                </span>
+                                <a href="#" class="editCname" provider_id="<?php print $rData['service_provider_id']; ?>">
+                                    &nbsp;
+                                </a>
+                                <a style="display: none;"  href="javascript:void(0);" class="editok" remotii_id="<?php print $rData['remotii_id']; ?>">
+                                    &nbsp;
+                                </a>
+                            </div>
+
+                        </td>
+                        <td><a href="<?php print BASE_URL . '/admin/index/clientinfo/' . $rData['user_id']; ?>"><?php if($rData['user_role'] != 2) print $rData['username']; ?></a>
+						  <div class="notes-popup" id="notes-popup_<?php echo $rData['remotii_id'] ?>">
+                                
+                                <div class="notes-popup-inner">
+                                    <a href="javascript:void(0)" class="close">X</a>
+                                    <div class="notes-btn">
+                                        <h2>Notes</h2>
+                                        <textarea id="<?php echo $rData['remotii_id'];?>" ><?php echo $rData['admin_notes'] ?></textarea>
+                                        <button id="btnSave_<?php echo $rData['remotii_id'] ?>" class="submit-btn ">Save</button>
+                                    </div>
+                                </div>        
+                            </div>
+
+
+
+                        </td> 
+
+                        <td>
+                            <div class="cname_fw">
+                                <span class="text_span"><?php print trim(htmlspecialchars($rData['hwfwver'])); ?></span>
+                                <input type="hidden" style="display:none" class="text_hidden" value="<?php print trim(htmlspecialchars($rData['hwfwver'])); ?>"/>
+                                <input type="hidden" style="display:none" class="text_last" value="<?php print trim(htmlspecialchars($rData['hwfwver'])); ?>"/>
+
+                                <a href="#" class="editCnameFw">
+                                    &nbsp;
+                                </a>
+
+                                <a  href="javascript:void(0);" style="display:none" class="editok_fw" mac_address="<?php print $rData['mac_address']; ?>"></a>
+                                <a  href="javascript:void(0);" style="display:none" class="editCancel_fw" mac_address="<?php print $rData['mac_address']; ?>"></a>
+
+                                <input type="text" class="text" style="display:none" value="<?php print trim(htmlspecialchars($rData['hwfwver'])); ?>" placeholder="update firmware"/>
+
+                            </div>
+
+
+                        </td> 
+
+                        
+
+                        <td style="display:none"><?php echo $rData['admin_notes'] ?></td>
+
+                        <td><?php
+                            $time = 0;
+                            if ($rData['day_light_saving'] == 0) {
+                                $time = $rData['offset'];
+                            }
+                            if ($rData['day_light_saving'] == 1) {
+                                $time = $rData['offset'];
+                                $time = $time - 60;
+                            }
+                            $hour = intval($time / 60);
+
+
+                            $minutes = $time % 60;
+
+                            $Time = '+00:00';
+
+                            if ($time < 0) {
+                                $hour = -$hour;
+                                $minutes = -$minutes;
+                                if ($hour < 10) {
+                                    if ($minutes < 10) {
+                                        $Time = "-0$hour:0$minutes";
+                                    }
+                                    if ($minutes >= 10) {
+                                        $Time = "-0$hour:$minutes";
+                                    }
+                                }
+
+                                if ($hour >= 10) {
+                                    if ($minutes < 10) {
+                                        $Time = "-$hour:0$minutes";
+                                    }
+                                    if ($minutes > 10) {
+                                        $Time = "-$hour:$minutes";
+                                    }
+                                }
+                            }
+                            if ($time > 0) {
+                                if ($hour < 10) {
+                                    if ($minutes < 10) {
+                                        $Time = "+0$hour:0$minutes";
+                                    }
+                                    if ($minutes >= 10) {
+                                        $Time = "+0$hour:$minutes";
+                                    }
+                                }
+
+                                if ($hour >= 10) {
+                                    if ($minutes < 10) {
+                                        $Time = "+$hour:0$minutes";
+                                    }
+                                    if ($minutes > 10) {
+                                        $Time = "+$hour:$minutes";
+                                    }
+                                }
+                            }
+                            $MaxTime = $rData['max_recieve_time'] + (int) $rData['offset'] * 60;
+                            if ($MaxTime > 0 && $rData['max_recieve_time'] > 0) {
+                                $FormattedTime = date('m/d/Y H:i:s', $MaxTime);
+                                $time_with_space = '';
+                                for ($i = 0; $i < strlen($FormattedTime); $i++) {
+                                    if ($FormattedTime{$i} == ' ' && $i <= 15) {
+                                        $time_with_space = $time_with_space . '&nbsp&nbsp' . $FormattedTime{$i};
+                                    } else {
+                                        $time_with_space = $time_with_space . $FormattedTime{$i};
+                                    }
+                                }
+                                if ($rData['day_light_saving'] == 1) {
+                                    print $time_with_space . " (GMT " . $Time . " DST)";
+                                } else {
+                                    print $time_with_space . " (GMT " . $Time . ")";
+                                }
+                            } else {
+                                print $rData['max_recieve_time'];
+                            }
+                            ?></td>
+                        <td><?php
+                            if ($rData['remotii_status'] == ACTIVE) {
+                                print 'Active';
+                            } else if ($rData['remotii_status'] == SUSPENDED || $rData['remotii_status'] == SUSPENDED_BY_ADMIN) {
+                                print 'Suspended';
+                            } else {
+                                print 'Inactive';
+                            }
+                            ?></td>
+                        <td><?php if ($rData['remotii_status'] == SUSPENDED || $rData['remotii_status'] == SUSPENDED_BY_ADMIN) { ?><a href="<?php print BASE_URL . '/admin/index/activateremotii/' . $rData['remotii_id']; ?>" onclick="return confirm('Are you sure to activate this remotii?');"><img src="<?php print $base_url; ?>/images/active.png"></a><?php } ?>
+                            <?php if ($rData['remotii_status'] == ACTIVE) { ?> <a href="<?php print BASE_URL . '/admin/index/suspendremotii/' . $rData['remotii_id']; ?>" onclick="return confirm('Are you sure to suspend this remotii?');"><img src="<?php print $base_url; ?>/images/suspended.png"></a><?php } ?>
+                            <a href="<?php print BASE_URL . '/admin/index/deleteremotiilist/' . $rData['remotii_id']; ?>" onclick="return confirm('Are you sure to delete this remotii?');"><img src="<?php print $base_url; ?>/images/crose.png"></a>
+                            <a href="<?php print BASE_URL . '/admin/index/clearremotiitoken/' . $rData['remotii_id'] . '?des=' . listremotii; ?>" onclick="return confirm('Are you sure you want to clear the token of this remotii?');"><img src="<?php print $base_url; ?>/images/clear.png" title="clear token"></a>
+                            <a href="javascript:void();" title="<?php echo $rData['admin_notes'] ?>" class="notes-btn" id="<?php echo $rData['remotii_id']?>"><img src="<?php print $base_url; ?>/images/notes.png"></a>
+                       </td>
+                           </tr>
+                    <?php
+                }
+                ?>
+
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- /widget --> 

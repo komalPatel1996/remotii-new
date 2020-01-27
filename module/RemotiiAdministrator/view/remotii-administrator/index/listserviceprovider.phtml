@@ -1,0 +1,371 @@
+<?php
+$title = 'Service Providers';
+$this->headTitle($title);
+//  define the base url
+$base_url = BASE_URL . '/assets/b';
+//_pre($data);
+//_pr($data);
+$sf = $_GET['sf'];
+?>
+<div class="pageInfo">
+    <div class="fr w150">
+    	<select onchange="window.location.href='<?php echo BASE_URL?>/admin/index/listserviceprovider?sf='+$(this).val()">
+    		<option value="0">All</option>
+    		<option value="<?php echo DELINQUENT?>" <?php echo $sf==DELINQUENT?'selected':""?>>Delinquent</option>
+    		<option value="<?php echo $sf==SUSPENDED ?>" <?php echo $sf==SUSPENDED?'selected':""?>>Suspended</option>
+    	</select>
+    </div>
+    <h1>Service Provider</h1>
+</div>
+<div class="widget">
+    <?php if (!empty($response[1])) { ?>
+        <div id="response" class="<?php echo $response[1]->status; ?>"><?php echo $response[1]->message; ?></div>
+    <?php } ?>
+    <div id="dyn" class="hiddenpars"> <a class="tOptions" title="Options"><img src="images/icons/options" alt="" /></a>
+        <table cellpadding="0" cellspacing="0" border="0" class="dTable listServiceProvider" id="dynamic">
+            <thead>
+                <tr>
+                    <th>ID<span class="sorting" style="display: block;"></span></th>
+                    <th width="160px;"> Company Name</th>
+                    <th width="130px">Contracted Price <small>(Price/remotii in $)</small></th>
+                    <th style="display:none">Notes</th>
+                    <th class="multiple-col"><div><span class="crssSpan">Remotii’s </span></div><small> Active </small> </th>
+                    <th class="multiple-col"><div></div><small>Inactive</small></th>
+                    <th class="multiple-col" width="76px"><div><span class="crssSpan" style="right: -120%;">Last Payment</span></div><small> Amount </small> </th>
+                    <th class="multiple-col"><div></div><small>Date</small></th>
+                    <th class="multiple-col"><div></div><small>Status</small></th>
+                    <th width="76px">Account Status <br /></th>
+                    <th width="80px" class="noShort"></th>
+            </tr>
+            </thead>
+            <tbody>
+                <?php
+                
+                foreach($data as $userData) {              
+                   // die();                 
+                ?>
+                    <tr id="sprow<?php print $userData->spid; ?>" <?php if($userData->acc_status == DELINQUENT) { print 'class=delenqred'; } ?>>
+                        <td><?php print $userData->spid; ?></td>
+                        <td>
+                            <a href="<?php print BASE_URL . '/admin/index/serviceproviderdetail/' . $userData->spid; ?>">
+                                <?php print ucwords($userData->company_name); ?>
+                            </a>
+                            <small>(Creation Date-</br><?php if($userData->acc_created_on != '') { print date('m/d/Y', $userData->acc_created_on); } ?>)</small>
+                      
+                            <div class="notes-popup" id="notes-popup_<?php echo $userData->spid ?>">
+                                
+                                <div class="notes-popup-inner">
+                                    <a href="javascript:void(0)" class="close">X</a>
+                                    <div class="notes-btn">
+                                        <h2>Notes</h2>
+                                        <textarea id="<?php echo $userData->spid;?>"><?php echo $userData->admin_notes ?></textarea>
+                                        <button id="btnSave_<?php echo $userData->spid ?>" class="submit-btn ">Save</button>
+                                    </div>
+                                </div>        
+                            </div>
+                        </td> 
+                        <td id="changeShortPrice" class="editable" title="click to edit Contracted Price" onchange="changeCPrice(<?php print $userData->spid; ?>);">
+                            <?php print $userData->contracted_price; ?>
+                        </td>
+                            
+                         <td style="display:none"><?php echo $userData->admin_notes ?></td>  
+                        <!--  Remotii -->
+                        <td><span id="actR<?php print $userData->spid; ?>"><?php print $userData->total_active_remotiis ?></span></td>
+                        <td><span id="inactR<?php print $userData->spid; ?>"><?php print $userData->total_inactive_remotiis ?></span></td>
+                        <!--  Remotii -->
+                        
+                        <!-- Payment -->
+                        <td><?php print ($userData->amount + $userData->credit); ?></td>
+                        <td>
+                            <span id="pdate">
+                                <?php if($userData->executedon != 'N/A') { print date('m/d/Y', $userData->executedon); } else { print $userData->executedon; } ?>
+                            </span>
+                        </td>
+                        <td><span id="pstatus"><?php if($userData->paymentstatus == 1) print 'Success'; else print 'Failed' ?></span></td>
+                        <!-- Payment -->
+                        
+                        <td>
+                            <span id="accSttaus<?php print $userData->spid; ?>">
+                            <?php
+                                if($userData->acc_status == ACTIVE) {
+                                    print 'Active';
+                                } elseif($userData->acc_status == SUSPENDED) {
+                                    print 'Suspended';
+                                } elseif($userData->acc_status == DELINQUENT) {
+                                    print 'Delinquent';
+                                }
+                            ?>
+                            </span>
+                        </td>
+                        <td>
+                            <?php
+                                if($userData->acc_status == DELINQUENT) { 
+                            ?>
+                            <span id="delinqstatus<?php print $userData->spid; ?>">
+                                <a href="javascript:void(0);" class="fr" onclick='billSPaccount(<?php print $userData->spid; ?>, <?php $userData->amount === NULL ? print 0 : print $userData->amount ; ?>);'>
+                                    <img src="<?php print $base_url . '/'; ?>images/billaccicon.png" alt="Bill Account" title="Bill Account">
+                                </a>
+
+                                <!--<input style="font-weight: bold;" type="submit" value="Bill" name="billAccount" title="submit" onclick='billSPaccount(<?php print $userData->spid; ?>, <?php print $userData->amount; ?>);'>-->
+                            </span>
+                            <?php
+                                } else if($userData->acc_status == SUSPENDED){ 
+                            ?>
+                                <a href="javascript:void(0);" class="fr" id="asusId" value="<?php echo SUSPENDED?>"
+                                   onclick='changeAccStatus(<?php print $userData->spid; ?>, this);'>
+                                    <img src="<?php print $base_url . '/'; ?>images/active.png" alt="Activate" title="Activate">
+                                </a>
+
+                            <?php
+                                } else { 
+                             ?>
+                               <a href="javascript:void(0);" class="fr" id="asusId" value="<?php echo ACTIVE?>"
+                                   onclick='changeAccStatus(<?php print $userData->spid; ?>, this);'>
+                                    <img src="<?php print $base_url . '/'; ?>images/suspended.png" alt="Suspend" title="Suspend">
+                                </a>
+                             <?php    	
+                                }
+                            ?>
+                           <a href="javascript:void();" class="notes-btn" title="<?php echo $userData->admin_notes ?>" id="<?php echo $userData->spid ?>"><img src="<?php print $base_url; ?>/images/notes.png"></a>
+                     
+                        </td>
+                    
+                    </tr>
+                <?php
+                }
+                ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="action" style="display: none;">
+	<div class="suspended">
+		<a href="javascript:void(0);" class="fr" id="asusId" value="<?php echo ACTIVE?>"
+	                                   onclick=''>
+	        <img src="<?php print $base_url . '/'; ?>images/suspended.png" alt="Suspend" title="Suspend">
+		</a>
+	</div>
+	<div class="active">
+		 <a href="javascript:void(0);" class="fr" id="asusId" value="<?php echo SUSPENDED?>"
+	                                   onclick=''>
+	        <img src="<?php print $base_url . '/'; ?>images/active.png" alt="Active" title="Active">
+	     </a>
+     </div>
+</div>
+<!-- /widget -->
+<script>
+    
+    $(document).ready(function(){
+    $("a.notes-btn").click(function () {
+        // alert("#notes-popup_"+$(this).attr('id'));
+        
+        $("#notes-popup_"+$(this).attr('id')).show();
+    });     
+     
+    //close custom popup  
+    text="";
+    id="";
+    $(".submit-btn").live('click',function(){ 
+//    val=$(this).parent('div').children('textarea').attr();
+     text= $(this).prev('textarea').val();
+     id= $(this).prev('textarea').attr('id');
+     console.log(id);
+     //if(text!=""){ 
+     $.post("<?php echo BASE_URL . "/admin/index/iajax"; ?>",
+                    {
+                        action: "addNoteToSP",
+                        params: {
+                           
+                            rsp_id: id,
+                            note: text,
+                        }
+                    },
+            function(data) {
+                //console.log(data);
+
+                if (data.status == "success") {
+                    window.location.reload();
+                } else {
+                    alert(data.result);
+                }
+            },
+                    "json");
+     //}
+     
+     
+//    console.log(text);
+    });
+        
+    $(".notes-popup a.close, .notes-popup .submit-btn").click(function () {
+        $(".notes-popup").hide();
+    }); 
+    });
+    
+    
+    
+    /*
+    function changeAccStatus(cb) {
+        var chkBoxStatus;
+        var spId;
+        spId = cb.value;
+        //alert(spId);
+        if(cb.checked) {
+            chkBoxStatus = <?php //print SUSPENDED; ?>
+        } else {
+            chkBoxStatus = <?php //print ACTIVE; ?>
+        }
+        ajaxRequest(spId, chkBoxStatus);
+    }
+    */
+
+    function changeAccStatus(spId, obj) {
+        var accStat = jQuery(obj).attr('value');
+        if(accStat == <?php print SUSPENDED; ?>) {
+            ajaxRequest(spId, <?php print ACTIVE; ?>);
+            jQuery(obj).attr('value', <?php print ACTIVE; ?>);
+
+            //  addde to change the alt and title tag
+            jQuery(obj).children().attr('alt', 'Suspend');
+            jQuery(obj).children().attr('title', 'Suspend');
+
+            jQuery(obj).children().attr("src","<?php print $base_url; ?>/images/suspended.png");
+        } else if(accStat == <?php print ACTIVE; ?>) {
+            ajaxRequest(spId, <?php print SUSPENDED; ?>);
+            jQuery(obj).attr('value', <?php print SUSPENDED; ?>);
+
+            //  addde to change the alt and title tag
+            jQuery(obj).children().attr('alt', 'Active');
+            jQuery(obj).children().attr('title', 'Active');
+
+            jQuery(obj).children().attr("src","<?php print $base_url; ?>/images/active.png");
+        }
+    }
+
+    function ajaxRequest(spId, chkBoxStatus) {
+        // Fire the ajax request
+        jQuery.ajax({
+            url: '<?php print BASE_URL ?>/admin/index/changeaccstatus/'+spId,
+            type: 'post',
+            data: { postdata: chkBoxStatus },
+            success: function(response) {
+                jQuery('#delinqstatus'+spId).css('display','none');
+                jQuery('#sprow'+spId).removeClass('delenqred');
+                var obj = jQuery.parseJSON(response);
+                var activeRemotii = obj.total_active_remotiis;
+                var inactiveRemotii = obj.total_inactive_remotiis;
+                var accStatus = obj.acc_status;
+                if(accStatus == <?php print ACTIVE; ?>) {
+                    jQuery('#accSttaus'+spId).html('Active');
+                }
+                if(accStatus == <?php print SUSPENDED; ?>) {
+                    jQuery('#accSttaus'+spId).html('Suspended');
+                }
+                jQuery('#actR'+spId).html(activeRemotii);
+                jQuery('#inactR'+spId).html(inactiveRemotii);
+            }
+        });//  Ajax function closed
+    }
+    
+    function billSPaccount(spId, amount) {
+        //alert(spId);
+        //alert(amount);
+        ajaxRequestBillAcc(spId, amount);
+    }
+    
+    function ajaxRequestBillAcc(spId, amount) {
+        // Fire the ajax request
+        jQuery.ajax({
+            url: '<?php print BASE_URL ?>/admin/index/billaccsp/'+spId,
+            type: 'post',
+            data: { postdata: amount },
+            success: function(response) {
+                
+                var obj = jQuery.parseJSON(response);
+                var paymentStatus = obj.data.paymentstatus;
+                var status = obj.status;
+                if(status == 'OK') {
+                    var exeDate = obj.data.executedon;
+                    var accStatus = obj.data.acc_status;
+                    if(accStatus == <?php print ACTIVE; ?>) {
+                        jQuery('#accSttaus'+spId).html('Active');
+                        jQuery('#delinqstatus'+spId).parent().html($(".action .suspended #asusId").attr('onclick','changeAccStatus('+spId+');').parent().html()).remove('#delinqstatus'+spId);
+                    }
+                    
+                    if(accStatus == <?php print SUSPENDED; ?>) {
+                        jQuery('#accSttaus'+spId).html('Suspended');
+                        jQuery('#delinqstatus'+spId).parent().html($(".action .active #asusId").attr('onclick','changeAccStatus('+spId+');').parent().html()).remove('#delinqstatus'+spId);
+                        
+                    }
+
+                    if(paymentStatus == 1) {
+                        jQuery('#pstatus'+spId).html('Success');
+                    } else {
+                        jQuery('#pstatus'+spId).html('Failed');
+                    }
+                    
+                    var orderDate = <?php print date('m/d/Y'); ?>;
+                    jQuery('#pdate'+spId).html(orderDate);
+                    
+                    //alert(response);
+                    //jQuery('#delinqstatus'+spId).css('display','none');
+                    jQuery('#sprow'+spId).removeClass('delenqred');
+                    
+                } else {
+                    if(obj.message != "")
+                    {
+                    	alert( obj.message );
+                    } else {
+						alert('Transaction Failed');
+                    }
+					
+                }
+            }
+        });//  Ajax function closed
+    }
+
+
+
+
+
+
+    // ----------------table cell editing	--------------
+    $("td.editable").dblclick(function () {
+        var OriginalContent = $(this).text();
+          
+        $(this).addClass("cellEditing");
+        $(this).html("<input type='text' id='cPriceEdit' value='" + OriginalContent + "' />");
+        $(this).children().first().focus();
+  
+        $(this).children().blur(function (e) {           
+                var newContent = $(this).val();
+                $(this).parent().text(newContent);
+                $(this).parent().removeClass("cellEditing");
+           
+        });
+          
+  
+    });
+    // ---------------end--------------
+    
+    function changeCPrice(spId) {
+        var amount = jQuery('#cPriceEdit').val();
+        var newAmount = amount.trim();
+        ajaxRequestBillAccChrg(spId, newAmount);
+    }
+    function ajaxRequestBillAccChrg(spId, amount) {
+        // Fire the ajax request
+        jQuery.ajax({
+            url: '<?php print BASE_URL ?>/admin/index/changecprice/'+spId,
+            type: 'post',
+            data: { postdata: amount },
+            success: function(response) {
+                alert('Price changed successfully.');
+            }
+        });//  Ajax function closed
+    }
+
+    function filter_result()
+    {
+		
+    }
+</script>

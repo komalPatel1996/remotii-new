@@ -1,0 +1,37 @@
+<?php
+$nav = array(
+    'index' => array('RemotiiServiceProvider\Controller\Index' => array('index', 'list-end-users', 'remotiis', 'listofflineremotii', 'active-deactive-remotii', 
+        'payments', 'previousbilling','previous-billing-cycle','view-remotii','billing-details')),
+);
+
+$active = $this->IsActive($nav);
+//_pre( $active );
+?>
+<div id="sidebar">
+    <div class="mainNav"> 
+
+        <!-- Responsive nav -->
+        <div class="altNav">
+            <div class="userSearch">
+                <form action="">
+                    <input type="text" placeholder="search..." name="userSearch" />
+                    <input type="submit" value="" />
+                </form>
+            </div>
+        </div>
+
+        <!-- Main nav -->      
+        <ul class="nav">
+            <li <?php if($active['index_index']) { print 'class="active"'; } ?>><a href="<?php print BASE_URL . '/sp'; ?>" title=""><span>Account Statistics</span></a> </li>
+           <li <?php if($active['index_list-end-users'] || $active['index_active-deactive-remotii']) { print 'class="active"'; } ?>><a href="<?php print BASE_URL . '/sp/list-end-users'; ?>" title=""><span>End Users</span></a> </li>
+            <li <?php if($active['index_remotiis']) { print 'class="active"'; } ?>><a href="<?php print BASE_URL . '/sp/remotiis'; ?>" title=""><span>Remotii's</span></a> </li>
+            <li <?php if($active['index_listofflineremotii']) { print 'class="active"'; } ?>><a href="<?php print BASE_URL . '/sp/listofflineremotii'; ?>" title=""><span>Offline Remotii's</span></a> </li>
+            <li><a class='iframe2' href="<?php print BASE_URL . '/sp/default-remotii-setup'; ?>"><span>Default Remotii Setup</span></a> </li>   
+            <!-- <li <?php //if($active['index_previous-billing-cycle']) { print 'class="active"'; } ?>><a href="<?php //echo BASE_URL;?>/sp/previous-billing-cycle" title=""><span>Previous Billing Cycle</span></a></li> -->   
+            <li <?php if($active['index_payments']) { print 'class="active"'; } ?>><a href="<?php print BASE_URL . '/sp/payments'; ?>" title=""><span>Payments </span></a></li>
+         
+            <li <?php if($active['index_view-remotii']) { print 'class="active"'; } ?>><a href="<?php echo BASE_URL . '/sp/redirect-remotii' ?>" title=""><span>View Remotii</span></a></li>
+            <li <?php if($active['index_billing-details']) { print 'class="active"'; } ?>><a href="<?php echo BASE_URL . '/sp/billing-details' ?>" title=""><span>Billing Details</span></a></li>
+        </ul>
+    </div>
+</div>

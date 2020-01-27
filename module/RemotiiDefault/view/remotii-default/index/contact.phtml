@@ -1,0 +1,47 @@
+<!-- Tag line  -->
+<div class="tag-line">
+  <div class="wrapper">   
+    <h2>Contact</h2>
+  </div>
+</div>
+<!-- Tag line ends --> 
+<div class="content">
+<div class="wrapper page-con">
+	<div class="border"></div>
+	<div class="box1">
+		<div class="inner form">
+			<h3 class="heading3">Send us an email. </h3>
+			<?php if(isset($flashMessages)) : ?>
+			<ul class="flash-messages">
+			    <?php foreach ($flashMessages as $flashMessage) : ?>
+			    <li class="<?php echo $flashMessage['status']=='success'?'success-msg':'error-msg'?>">
+			    <?php echo $flashMessage['message']; ?>
+			    </li>
+			    <?php endforeach; ?> 
+			</ul>
+			<?php endif; ?>
+			<p>We welcome your suggestions, feedback, or concerns.<br> We are here to help.</p>
+			<div class="fr msg-contact"><img src="<?php echo BASE_URL?>/assets/f/images/msg.png" alt=""></div>
+			<form method="post">
+				<ul>
+					<li><input type="text" placeholder="Your Name" name="yourName" value="<?php echo $contact['yourName']?>"></li>
+					<li><input type="text" placeholder="Return Email Address" name="yourEmail" value="<?php echo $contact['yourEmail']?>"></li>
+					<li><textarea placeholder="Your Message" name="message"><?php echo $contact['message']?></textarea></li>
+				
+				</ul>	
+				
+				<input type="submit" title="Create Account" name="submit" value="Send" class="submit-btn width">
+				<br><br>
+				<h3 class="heading3">You can also get us at:</h3>
+				<p class="getus">
+				<a href="#">info@remotii.com</a><br>
+				<a href="#">support@remotii.com</a><br>
+				1 844-REMOTII (736-6844)
+			    </p>
+			</form>
+		</div>
+	</div>
+	<div class="border"></div>
+</div>
+</div>
+<!--/content-->

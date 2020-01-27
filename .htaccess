@@ -1,0 +1,14 @@
+RewriteEngine on
+
+
+
+
+# Don't rewrite any URIs ending with a file extension (ending with .[xxxx])
+RewriteCond %{REQUEST_URI} !\.[a-zA-Z0-9]{2,5}$
+RewriteRule .* index.php?%{QUERY_STRING} [L]
+
+
+
+
+
+

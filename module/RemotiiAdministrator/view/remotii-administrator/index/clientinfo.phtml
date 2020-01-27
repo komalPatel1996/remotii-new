@@ -1,0 +1,194 @@
+<script>
+    $(document).ready(function() {
+
+        $(".inline").colorbox({inline: true, width: "40%"});
+        $(".callbacks").colorbox({
+            onOpen: function() {
+                alert('onOpen: colorbox is about to open');
+            },
+            onLoad: function() {
+                alert('onLoad: colorbox has started to load the targeted content');
+            },
+            onComplete: function() {
+                alert('onComplete: colorbox has displayed the loaded content');
+            },
+            onCleanup: function() {
+                alert('onCleanup: colorbox has begun the close process');
+            },
+            onClosed: function() {
+                alert('onClosed: colorbox has completely closed');
+            }
+        });
+
+    });
+</script>
+<?php
+$title = 'End User Information';
+$this->headTitle($title);
+//  define the base url
+$base_url = BASE_URL . '/assets/b';
+$cinfo = $data[0];
+//_pr($responseData);
+if ($responseData[0] <> '') {
+    $data = $responseData[0];
+} else {
+    $data = $data[0];
+}
+?>
+
+<div class="pageInfo"><h1>End User Information</h1></div>
+<!-- widget -->
+<div class="widget">
+
+    <?php if (!empty($responseData[1])) { ?>
+        <div id="response" class="<?php echo $responseData[1]->status; ?>"><?php echo $responseData[1]->message; ?></div>
+    <?php } ?>
+
+<!--    <div id="response" class="successmsg">HERE</div>-->
+
+    <div class="formWrap">
+        <h2><?php print $cinfo->fname . ' ' . $cinfo->lname; ?><br><?php if($cinfo->created_on <> '') { ?><small class="size12"> (Account Creation Date-<?php print date('m/d/Y', $cinfo->created_on); ?>)</small><?php } ?></h2>
+        <div class="tabContainer">
+            <ul class="tabLink">
+                <li><a href="#tab1">Remotii's</a></li>
+                <li><a href="#tab2">Account Info</a></li>
+            </ul>
+            <div class="tabContent" id="tab1">
+
+            	<?php
+                    foreach($userRemotiiData as $dataKey => $value) {
+                ?>
+                        <div class="row <?php if(in_array($value[1],array(SUSPENDED, SUSPENDED_BY_ADMIN ))) print 'disable'; ?>">
+                            <h3><?php print $dataKey; ?></h3>
+                            <p>Remotii Charge: $<?php print $value[0]; ?>/month</p>
+                            <?php
+                                $rmID = '';
+                                $shutOffStatus = '';
+                                foreach($value as $key => $dataR) {
+                                    if($key != 0 && $key != 1) {
+                                        $rmID .= $dataR['remotii_id'] . ',';
+                                        $shutOffStatus = $dataR['remotii_status'];
+                            ?>
+                                        <p>
+                                        <?php print $dataR['mac_address']; ?><br>
+                                        </p>
+                            <?php   }
+                                }
+                            ?>
+                            <?php
+                                if(!in_array($value[1],array(SUSPENDED, SUSPENDED_BY_ADMIN ))) {
+                            ?>
+                                    <p class="check">
+                                        <input type="checkbox" value="<?php print $rmID; ?>" <?php if($shutOffStatus == SUSPENDED_BY_ADMIN) { print 'checked="checked"';} ?> class="check" id="lable1" onclick='changeAccStatus(this);'> 
+                                        <label name="label1">Shut off all Remotii's</label>
+                                    </p>
+                            <?php
+                                }
+                            ?>
+                        </div>
+                <?php
+                    }
+                ?>
+                
+            </div>
+            <div class="tabContent pt20" id="tab2">
+                <form action="" id="formAddNagScreen" method="post">
+                    <input type="text" name="userName" value="<?php print $data->username; ?>" placeholder="Username" class="formInput <?php if($responseData['erruserName'] <> '') { print 'error'; } ?>" maxlength="100" />
+                    <?php if($responseData['erruserName'] <> '') { ?>
+                        <span class="infoMsg"><?php print 'Please enter user name'; ?></span>
+                    <?php } ?>
+                    <?php if($responseData['errUsernameDuplicasy'] <> '') { ?>
+                        <span class="infoMsg"><?php print 'User name already exist. Please use another'; ?></span>
+                    <?php } ?>
+
+                    <input type="text" name="displayName" value="<?php print $data->display_name; ?>" placeholder="Display Name" class="formInput" maxlength="100" />
+
+                    <input type="text" name="fName" value="<?php print $data->fname; ?>" placeholder="First Name" class="formInput <?php if($responseData['errfName'] <> '') { print 'error'; } ?>" maxlength="100" />
+                    <?php if($responseData['errfName'] <> '') { ?>
+                        <span class="infoMsg"><?php print 'Please enter first name'; ?></span>
+                    <?php } ?>
+
+                    <input type="text" name="lName" value="<?php print $data->lname; ?>" placeholder="Last Name" class="formInput <?php if($responseData['errlName'] <> '') { print 'error'; } ?>" maxlength="100" />
+                    <?php if($responseData['errlName'] <> '') { ?>
+                        <span class="infoMsg"><?php print 'Please enter last name'; ?></span>
+                    <?php } ?>
+
+                    <input type="text" name="phoneNumber" value="<?php print $data->phone; ?>" placeholder="Phone Number" class="formInput <?php if($responseData['errphoneNumber'] <> '') { print 'error'; } ?>" maxlength="12" />
+                    <?php if($responseData['errphoneNumber'] <> '') { ?>
+                        <span class="infoMsg"><?php print 'Please enter valid phone number'; ?></span>
+                    <?php } ?>
+
+                    <input type="text" name="emailId" value="<?php print $data->email; ?>" placeholder="Email Address" class="formInput <?php if($responseData['erremailId'] <> '' || $responseData['errEmailDuplicasy'] <> '') { print 'error'; } ?>" maxlength="200" />
+                    <?php if($responseData['erremailId'] <> '') { ?>
+                        <span class="infoMsg"><?php print 'Please enter valid email id'; ?></span>
+                    <?php } ?>
+                    <?php if($responseData['errEmailDuplicasy'] <> '') { ?>
+                        <span class="infoMsg"><?php print 'Email id already exist. Please use another'; ?></span>
+                    <?php } ?>
+
+                    <input type="password" name="password" placeholder="Password" class="formInput <?php if($responseData['errpassword'] <> '') { print 'error'; } ?>" maxlength="100" />
+                    <?php if($responseData['errpassword'] <> '') { ?>
+                        <span class="infoMsg"><?php print 'Either passowrd is less than 8 character or password is empty'; ?></span>
+                    <?php } ?>
+
+                    <input type="password" name="cnfrmPassword" placeholder="Verify Password" class="formInput <?php if($responseData['errcnfrmPassword'] <> '') { print 'error'; } ?>" maxlength="100" />
+                    <?php if($responseData['errcnfrmPassword'] <> '') { ?>
+                        <span class="infoMsg"><?php print 'Password and confirm password do not match'; ?></span>
+                    <?php } ?>
+                        
+                    <h2>End User Address (optional)-</h2>
+                    <input type="text" name="street" value="<?php print $data->street; ?>" placeholder="Street" class="formInput" />
+                    <input type="text" name="city" value="<?php print $data->city; ?>" placeholder="City" class="formInput" />  
+                    <div class="clear"></div>
+                    <input type="text" name="state" value="<?php print $data->state; ?>" placeholder="State" class="formInput half" />
+                    <input type="text" name="zip" value="<?php print $data->zip_code; ?>" placeholder="Zip Code" class="formInput half" />
+                    <input type="text" name="country" value="<?php print $data->country; ?>" placeholder="Country" class="formInput" />
+
+                    <div class="clear"></div>
+                    <input type="checkbox" class="check" name="acc_status" value="2" <?php if($data->acc_status == 2) print 'checked=checked'; ?> ><label>Suspend Account</label>
+                    <div class="clear h20"></div>
+                    
+                    <div class="cl"></div>
+                    <input class="submit-btn" type="submit" value="Submit" name="submit" title="Add Nag Screen">
+                </form>                
+            </div>
+        </div>          
+        <!--/tabContainer-->    
+    </div>
+</div>
+<!-- /widget --> 
+<script>
+    function changeAccStatus(cb) {
+        var chkBoxStatus;
+        var rmIds;
+        rmIds = cb.value;
+        if(cb.checked) {
+            chkBoxStatus = 1;
+        } else {
+            chkBoxStatus = 0;
+        }
+        ajaxRequest(rmIds, chkBoxStatus);
+    }
+
+    function ajaxRequest(rmIds, chkBoxStatus) {
+        // Fire the ajax request
+        jQuery.ajax({
+            url: '<?php print BASE_URL ?>/admin/index/changeremotiistatus/'+chkBoxStatus,
+            type: 'post',
+            data: { postdata: rmIds },
+            success: function(response) {
+                alert('Remotii status changed successfully');
+            }
+        });//  Ajax function closed
+    }
+
+ /*    $(".shutOffAllRemotiis").change(function(){
+    	if($(".shutOffAllRemotiis:checked").val())
+    	{
+    		$('input[name="remotiis[]"]').attr("checked",true);
+    	} else {
+    		$('input[name="remotiis[]"]').attr("checked",false);
+    	}
+    }); */
+
+</script>

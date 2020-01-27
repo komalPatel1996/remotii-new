@@ -1,0 +1,54 @@
+<div class="header">
+    <div class="wrapper">
+        <a href="<?php echo BASE_URL; ?>" class="left">
+        	<img width="184px" src="<?php print BASE_URL ?>/assets/c/img/logo.png" alt="">
+        </a>
+        <ul class="menu">
+        	<li><a href="<?php echo BASE_URL.'/'?>">Home</a></li>
+            <li><a href="<?php echo BASE_URL.'/about'?>">About</a></li>
+            <li><a href="<?php echo BASE_URL.'/features'?>">Features</a></li>
+            <li><a href="<?php echo BASE_URL.'/careers'?>">Careers</a></li>
+            <li><a href="<?php echo BASE_URL.'/contact'?>">Contact</a></li>
+        </ul>
+        <div class="user-area fr">
+            <?php $zfcUserIdentity = $this->zfcUserIdentity(); ?>
+
+            <?php if (!$zfcUserIdentity): ?>
+                <a class="btn2" href="<?php echo BASE_URL . '/register'; ?>">Register</a>
+                <a class="btn3" href="#"><span>Login</span></a>
+                <div class="drop">
+                    <img src="<?php print BASE_URL ?>/assets/f/images/drop-arrow.png" alt="">
+                    <?php echo $this->zfcUserLoginWidget(); ?>
+                </div>
+            <?php else: ?>
+            <?php 
+            $roleId = $zfcUserIdentity->getUserRoleId();
+            ?>
+                <a class="btn3" href="#"><span><?php echo $zfcUserIdentity->getUsername(); ?></span></a>
+                <div class="drop algn">
+                    <img src="<?php print BASE_URL; ?>/assets/f/images/drop-arrow.png" alt="">
+                    <?php if( $roleId == 3 ):?>
+                    <a href="<?php echo BASE_URL . '/client/my-remotii' ?>" style="border-bottom:1px solid #C4C4C4;padding-left:14px;">My Remotiis</a>
+                    <a href="<?php echo BASE_URL . '/client/profile' ?>" class="profile">Profile</a>
+                    <?php elseif($roleId == 1):?>
+                    <a href="<?php echo BASE_URL . '/admin' ?>" style="border-bottom:1px solid #C4C4C4;padding-left:14px;">Admin Home</a>
+                    <?php elseif($roleId == 2):?>
+                    <a href="<?php echo BASE_URL . '/sp' ?>" style="border-bottom:1px solid #C4C4C4;padding-left:21px;">SP Home</a>
+                    <?php endif;?>
+                    <a href="<?php echo BASE_URL . '/logout' ?>" class="logout">Logout</a>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+<script>
+<?php
+
+	if($_GET['se'] == '1') {
+?>		
+		alert('Your session has expired. \nPlease login');
+		window.location.href = '<?php echo BASE_URL.'/user/login?mc='.$_GET['mc'].'&redirect='.$_GET['redirect']?>';
+<?php
+	}
+?>
+</script>

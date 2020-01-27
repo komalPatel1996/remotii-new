@@ -1,0 +1,145 @@
+<?php
+$baseUrl = BASE_URL . '/assets/f';
+echo $this->doctype();
+//_pre($spInfo);
+?>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <?php echo $this->headTitle('Remotii')->setSeparator(' - ')->setAutoEscape(false) ?>
+
+        <?php echo $this->headMeta()->appendName('viewport', 'width=device-width, initial-scale=1.0') ?>
+
+        <!-- Le styles -->
+        <!-- <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'> -->
+        <?php
+        echo $this->headMeta()->appendName("width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0", "viewport");
+        echo $this->headLink()->appendStylesheet($baseUrl . '/css/reset.css')
+                ->appendStylesheet($baseUrl . '/css/main.css')
+                ->appendStylesheet($baseUrl . '/css/main-2.css')
+                ->appendStylesheet($baseUrl . '/css/buttons.css')
+                ->appendStylesheet($baseUrl . '/css/colorbox.css')
+                ->appendStylesheet($baseUrl . '/css/screen.css');
+
+
+        echo $this->headScript()
+                ->prependFile($baseUrl . '/js/jquery.min.js')
+                ->appendFile($baseUrl . '/js/jquery-1.7.1.min.js')
+                ->appendFile($baseUrl . '/js/custom.js')
+                ->appendFile($baseUrl . '/js/easySlider1.7.js')
+
+                //  Added for remotii setup page
+                ->appendFile(BASE_URL . '/assets/b/js/plugins/ui/jquery.colorpicker.js')
+                ->appendFile(BASE_URL . '/assets/b/js/jquery.colorbox.js')
+                ->prependScript('BASE_URL = "' . BASE_URL . '";');
+        		echo $this->headStyle();
+        ?>
+    </head>
+    <body>
+        <!--container start-->
+  
+
+        
+            <div class="remotii-setup">
+				<h2>Service Provider</h2>
+				<div class="service-popup">
+				<ul>
+					<li><span>Service Provider ID:</span> <?php echo $spInfo->service_provider_id?></li>
+					<li><span>Company name:</span> <?php echo $spInfo->company_name?></li>
+					<li><span>Email:</span> <span class="email"><?php echo $spInfo->contact_email?></span></li>
+					<li><span>Contact:</span> <?php echo $spInfo->contact_phone?></li>
+					<li><span>Remotii Charge:</span> $<?php echo $spInfo->end_user_price; ?>/month</li>
+				</ul>
+				<div class="sent-msg">
+					<h4> Email to service provider: </h4>
+					<div class="error"></div>
+					<br />
+					<textarea name="message" id="message"></textarea>
+					<input type="hidden" name="spid" id="spid" value="<?php echo $spInfo->service_provider_id?>"/>
+					
+                                        <a class="btn3 send_email" href="#" onclick="return send_email(); return false;"> Send </a>
+                                        <a class=" btn2 spinfo_cancel" href="#">Close</a>
+					<div id="send_email_progress" style="float: right;padding-left: 8px;padding-top: 8px;"></div>
+				</div>
+				<div class="cl"></div>
+				</div>
+				
+			</div>
+
+
+    
+        <!--container end-->
+<script type="text/javascript" src="<?php echo BASE_URL . '/assets/c/js/spin.js'?>"></script>
+<script>
+
+$(document).ready(function(){
+    $(".spinfo_cancel").click(function(){
+		$("#cboxClose", parent.document).trigger('click');
+	});
+});        
+        
+function send_email()
+{
+	$("#send_email_progress").html('');
+	$(".error").text('');
+	var spid = $("#spid").val();
+	
+	var email_message =  $("#message").val();
+
+	if( email_message.length < 5 )
+	{
+		 $(".error").text('Message must be atleast 5 characters long');
+	} else {
+
+		target = document.getElementById('send_email_progress');
+		opts.top = -7;
+		opts.left = -250;
+		var spinner = new Spinner(opts);
+		spinner.spin(target);
+	
+		
+		
+		url = '<?php print BASE_URL . '/client/send-email-to-service-provider?spid=' ?>'+spid;
+	
+		jQuery.ajax({
+	            url: url,
+	            type: 'post',
+	            async: false,
+	            data: { message: email_message },
+	            success: function(response) {
+	                console.log( response );
+	                spinner.stop(target);
+	                $("#send_email_progress").html('<span style="color:green;font-size:14px;left: -63px;position: relative;">Message sent successfully.</span>');
+	                $("#message").val("");
+	            },
+	            complete:function(response){
+	            	console.log( data );
+	            }
+	    });
+	}
+}
+
+var opts = {
+	  lines: 8, // The number of lines to draw
+	  length: 4, // The length of each line
+	  width: 5, // The line thickness
+	  radius: 5, // The radius of the inner circle
+	  corners: 1, // Corner roundness (0..1)
+	  rotate: 0, // The rotation offset
+	  direction: 1, // 1: clockwise, -1: counterclockwise
+	  color: '#000', // #rgb or #rrggbb or array of colors
+	  speed: 1, // Rounds per second
+	  trail: 60, // Afterglow percentage
+	  shadow: false, // Whether to render a shadow
+	  hwaccel: false, // Whether to use hardware acceleration
+	  className: 'spinner', // The CSS class to assign to the spinner
+	  zIndex: 2e9, // The z-index (defaults to 2000000000)
+	  top: 'auto', // Top position relative to parent in px
+	  left: 'auto' // Left position relative to parent in px
+	};
+</script>   
+    </body>
+</html>
+
+
+

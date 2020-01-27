@@ -1,0 +1,18 @@
+@CHARSET "UTF-8";
+
+/* .box2{
+	background: none repeat scroll 0 0 #F1F3F3;
+    border: 1px solid #DDDDDD;
+    border-radius: 6px 6px 6px 6px;
+    margin-bottom: 20px;
+}  */
+
+.mh_400 {
+	min-height:400px;
+}
+
+.menu {
+    float: left;
+    padding-left: 80px;
+    padding-top: 3px;
+}

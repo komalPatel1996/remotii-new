@@ -1,0 +1,77 @@
+<!--<div class="pageInfo"><h1>Remotii</h1></div>
+ widget 
+<div class="widget"> 
+    <div class="formWrap">
+        <?php
+        //print '<div><b> Welcome  ';
+        //echo $this->zfcUserIdentity()->getUsername();
+        //print '</b>!!<div>';
+        ?>
+    </div>
+</div>-->
+<!-- /widget -->
+<?php
+$summery = $this->summery;
+$delinquentClients = $this->delinquentClients;
+?>
+
+<div class="pageInfo"><h1>Summary</h1></div>
+<div class="widget"> 
+    <ul class="list1 alter">
+        <li>
+            <span><?php echo $summery['totalClient'];?></span>
+            Current Number of End Users</li>
+        <li>
+            <span><?php echo $summery['totalServiceProviders'];?></span>
+            Current Number of Service Providers</li>
+        <li>
+            <span>$<?php echo $summery['netIncomeInPBC'];?></span>
+            Net Income in Previous Billing Cycle</li>
+        <li>
+            <span>$<?php echo $summery['expectedIncomeInNBC'];?> 
+            (Includes $<?php echo $summery['NIserviceFee'];?> service fee)
+            </span>
+            Expected Income in Next Billing Cycle
+        </li>
+        <li>
+            <span>$<?php echo $summery['inActiveIncome'];?> 
+            (Includes $<?php echo $summery['INACTserviceFee'];?> service fee)
+            </span>
+            Inactive Income
+        </li>
+    </ul>
+</div>
+<!-- widget -->
+<h2>Service Provider Statistics</h2>
+<div class="widget">       
+    <div id="dyn" class="hiddenpars"> <a class="tOptions" title="Options"><img src="images/icons/options" alt="" /></a>
+        <table cellpadding="0" cellspacing="0" border="0" class="dTable" id="dynamic">
+            <thead>
+                <tr>
+                    <th>ID<span class="sorting" style="display: block;"></span></th>
+                    <th>Company Name</th>
+                    <th>Contracted Price <small>(Per Remotii)</small></th>
+                   	<th>Remotii’s <small>Active</small> </th>
+                    <th>Remotii’s <small> Inactive </small> </th>
+                    <th>Inactive Income</th>
+                    <th>Projected Amout</th>                
+                </tr>
+            </thead>
+            <tbody>
+            <?php 
+            foreach($this->spStatistics as $sps):?>
+                <tr>
+                    <td><?php echo $sps['spid']?></td>
+                    <td><a href="<?php print BASE_URL . '/admin/index/serviceproviderdetail/' . $sps['spid']; ?>"><?php echo $sps['company_name'];?></a>  <small>(Creation Date-07/01/2013)</small></td>
+                    <td>$<?php echo $sps['contracted_price'];?></td>                
+                    <td><?php echo $sps['total_active_remotiis']?></td>
+                    <td><?php echo $sps['total_inactive_remotiis']?></td>
+                    <td>$<?php echo $sps['inactive_income']?$sps['inactive_income']:0?></td>
+                    <td >$<?php echo $sps['projected_amount']?></td>               
+                </tr>
+            <?php endforeach;?>    
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- /widget --> 

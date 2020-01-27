@@ -1,0 +1,993 @@
+<?php 
+$title = 'Service Provider Details';
+$this->headTitle($title);
+//  define the base url
+$base_url = BASE_URL . '/assets/b';
+
+if (!empty($responseData[0])) {
+    $isFormSubmitted = true;
+}
+
+$spinfo = $data[0];
+if ($responseData[0] <> '') {
+    $data = $responseData[0];
+} else {
+    $data = $data[0];
+}
+//_pr( $flashMessages );
+//_pr($sprpinfo);
+//_pr($data);
+//_pr($spinfo);
+
+$summery = $this->accountStatistics['summery'];
+$delinquentClients = $this->accountStatistics['delinquentClients'];
+
+foreach ($flashMessages as $k => $msg) {
+    if (array_key_exists('stripeErrors', $msg)) {
+        $stripeErrors = $msg['stripeErrors'];
+        break;
+    }
+}
+//_pr($stripeErrors);
+?>
+
+<script>
+    $(document).ready(function() {
+
+<?php if ($currentTab == 'accinfo'): ?>
+            $('.tabContent').hide();
+            $("#tab5").show();
+            $(".active").removeClass('active');
+            $('a[href=#tab5]').parent().addClass('active');
+<?php elseif ($currentTab == 'users'): ?>
+            $('.tabContent').hide();
+            $("#tab3").show();
+            $(".active").removeClass('active');
+            $('.tabLink li:last').addClass('active');
+<?php elseif ($currentTab == 'remotii'): ?>
+            $('.tabContent').hide();
+            $("#tab2").show();
+            $(".active").removeClass('active');
+            $('.tabLink li.rtCls').addClass('active');
+<?php endif; ?>
+
+    });
+
+    function edSF(o)
+    {
+        if (o.checked) {
+            $("#service_fee").removeAttr('disabled');
+            $("#service_fee").val("");
+            $("#payaccdetails").show('slow');
+        } else {
+            $("#service_fee").attr('disabled', 'disabled');
+            $("#service_fee").val("");
+            $("#payaccdetails").hide('slow');
+        }
+    }
+
+    function showHideBillingDetails(obj)
+    {
+        if (obj.checked) {
+            $("#billingDetails").show('slow');
+        } else {
+            $("#billingDetails").hide('slow');
+        }
+    }
+
+    function showHideSPUser()
+    {
+        $(".form_add_sp").toggle();
+        $(".spUsersList").toggle();
+        $(".addNewSPUser").toggle();
+        return false;
+    }
+</script>
+
+<div class="pageInfo"><h1> &nbsp;</h1></div>
+<!-- widget -->
+<?php if (!empty($responseData[1])) { ?>
+    <div id="response" class="<?php echo $responseData[1]->status; ?>"><?php echo $responseData[1]->message; ?></div>
+<?php } ?>
+<?php if (!empty($responseData)) { ?>
+    <div id="response" class="<?php echo $responseData['status']; ?>"><?php echo $responseData['message']; ?></div>
+<?php } ?>
+
+<?php if (!empty($stripeErrors)) { ?>
+    <div id="response" class="error-msg"><?php echo $stripeErrors['message']; ?></div>
+<?php } ?>
+<div class="widget"> 
+
+
+    <div class="formWrap">
+        <h2 <?php
+        if ($spinfo->acc_status == DELINQUENT) {
+            print 'class="hred"';
+        }
+        ?> ><?php print ucwords($spinfo->company_name); ?> <br><small class="size12"><?php if ($spinfo->acc_created_on <> '') { ?> ( Account Creation Date-<?php print date('m/d/Y', $spinfo->acc_created_on); ?> )<?php } ?> ID: <?php print $spinfo->service_provider_id; ?></small></h2>
+        <div class="tabContainer serviceProvider">
+            <ul class="tabLink">
+                <li><a href="#tab1">Account Statistics</a></li>
+                <li class=""><a href="#tab5">Account Info</a></li>
+                <li class="rtCls"><a href="#tab2">Remotii’s</a></li>
+                <li><a href="#tab4">Payments</a></li>
+                <li><a href="#tab3">Users</a></li>
+            </ul>
+            <div class="tabContent pt20" id="tab1">
+                <h2>Summary</h2>
+                <div class="widget">
+                    <ul class="twocolumnList alter">
+                        <li> <span><?php echo $summery['totalClient']; ?></span> Current Number of End Users</li>
+                        <li> <span><?php echo $summery['activeRemotiis']; ?></span> Current Number of Active Remotii</li>
+                        <li> <span><?php echo $summery['inActiveRemotiis']; ?></span> Current Number of Inactive Remotii</li>
+                        <li> <span>$<?php echo $summery['netIncomeInPBC']; ?></span> Net Income in Previous Billing Cycle</li>
+                        <li> <span>$<?php echo $summery['expectedIncomeInNBC']; ?> 
+                                <?php if ($summery['expectedIncomeInNBC'] & $summery['NIserviceFee']): ?>
+                                    (Includes $<?php echo $summery['NIserviceFee'] ?> service fee)
+                                <?php endif; ?>
+                            </span>
+                            Expected Income in Next Billing Cycle</li>
+                        <li> <span>$<?php echo $summery['inActiveIncome']; ?> 
+                                <?php if ($summery['inActiveIncome'] & $summery['INACTserviceFee']): ?>
+                                    (Includes $<?php echo $summery['INACTserviceFee'] ?> service fee)
+                                <?php endif; ?>
+                            </span>Inactive Income</li>
+                        
+                         <li> <span>$<?php echo $this->credit; ?> 
+                                
+                            </span>Available Credits</li>
+                    </ul>
+                </div>
+                <h2>Delinquent End Users</h2>
+                <div class="widget">
+                    <ul class="twocolumnList alter">
+                        <?php
+                        if (!empty($delinquentClients)) {
+
+                            foreach ($delinquentClients as $dc) {
+                                ?>
+                                <li><span>
+                                        <a href="<?php print BASE_URL . '/admin/index/clientinfo/' . $dc['user_id']; ?>">
+                                            <?php echo $dc['username'] ?>
+                                        </a>
+                                    </span> 
+                                    <?php echo $dc['fname'] . ' ' . $dc['lname']; ?>
+                                </li>
+                                <?php
+                            }
+                        } else {
+                            ?>
+                            <li> No delinquent client </li>
+                            <?php
+                        }
+                        ?>
+                    </ul>
+                </div>
+
+            </div>
+            <!-- Remotii Tab START -->
+            <div class="tabContent pt20" id="tab2">
+                <div class="head">
+                    <h2>Manage Remotii’s</h2>         
+                </div>
+                <table cellpadding="0" cellspacing="0" border="0" class="dTable" id="dynamic">
+                    <thead>
+                        <tr>                              
+                            <th> Mac Address </th>
+                            <th> Remotii Name </th>
+                            <th>User</th>
+                            <th>Last Received Time</th>
+                            <th>Action</th> 
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($spRemotii as $dataRemotii) {
+                            ?>
+                            <tr>                                                         
+                                <td><?php print $dataRemotii->mac_address; ?> </td>
+                                <td><?php print $dataRemotii->remotii_name; ?> </td>
+                                <td>
+                                    <a href="<?php print BASE_URL . '/sp/active-deactive-remotii/' . $dataRemotii->user_id; ?>" class="">
+                                        <?php if($dataRemotii->user_role != 2) print $dataRemotii->uname; ?>
+                                    </a>
+                                </td>
+                                <td><?php
+                                    $time = 0;
+                                    if ($dataRemotii->day_light_saving == 0) {
+                                        $time = $dataRemotii->offset;
+                                    }
+                                    if ($dataRemotii->day_light_saving == 1) {
+                                        $time = $dataRemotii->offset;
+                                        $time = $time - 60;
+                                    }
+                                    $hour = intval($time / 60);
+
+
+                                    $minutes = $time % 60;
+
+                                    $Time = '+00:00';
+
+                                    if ($time < 0) {
+                                        $hour = -$hour;
+                                        $minutes = -$minutes;
+                                        if ($hour < 10) {
+                                            if ($minutes < 10) {
+                                                $Time = "-0$hour:0$minutes";
+                                            }
+                                            if ($minutes >= 10) {
+                                                $Time = "-0$hour:$minutes";
+                                            }
+                                        }
+
+                                        if ($hour >= 10) {
+                                            if ($minutes < 10) {
+                                                $Time = "-$hour:0$minutes";
+                                            }
+                                            if ($minutes > 10) {
+                                                $Time = "-$hour:$minutes";
+                                            }
+                                        }
+                                    }
+                                    if ($time > 0) {
+                                        if ($hour < 10) {
+                                            if ($minutes < 10) {
+                                                $Time = "+0$hour:0$minutes";
+                                            }
+                                            if ($minutes >= 10) {
+                                                $Time = "+0$hour:$minutes";
+                                            }
+                                        }
+
+                                        if ($hour >= 10) {
+                                            if ($minutes < 10) {
+                                                $Time = "+$hour:0$minutes";
+                                            }
+                                            if ($minutes > 10) {
+                                                $Time = "+$hour:$minutes";
+                                            }
+                                        }
+                                    }
+                                    $MaxTime = $dataRemotii->remotii_last_received_time + (int) $dataRemotii->offset * 60;
+                                    if ($MaxTime > 0 && $dataRemotii->remotii_last_received_time > 0) {
+                                        $FormattedTime = date('m/d/Y H:i:s', $MaxTime);
+                                        $time_with_space = '';
+                                        for ($i = 0; $i < strlen($FormattedTime); $i++) {
+                                            if ($FormattedTime{$i} == ' ' && $i <= 15) {
+                                                $time_with_space = $time_with_space . '&nbsp&nbsp' . $FormattedTime{$i};
+                                            } else {
+                                                $time_with_space = $time_with_space . $FormattedTime{$i};
+                                            }
+                                        }
+
+                                        if ($dataRemotii->day_light_saving == 1) {
+                                            print $time_with_space . " (GMT " . $Time . " DST)";
+                                        } else {
+                                            print $time_with_space . " (GMT " . $Time . ")";
+                                        }
+                                    } else {
+                                        print $dataRemotii->remotii_last_received_time;
+                                    }
+                                    ?></td>
+                                <td>
+                                    
+                                    <a href="<?php print BASE_URL . '/admin/index/deleteremotii/' .$spinfo->service_provider_id.'/'.$dataRemotii->remotii_id; ?>" class="" onclick="return confirm('Are you sure you wish to delete?');">
+                                        <img src="<?php print $base_url . '/'; ?>images/crose.png" alt="" />
+                                    </a> 
+
+                                    <a href="<?php print BASE_URL . '/admin/index/clearremotiitoken/' . $dataRemotii->remotii_id . '?des=' . listserviceprovider; ?>" class="" onclick="return confirm('Are you sure you want to clear the token of this remotii?');">
+                                        <img src="<?php print $base_url . '/'; ?>images/clear.png" alt=""title="clear token" />
+                                    </a> 
+
+                                </td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+                <br><br>
+                <?php if(count($this->spUsers) > 0){?>
+                <form name="remFrm" id="remFrm">
+                    <div class="box1 col1">
+                        <ul class="list1 customList" id="rmCustul">
+                            <!-- -->
+
+                        </ul>
+                        <br/>
+                        <ul class="pad-list">
+                            <li class="add-remotii">
+                                <textarea id="remotiiVal" style="height:170px;width:280px;"></textarea>
+                                <pre>
+Example:
+11-22-33-44-55-66
+11-22-33-44-55-67
+11-22-33-44-55-68</pre>
+                            <li class="add-remotii nbr">
+                                <a href="javascript:void(0);" id="addMore" class="add-btn" id="remotiiSave" onclick="saveMacAddrs();">Add New MAC ID</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                </form>
+                <?php } 
+                else {
+                ?>
+                <span> This RSP does not have any users. To add a Remotii, please go to Users tab and create a user for this RSP.</span>
+                <?php } ?>
+                <!--                <div class="box1 col2" >
+                                    <ul class="list1 alter">
+                <?php
+                //_pr($spRemotii);
+                foreach ($spRemotii as $dataRemotii) {
+                    ?>
+                                                                                                        <li>
+                                                                                                            <a href="<?php print BASE_URL . '/admin/index/deleteremotii/' . $spinfo->service_provider_id . '/' . $dataRemotii->remotii_id; ?>" class="fr" onclick="return confirm('Are you sure you wish to delete?');">
+                                                                                                                <img src="<?php print $base_url . '/'; ?>images/crose.png" alt="">
+                                                                                                            </a> 
+                    <?php print $dataRemotii->mac_address; ?> 
+                                                                                                            <a href="<?php print BASE_URL . '/admin/index/clientinfo/' . $dataRemotii->user_id; ?>" class="name">
+                    <?php print $dataRemotii->uname; ?>
+                                                                                                            </a>
+                                                                                                        </li>
+                    <?php
+                }
+                ?>
+                                    </ul>
+                                </div>-->
+                <div class="clear"></div>
+            </div> 
+            <!-- Remotii Tab END -->
+
+            <div class="tabContent pt20" id="tab3">
+                <?php
+                if ($uid) {
+                    $style = 'display: block';
+                } else {
+                    $style = 'display: none';
+                }
+                if ($sval) {
+                    $style = 'display:block';
+                }
+                //_pr($responseData);
+                ?>
+                <div class="box1 hidePars form_add_sp" style="<?php echo $style; ?>">
+                    <div class="formWrap" >
+                        <form action="" id="formAddNagScreen" method="post">
+                            <input type="text" name="userName" value="<?php
+                            if ($spUserDetails->username <> '') {
+                                print $spUserDetails->username;
+                            } else {
+                                print $responseData[0]->username;
+                            }
+                            ?><?php print $responseData['username']; ?>" placeholder="Username" class="formInput <?php
+                                   if ($responseData['erruserName'] <> '') {
+                                       print 'error';
+                                   }
+                                   ?>" maxlength="100" />
+                                   <?php if ($responseData['erruserName'] <> '') { ?>
+                                <span class="infoMsg"><?php print 'Please enter user name'; ?></span>
+                            <?php } ?>
+                            <?php if ($responseData['errUsernameDuplicasy'] <> '') { ?>
+                                <span class="infoMsg"><?php print 'User name already exist. Please use another'; ?></span>
+                            <?php } ?>
+
+                            <input type="text" name="fName" value="<?php
+                            if ($spUserDetails->fname <> '') {
+                                print $spUserDetails->fname;
+                            } else {
+                                print $responseData[0]->fname;
+                            }
+                            ?>" placeholder="First Name" class="formInput <?php
+                                   if ($responseData['errfName'] <> '') {
+                                       print 'error';
+                                   }
+                                   ?>" maxlength="100" />
+                                   <?php if ($responseData['errfName'] <> '') { ?>
+                                <span class="infoMsg"><?php print 'Please enter first name'; ?></span>
+                            <?php } ?>
+
+                            <input type="text" name="lName" value="<?php
+                            if ($spUserDetails->lname <> '') {
+                                print $spUserDetails->lname;
+                            } else {
+                                print $responseData[0]->lname;
+                            }
+                            ?>" placeholder="Last Name" class="formInput <?php
+                                   if ($responseData['errlName'] <> '') {
+                                       print 'error';
+                                   }
+                                   ?>" maxlength="100" />
+                                   <?php if ($responseData['errlName'] <> '') { ?>
+                                <span class="infoMsg"><?php print 'Please enter last name'; ?></span>
+                            <?php } ?>
+
+                            <input type="text" name="phoneNumber" value="<?php
+                            if ($spUserDetails->phone <> '') {
+                                print $spUserDetails->phone;
+                            } else {
+                                print $responseData[0]->phone;
+                            }
+                            ?>" placeholder="Phone Number" class="formInput <?php
+                                   if ($responseData['errphoneNumber'] <> '') {
+                                       print 'error';
+                                   }
+                                   ?>" maxlength="12" />
+                                   <?php if ($responseData['errphoneNumber'] <> '') { ?>
+                                <span class="infoMsg"><?php print 'Please enter valid phone number'; ?></span>
+                            <?php } ?>
+
+                            <input type="text" name="emailId" value="<?php
+                            if ($spUserDetails->email <> '') {
+                                print $spUserDetails->email;
+                            } else {
+                                print $responseData[0]->email;
+                            }
+                            ?>" placeholder="Email Address" class="formInput <?php
+                                   if ($responseData['erremailId'] <> '' || $responseData['errEmailDuplicasy'] <> '') {
+                                       print 'error';
+                                   }
+                                   ?>" maxlength="200" />
+                                   <?php if ($responseData['erremailId'] <> '') { ?>
+                                <span class="infoMsg"><?php print 'Please enter valid email id'; ?></span>
+                            <?php } ?>
+                            <?php if ($responseData['errEmailDuplicasy'] <> '') { ?>
+                                <span class="infoMsg"><?php print 'Email id already exist. Please use another'; ?></span>
+                            <?php } ?>
+
+                            <input type="password" name="password" placeholder="Password" value="<?php print $responseData[0]->password; ?>" class="formInput <?php
+                            if ($responseData['errpassword'] <> '') {
+                                print 'error';
+                            }
+                            ?>" maxlength="100" />
+                                   <?php if ($responseData['errpassword'] <> '') { ?>
+                                <p class="infoMsg"><?php print 'Passwords must be at least 8 characters and include at least one number, special characters, or upper case letter.'; ?></p>
+                            <?php } ?>
+
+                            <input type="password" name="cnfrmPassword" value="<?php print $responseData[0]->cnfrmPassword; ?>" placeholder="Verify Password" class="formInput <?php
+                            if ($responseData['errcnfrmPassword'] <> '') {
+                                print 'error';
+                            }
+                            ?>" maxlength="100" />
+                                   <?php if ($responseData['errcnfrmPassword'] <> '') { ?>
+                                <span class="infoMsg"><?php print 'Password and confirm password do not match'; ?></span>
+                            <?php } ?>
+
+                            <div class="cl"></div>
+                            <input class="submit-btn" type="submit" value="Submit" name="submit_user" title="Add new user">
+                            <?php
+                            if (!$uid) {
+                                ?>
+                                <input class="btn" type="button" value="Cancel" onclick="return showHideSPUser();">
+                            <?php } ?>
+                        </form>
+                    </div>
+                </div>
+                <?php
+                if ($uid) {
+                    $style = 'display:none';
+                } else {
+                    $style = 'display:block';
+                }
+
+                if ($sval) {
+                    $style = 'display:none';
+                }
+                ?>
+                <input onclick="return showHideSPUser();" type="button" name="addNewSPUser" value="Add New User" class="submit-btn2 addNewSPUser submit-btn" style="margin-bottom: 20px;<?php echo $style; ?>"/>
+                <div class="box1 topSearchHeight spUsersList" style="<?php echo $style; ?>">
+                    <table cellpadding="0" cellspacing="0" border="0" class="dTable" id="dynamic">
+                        <thead>
+                            <tr>
+                                <th>Username<span class="sorting" style="display: block;"></span></th>
+                                <th>Last Name/First Name</th>
+                                <th>Contact Number</th>
+                                <th>Email</th>
+                                <th class="noShort">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+//_pr( $this->spUsers );
+                            foreach ($this->spUsers as $spUser):
+                                ?>
+                                <tr>
+                                    <td><a href="#"><?php echo $spUser->username ?></a></td>
+                                    <td><?php echo $spUser->lname . '/' . $spUser->fname ?> </td>
+                                    <td><?php echo $spUser->phone; ?></td>
+                                    <td><?php echo $spUser->email; ?></td>
+                                    <td>
+                                        <a href="<?php echo BASE_URL . '/admin/index/serviceproviderdetail/' . $data->service_provider_id . '/?ct=users&uid=' . $spUser->user_id; ?>"><img src="<?php print $base_url; ?>/images/edit-icon.png" alt=""></a>&nbsp;&nbsp;
+                                        <a href="<?php echo BASE_URL . '/admin/index/deletespuser/' . $spUser->user_id . '/' . $data->service_provider_id; ?>" onclick="return confirm('Are you sure you wish to delete?');"><img src="<?php print $base_url; ?>/images/delete-icon.png" alt="delete"></a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>   
+                        </tbody>
+                    </table>
+                </div>
+                <br />
+
+                <!-- /widget -->
+            </div>
+
+            <div class="tabContent pt20" id="tab4">
+                <div class="box1 topSearchHeight">
+                    <table cellpadding="0" cellspacing="0" border="0" class="dTable" id="dynamic">
+                        <thead>
+                            <tr>
+                                <th>User<span class="sorting" style="display: block;"></span></th>
+                                <th> Billing Cycle</th>
+                                <th>Paid Amount</th>
+                                <th>Payment mode</th>
+                                <th class="noShort">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            foreach ($spPayment as $spPaymentData) {
+                                ?>
+                                <tr>
+                                    <td><a href="javascript:void(0);"><?php print $spPaymentData->company_name; ?></a></td>
+                                    <td><?php print substr($spPaymentData->payment_cycle, -2) . '/' . substr($spPaymentData->payment_cycle, 0, 4); ?></td>
+                                    <td>$<?php print $spPaymentData->amount; ?></td>
+                                    <td><?php print $spPaymentData->payment_source; ?></td>
+                                    <td><span><?php
+                                            if ($spPaymentData->payment_status)
+                                                print 'Success';
+                                            else
+                                                print 'Failed';
+                                            ?></span></td>
+                                </tr>
+                                <?php
+                            }
+                            ?>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="tabContent pt20" id="tab5">
+                <form action="" id="formAddNagScreen" method="post">
+                    <h2>Provider Info</h2>
+                    <input type="text" name="company_name" value="<?php print $data->company_name; ?>" placeholder="Company Name" class="formInput <?php
+                    if ($responseData['errfName'] <> '') {
+                        print 'error';
+                    }
+                    ?>" maxlength="150" />
+                           <?php if ($responseData['errCompany'] <> '') { ?>
+                        <span class="infoMsg"><?php print 'Please enter Company name'; ?></span>
+                    <?php } ?>
+                    <?php if ($responseData['errCompanyDuplicasy'] <> '') { ?>
+                        <span class="infoMsg"><?php print 'Company name already exist. Please use another'; ?></span>
+                    <?php } ?>
+                    <input type="text" name="contact_fname" value="<?php print $data->contact_fname; ?>" placeholder="Contact First Name" class="formInput <?php
+                    if ($responseData['errfName'] <> '') {
+                        print 'error';
+                    }
+                    ?>" maxlength="100" />
+                           <?php if ($responseData['errfName'] <> '') { ?>
+                        <span class="infoMsg"><?php print 'Please enter first name'; ?></span>
+                    <?php } ?>
+
+                    <input type="text" name="contact_lname" value="<?php print $data->contact_lname; ?>" placeholder="Contact Last Name" class="formInput <?php
+                    if ($responseData['errlName'] <> '') {
+                        print 'error';
+                    }
+                    ?>" maxlength="100" />
+                           <?php if ($responseData['errlName'] <> '') { ?>
+                        <span class="infoMsg"><?php print 'Please enter last name'; ?></span>
+                    <?php } ?>
+
+                    <input type="text" name="contact_phone" value="<?php print $data->contact_phone; ?>" placeholder="Contact Phone Number" class="formInput <?php
+                    if ($responseData['errphoneNumber'] <> '') {
+                        print 'error';
+                    }
+                    ?>" maxlength="12" />
+                           <?php if ($responseData['errphoneNumber'] <> '') { ?>
+                        <span class="infoMsg"><?php print 'Please enter valid phone number'; ?></span>
+                    <?php } ?>
+
+                    <input type="text" name="contact_email" value="<?php print $data->contact_email; ?>" placeholder="Contact Email Address" class="formInput <?php
+                    if ($responseData['erremailId'] <> '' || $responseData['errEmailDuplicasy'] <> '') {
+                        print 'error';
+                    }
+                    ?>" maxlength="200" />
+                           <?php if ($responseData['erremailId'] <> '') { ?>
+                        <span class="infoMsg"><?php print 'Please enter valid email id'; ?></span>
+                    <?php } ?>
+                    <?php if ($responseData['errEmailDuplicasy'] <> '') { ?>
+                        <span class="infoMsg"><?php print 'Email id already exist. Please use another'; ?></span>
+                    <?php } ?>
+                    <br />
+
+                    <h2>Billing Details</h2>
+
+                    <?php
+                    $ccChangeDisplay = "block";
+                    $ccFrmDisplay = "none";
+                    if ($data->card_number <> '' && $data->shbillingDetails == 0) {
+                        $ccChangeDisplay = "block";
+                    } else {
+                        if ($data->shbillingDetails == 0) {
+                            $data->shbillingDetails = 1;
+                            $ccChangeDisplay = "none";
+                            $ccFrmDisplay = "block";
+                        } else {
+                            $ccChangeDisplay = "none";
+                            $ccFrmDisplay = "block";
+                        }
+                    }
+                    ?>
+
+
+
+
+                    <input type="hidden" name="shbillingDetails" value ="<?php echo (int) $data->shbillingDetails; ?>">
+                    <div id="ccChange" style="display:<?php echo $ccChangeDisplay ?>;">
+                        <input type="text" name="old_card_number" value="<?php print $data->old_card_number? : $data->card_number; ?>" placeholder="Credit Card Number" class="formInput" maxlength="16" disabled="disabled" />
+                        <input type="hidden" name="old_card_number" value="<?php print $data->old_card_number? : $data->card_number; ?>" maxlength="16"/>
+                        <a href="javascript:void(0);" id="pmntFrm2" onclick='showHidePaymentFrm();'>Change</a>
+                    </div>
+                    <div id="ccFrm" style="display:<?php echo $ccFrmDisplay ?>;">
+                        <?php if (!empty($data->old_card_number)) { ?>
+                            <a href="javascript:void(0);" id="pmntFrm" onclick='cancelChange();'>Cancel</a>
+                        <?php } ?>
+
+                        <select name="cardType">
+                            <option <?php echo ($data->shbillingDetails == 1 && $data->cardType == '' ? 'selected="selected"' : ''); ?> value="">Card Type</option>
+                            <option <?php echo ($data->shbillingDetails == 1 && $data->cardType == 'American Express' ? 'selected="selected"' : ''); ?> value="American Express">American Express</option>
+                            <option <?php echo ($data->shbillingDetails == 1 && $data->cardType == 'Carte Blanche' ? 'selected="selected"' : ''); ?> value="Carte Blanche">Carte Blanche</option>
+                            <option <?php echo ($data->shbillingDetails == 1 && $data->cardType == 'Diners Club' ? 'selected="selected"' : ''); ?> value="Diners Club">Diners Club</option>
+                            <option <?php echo ($data->shbillingDetails == 1 && $data->cardType == 'Discover' ? 'selected="selected"' : ''); ?> value="Discover">Discover</option>
+                            <option <?php echo ($data->shbillingDetails == 1 && $data->cardType == 'Enroute' ? 'selected="selected"' : ''); ?> value="Enroute">enRoute</option>
+                            <option <?php echo ($data->shbillingDetails == 1 && $data->cardType == 'JCB' ? 'selected="selected"' : ''); ?> value="JCB">JCB</option>
+                            <option <?php echo ($data->shbillingDetails == 1 && $data->cardType == 'Maestro' ? 'selected="selected"' : ''); ?> value="Maestro">Maestro</option>
+                            <option <?php echo ($data->shbillingDetails == 1 && $data->cardType == 'MasterCard' ? 'selected="selected"' : ''); ?> value="MasterCard">MasterCard</option>
+                            <option <?php echo ($data->shbillingDetails == 1 && $data->cardType == 'Solo' ? 'selected="selected"' : ''); ?> value="Solo">Solo</option>
+                            <option <?php echo ($data->shbillingDetails == 1 && $data->cardType == 'Switch' ? 'selected="selected"' : ''); ?> value="Switch">Switch</option>
+                            <option <?php echo ($data->shbillingDetails == 1 && $data->cardType == 'Visa' ? 'selected="selected"' : ''); ?> value="Visa">Visa</option>
+                            <option <?php echo ($data->shbillingDetails == 1 && $data->cardType == 'Visa Electron' ? 'selected="selected"' : ''); ?> value="Visa Electron">Visa Electron</option>
+                            <option <?php echo ($data->shbillingDetails == 1 && $data->cardType == 'LaserCard' ? 'selected="selected"' : ''); ?> value="LaserCard">Laser</option>
+                        </select>
+
+                        <input type="text" name="card_holder" value="<?php print $data->shbillingDetails == 1 ? $data->card_holder : ""; ?>" placeholder="Card Holder Name" class="formInput" maxlength='16' autocomplete="off"/>
+                        <?php if ($responseData['err_card_holder'] <> '') { ?>
+                            <span class="infoMsg"><?php print 'Please enter card holder name'; ?></span>
+                        <?php } ?>
+
+                        <input type="text" name="card_number" value="<?php print $data->shbillingDetails == 1 ? $data->card_number : ""; ?>" placeholder="Credit Card Number" class="formInput" maxlength='16' autocomplete="off"/>
+                        <?php if ($responseData['errcnCC'] <> '') { ?>
+                            <span class="infoMsg"><?php print 'Please enter valid credit card number'; ?></span>
+                        <?php } ?>
+
+                        <div class="clear"></div>
+                        <input type="text" style="display:none;">
+                        <input type="password" name="cvv" placeholder="CVV" class="formInput onethird" style="width: 50px;" maxlength="4"  autocomplete="off"/> 
+                        <select name="expMonth">
+                            <option value="">Expiry Month</option>
+                            <?php
+                            for ($i = 1; $i <= 12; $i++) {
+                                $option .= '<option ' . ($data->shbillingDetails == 1 && $data->expMonth == $i ? 'selected="selected"' : '') . ' value="' . str_pad($i, 2, "0", STR_PAD_LEFT) . '">' . date('F', strtotime(date('Y-' . str_pad($i, 2, "0", STR_PAD_LEFT) . '-d'))) . '</option>';
+                            }
+                            print $option;
+                            ?>
+                        </select>
+                        <select name="expYear">
+                            <option value="">Expiry Year</option>
+                            <?php
+                            $year = date('Y');
+                            $newYear = $year + 15;
+                            $option = '';
+                            for ($i = 1; $year <= $newYear; $year++) {
+                                $option .= '<option ' . ($data->shbillingDetails == 1 && $data->expYear == $year ? 'selected="selected"' : '') . ' value="' . $year . '">' . $year . '</option>';
+                            }
+                            print $option;
+                            ?>
+                        </select>
+
+                        <div class="cl"></div>
+                    </div>
+
+
+                    <br/>
+                    <h2>Contracted Wholesale Price Per Remotii</h2>
+                    <input type="text" name="contracted_price" value="<?php print $data->contracted_price; ?>" placeholder="$ (USD)" class="formInput" /> 
+                    <?php if ($responseData['contracted_price'] == 2) { ?>
+                        <span class="infoMsg"><?php print 'Value cannot be negative'; ?></span>
+                    <?php } ?>
+                    <?php if ($responseData['contracted_price'] == 1) { ?>
+                        <span class="infoMsg"><?php print 'Value not in correct format'; ?></span>
+                    <?php } ?>
+                    <div class="clear"></div>
+
+                    <h2>End User Price Per Remotii </h2>
+                    <input type="text" name="end_user_price" value="<?php print $data->end_user_price; ?>" placeholder="$ (USD)" class="formInput" />
+                    <?php if ($responseData['end_user_price'] == 2) { ?>
+                        <span class="infoMsg"><?php print 'Value cannot be negative'; ?></span>
+                    <?php } ?>
+                    <?php if ($responseData['end_user_price'] == 1) { ?>
+                        <span class="infoMsg"><?php print 'Value not in correct format'; ?></span>
+                    <?php } ?> 
+                    <div class="clear"></div>
+                    <br> 
+                    <h2>Available Credits</h2>
+                    <input type="text" name="service_provider_credit" value="<?php print $data->service_provider_credit; ?>" placeholder="$ (USD)" class="formInput" />
+                    <?php if ($responseData['service_provider_credit'] == 2) { ?>
+                        <span class="infoMsg"><?php print 'Value cannot be negative'; ?></span>
+                    <?php } ?>
+                    <?php if ($responseData['service_provider_credit'] == 1) { ?>
+                        <span class="infoMsg"><?php print 'Value not in correct format'; ?></span>
+                    <?php } ?> 
+
+                    <div class="clear"></div>
+
+
+
+                    <div class="clear h20"></div>
+                    <input onchange="edSF(this);" type="checkbox" id="allow_end_user_billing" name="allow_end_user_billing" value="1" <?php if ($data->allow_end_user_billing == 1) print 'checked=checked'; ?> class="check"><label>Allow automated billing for end users</label>
+                    <div class="clear h20"></div>
+
+                    <div id="payaccdetails" style="<?php
+                    if ($data->allow_end_user_billing == 1) {
+                        echo 'display:block;';
+                    } else {
+                        echo 'display:none;';
+                    }
+                    ?>">
+                        <h2>Service Fee</h2>
+                        <input type="text" id="service_fee" name="service_fee" value="<?php print $data->service_fee; ?>" placeholder="Service Fee" class="formInput half" <?php
+                        if ($data->allow_end_user_billing != 1) {
+                            print 'disabled="disabled"';
+                        }
+                        ?>/> &nbsp;% 
+
+                        <!--  receiving payment details start  -->
+                        <h2>Receiving Payment details</h2>
+                        <label <?php
+                        if ($spinfo->acc_status == DELINQUENT) {
+                            print 'class="hred"';
+                        }
+                        ?>>The account fields below are for <?php print ucwords($spinfo->company_name); ?> payment system</label>
+                        <input type="text" name="routing_number" placeholder="Routing number" class="formInput" maxlength="200" value="<?php echo $sprpinfo->routing_number; ?>"/>
+                        <select name="account_type">
+                            <option value="">Account Type</option>
+                            <option value="individual" <?php
+                            if ($sprpinfo->account_type == 'individual') {
+                                echo 'selected';
+                            }
+                            ?>>Individual</option>
+                            <option value="corporation" <?php
+                            if ($sprpinfo->account_type == 'corporation') {
+                                echo 'selected';
+                            }
+                            ?>>Corporation</option>
+                        </select>
+                        <input type="text" name="account_number" placeholder="Account Number" class="formInput" maxlength="200" value="<?php echo $sprpinfo->account_number; ?>"/>
+                        <input type="text" name="name_on_bank" placeholder="Firstname Lastname" class="formInput" maxlength="200" value="<?php echo $sprpinfo->name_on_bank; ?>"/>
+                        <!--  receiving payment details end  -->
+                    </div>
+
+                    <div class="clear"></div>
+                    <input type="checkbox" class="check" name="acc_status" value="2" <?php if ($data->acc_status == 2) print 'checked=checked'; ?> ><label>Suspend Account</label>
+                    <div class="clear h20"></div>
+
+                    <input class="submit-btn w200" type="submit" value="Update" name="submit" title="submit">
+                    <?php
+                    if ($spinfo->acc_status == DELINQUENT) {
+                        ?>
+                        <!-- Charging the SP from listing page Temporary commented -->
+                        <!--<input class="btn2 w200" type="submit" value="Bill Account" name="billAccount" title="submit">-->
+                        <?php
+                    }
+                    ?>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!--/tabContainer-->
+</div>
+</div>
+<!-- /widget --> 
+
+
+<script>
+    function showHidePaymentFrm() {
+        jQuery('#ccFrm').show();
+        jQuery('#ccChange').hide();
+        jQuery('input[name=shbillingDetails]').val('1');
+    }
+    function cancelChange() {
+        jQuery('#ccFrm').hide();
+        jQuery('#ccChange').show();
+        jQuery('input[name=shbillingDetails]').val('0');
+        jQuery('select[name=cardType]').val('');
+        jQuery('select[name=expMonth]').val('');
+        jQuery('select[name=expYear]').val('');
+        jQuery('input[name=card_holder]').val('');
+        jQuery('input[name=card_number]').val('');
+
+    }
+
+
+    function ValidateRemotii(RemotiiMacAdd)
+    {
+        var capture = '';
+        // Fire the ajax request
+        jQuery.ajax({
+            url: '<?php print BASE_URL ?>/admin/index/remotichk',
+            type: 'post',
+            async: false,
+            data: {postdata: RemotiiMacAdd},
+            success: function(response) {
+                capture = response;
+            }
+        });//  Ajax function closed
+        return capture;
+    }
+
+    function checkMACAddress(macAddress) {
+        //var macAddress=document.getElementById('mac').value;
+        var macAddressRegExp = /^([0-9A-F]{2}-){5}[0-9A-F]{2}$/i;
+
+        /*if(macAddress.length!=17) {
+         alert('Mac Address is not the proper length.');
+         return false;
+         }*/
+
+        if (macAddressRegExp.test(macAddress) == false) { //if match failed
+            alert("Invalid MAC Address " + macAddress);
+            return false;
+        }
+
+        return true;
+    }
+
+//  Remotii JS aded
+    var i = 0;
+    jQuery(function() {
+        var flag;
+        $('.form_add_sp input[name="password"],.form_add_sp input[name="cnfrmPassword"]').blur(function() {
+            flag = true;
+            pass = $(this).val();
+            if (pass.length < 8) {
+                flag = false;
+            }
+
+            var patt1 = new RegExp("[A-Z]");
+            if (patt1.test(pass) == false) {
+                flag = false;
+            }
+
+            if (flag == false) {
+                $(this).next('.infoMsg').remove();
+                $(this).after('<p class="infoMsg" style="display:none;">Passwords must be at least 8 characters and include at least one number, special characters, or upper case letter.');
+                $(this).next(".infoMsg").show();
+            } else {
+                $(this).next('.infoMsg').remove();
+            }
+
+            if ($(this).attr('name') == 'cnfrmPassword') {
+                pass1 = $('.form_add_sp input[name="password"]').val();
+                if (pass1 != pass)
+                {
+                    flag = false;
+                    $(this).next('.infoMsg').remove();
+                    $(this).after('<p class="infoMsg" style="display:none;">Passwords and Confirm password does not match.');
+                    $(this).next(".infoMsg").show();
+                }
+            }
+        });
+
+        $('.form_add_sp').submit(function(e) {
+            $('.form_add_sp input[name="password"],.form_add_sp input[name="cnfrmPassword"]').trigger('blur');
+            if (flag == true) {
+                return true;
+            }
+            return false;
+        });
+
+        /* $("#remotiiVal").bind('keyup', function (e) {
+         if (e.which >= 97 && e.which <= 122) {
+         var newKey = e.which - 32;
+         // I have tried setting those
+         e.keyCode = newKey;
+         e.charCode = newKey;
+         }
+         $("#remotiiVal").val(($("#remotiiVal").val()).toUpperCase());
+         });
+         */
+        //$("#remotiiVal").mask("**-**-**-**-**-**");
+        // $("#remotiiId").mask("**-**-**-**-**-**");
+        jQuery("#addMore").click(function() {
+
+            var chkVal = '';
+            var txtValue = jQuery('#remotiiVal').val();
+
+            var macAddressesArr = txtValue.split('\n');
+            //alert(macAddressesArr.length);
+            for (var i = 0; i < macAddressesArr.length; i++)
+            {
+                macId = macAddressesArr[i].trim();
+                macId.toUpperCase();    //  added
+
+                if (macId == "") {
+                    continue;
+                }
+
+                if (!checkMACAddress(macId))
+                    continue;
+
+
+                //  get the already added items
+                jQuery('#rmCustul li').each(function()
+                {
+                    var liValue = $(this).text();
+                    //alert($(this).text());
+                    if (macId.trim() == liValue.trim()) {
+                        alert('Mac Address ' + macId + ' Already added in the queue, Please enter another.');
+                        macAddressesArr[i] = '';
+                        jQuery('#remotiiVal').val('');
+                    }
+
+                });
+
+                //  get the text box value to add
+                if (macId.trim() != "") {
+                    chkVal = ValidateRemotii(macId);
+                    if (chkVal >= 1) {
+                        alert('Mac Address ' + macId + ' already exist, Please use another');
+                    } else {
+                        $(".customList").append('<a href="javascript:void(0);" class="fr"></a><input type="hidden" class="clsMacVal" name="hdnMacVal" value="' + macId + '"/> ');
+                    }
+                    jQuery('#remotiiVal').val('');
+                }
+            }
+
+            if ($(".clsMacVal").length > 0) {
+                $("#remotiiSave").css({"color": "#FFFFFF", "cursor": "pointer"});
+            }
+            saveMacAddrs();
+
+        }); //  click event END
+
+        //
+        //  Delete the clicked li item
+        $('.itemDelete a').live('click', function() {
+            $(this).closest('li').remove();
+            if ($(".clsMacVal").length == 0) {
+                $("#remotiiSave").css({"color": "#B2D3E8", "cursor": "default"});
+            }
+        });
+
+    });
+
+
+    function saveMacAddrs() {
+        if ($(".clsMacVal").length == 0) {
+            return false;
+        }
+        var cust = [];
+        jQuery('.clsMacVal').each(function()
+        {
+            cust.push(this.value);
+        });
+        SaveRemotiiMac(jQuery.unique(cust));
+    }
+
+
+    function SaveRemotiiMac(RemotiiMacAdd)
+    {
+        // Fire the ajax request
+        jQuery.ajax({
+            url: '<?php print BASE_URL ?>/admin/index/remotiisave/' +<?php print $spinfo->service_provider_id; ?>,
+            type: 'post',
+            async: false,
+            data: {postdata: RemotiiMacAdd},
+            success: function(response) {
+                //alert('Remotiis added successfully');
+                window.location.href = "<?php print BASE_URL . '/admin/index/serviceproviderdetail/' . $spinfo->service_provider_id; ?>?ct=remotii";
+            }
+        });//  Ajax function closed
+    }
+
+
+
+
+</script>

@@ -1,0 +1,37 @@
+Trigger conditions have been met for <?php print $bitInfo['remotii_name']; ?><?php echo "\r\n\r\n"; ?>
+Event Time : <?php echo $outTime ?><?php echo "\r\n\r\n"; ?>
+<?php
+$i = 1;
+$inHt = '';
+$Starthtml = "";
+$endhtml = "";
+foreach ($inputConfig as $inConfig) {
+    ?>
+    <?php
+    if ($inState & pow(2, ((int) $inConfig['pin_number']) - 1)) {
+        $inHt = $Starthtml . $inConfig['name'] . $endhtml . $Starthtml . ' : ' . $inConfig['active_label_text'] . $endhtml;
+    } else {
+        $inHt = $Starthtml . $inConfig['name'] . $endhtml . $Starthtml . ' : ' . $inConfig['inactive_label_text'] . $endhtml;
+    }
+    echo $inHt."\r\n";
+    $i++;
+}
+?>
+<?php echo "\r\n"; ?>
+<?php
+$Starthtml = "";
+$endhtml = "";
+$j = 1;
+foreach ($outputConfig as $outConfig) {
+    ?>
+    <?php
+    if ($outState & pow(2, ((int) $outConfig['pin_number']) - 1)) {
+        $inHt = $Starthtml . $outConfig['name'] . $endhtml . $Starthtml . ' : ' . $outConfig['active_label_text'] . $endhtml;
+    } else {
+        //inactive
+        $inHt = $Starthtml . $outConfig['name'] . $endhtml . $Starthtml . ' : ' . $outConfig['inactive_label_text'] . $endhtml;
+    }
+    echo $inHt."\r\n";
+    $j++;
+}
+?>

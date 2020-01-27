@@ -1,0 +1,163 @@
+<?php
+$data = $responseData[0];
+//_pr($responseData);
+?>
+<!-- Tag line  -->
+<div class="tag-line">
+    <div class="wrapper">
+        <h2> My Profile </h2>
+    </div>
+</div>
+<!-- Tag line ends -->
+<div class="content">
+    <div class="wrapper">
+        <form method="post" name="regFrm" id="regFrm">
+        <div class="box1">
+            <div class="inner form">
+        	<?php if($pResponse[0]['errorBillingDetails'] == 3) { ?>
+        		<div class="error-msg">Error occured while processing transaction</div>
+        	<?php } ?>
+
+                <?php if (!empty($errdata[1])) { ?>
+                    <div id="response" class="<?php echo $errdata[1]->status; ?>"><?php echo $errdata[1]->message; ?></div>
+                <?php } ?>
+                
+                <h4>Your Account Info <span>(All fields are required)</span></h4>
+                    <ul>
+                        <li>
+                            <input type="text" name="userName" value="<?php print $data->username; ?>" placeholder="Username">
+                            <?php if($responseData['erruserName'] <> '') { ?>
+                                <span class="infoMsg error"><?php print 'Please enter user name'; ?></span>
+                            <?php } ?>
+                            <?php if($responseData['errUsernameDuplicasy'] <> '') { ?>
+                                <span class="infoMsg error"><?php print 'User name already exist. Please use another'; ?></span>
+                            <?php } ?>
+                        </li>
+                        <li>
+                            <input type="text" name="fName" value="<?php print $data->fname; ?>" placeholder="First Name">
+                            <?php if($responseData['errfName'] <> '') { ?>
+                                <span class="infoMsg error"><?php print 'Please enter first name'; ?></span>
+                            <?php } ?>
+                        </li>
+                        <li>
+                            <input type="text" name="lName" value="<?php print $data->lname; ?>" placeholder="Last Name">
+                            <?php if($responseData['errlName'] <> '') { ?>
+                                <span class="infoMsg error"><?php print 'Please enter last name'; ?></span>
+                            <?php } ?>
+                        </li>
+                        <li>
+                            <input type="text" name="phoneNumber" value="<?php print $data->phone; ?>" placeholder="Phone Number">
+                            <?php if($responseData['errphoneNumber'] <> '') { ?>
+                                <span class="infoMsg error"><?php print 'Please enter valid phone number'; ?></span>
+                            <?php } ?>
+                        </li>
+                        <li>
+                            <input type="text" name="emailId" value="<?php print $data->email; ?>" placeholder="Email Address">
+                            <?php if($responseData['erremailId'] <> '') { ?>
+                                <span class="infoMsg error"><?php print 'Please enter valid email id'; ?></span>
+                            <?php } ?>
+                            <?php if($responseData['errEmailDuplicasy'] <> '') { ?>
+                                <span class="infoMsg error"><?php print 'Email id already exist. Please use another'; ?></span>
+                            <?php } ?>
+                        </li>
+                    </ul>
+                    <h4>Set Password</h4>
+                    <ul>
+                        <li><input type="password" name="password" placeholder="Password">
+                            <?php if($responseData['errpassword'] <> '') { ?>
+                                <span class="infoMsg error"><?php print 'Either passowrd is less than 8 character or password is empty'; ?></span>
+                            <?php } ?>
+                            <span>Passwords must be at least 8 characters and include at least one number, special characters, or upper case letter.
+                            </span>
+                        </li>
+                        <li>
+                            <input type="password" name="cnfrmPassword" placeholder="Verify Password">
+                            <?php if($responseData['errcnfrmPassword'] <> '') { ?>
+                                <span class="infoMsg error"><?php print 'Password and confirm password do not match'; ?></span>
+                            <?php } ?>
+                            
+                        </li>
+                    </ul>
+                    <h4>Address</h4>
+                    <ul>
+                        <li><input type="text" name="street" value="<?php print $data->street; ?>" placeholder="Street"></li>
+                        <li><input type="text" name="city" value="<?php print $data->city; ?>" placeholder="City"></li>
+                        <li>
+                            <input type="text" name="state" value="<?php print $data->state; ?>" placeholder="State" class="half"> 
+                            <input type="text" name="zip_code" value="<?php print $data->zip_code; ?>" placeholder="Zip Code"  class="half">
+                        </li>
+                        <li><input type="text" name="country" value="<?php print $data->country; ?>" placeholder="Country"></li>
+                    </ul>
+                    <?php
+                    /*
+                    ?>
+                    <h4>Payment Source Details</h4>
+                    <ul>
+                        <li>
+                            <label class="sel">
+                                <select name="cardType">
+                                  <option value="Visa">Visa</option>
+                                  <option value="American Express">American Express</option>
+                                  <option value="Carte Blanche">Carte Blanche</option>
+                                  <option value="Diners Club">Diners Club</option>
+                                  <option value="Discover">Discover</option>
+                                  <option value="Enroute">enRoute</option>
+                                  <option value="JCB">JCB</option>
+                                  <option value="Maestro">Maestro</option>
+                                  <option value="MasterCard">MasterCard</option>
+                                  <option value="Solo">Solo</option>
+                                  <option value="Switch">Switch</option>
+                                  <option value="Visa">Visa</option>
+                                  <option value="Visa Electron">Visa Electron</option>
+                                  <option value="LaserCard">Laser</option>
+                                </select>
+                            </label>
+                        </li>
+                        <li>
+                            <input type="text" name="card_holder" placeholder="Card Holder" class="half" maxlength="150">
+                            <input type="text" name="card_number" placeholder="Credit Card Number" class="half" maxlength="16">
+                        </li>
+                        <li>
+                            <input type="text" name="cvv" placeholder="CVV" class="one-third" maxlength="4">
+                            <label class="sel">
+                                <select name="expMonth">
+                                    <option value="0">Expiry Month</option>
+                                    <option value="01">January</option>
+                                    <option value="02">February</option>
+                                    <option value="03">March</option>
+                                    <option value="04">April</option>
+                                    <option value="05">May</option>
+                                    <option value="06">June</option>
+                                    <option value="07">July</option>
+                                    <option value="08">August</option>
+                                    <option value="09">September</option>
+                                    <option value="10">October</option>
+                                    <option value="11">November</option>
+                                    <option value="12">December</option>
+                                </select>
+                            </label>
+                            <label class="sel">
+                                <select name="expYear">
+                                    <option value="0">Expiry Year</option>
+                                    <?php
+                                        $year = date('Y');
+                                        $newYear = $year + 15;
+                                        for($i=1; $year<=$newYear; $year++) {
+                                            $option .= '<option value="'.$year.'">'.$year.'</option>';
+                                        }
+                                        print $option;
+                                    ?>
+                                </select>
+                            </label>
+                        </li>
+                    </ul>
+                    <?php
+                    */
+                    ?>
+                    <input type="submit" title="Update Account" name="submit" value="Submit" class="submit-btn">
+            </div>
+        </div>
+      </form>
+    </div>
+</div>
+<!--/content-->

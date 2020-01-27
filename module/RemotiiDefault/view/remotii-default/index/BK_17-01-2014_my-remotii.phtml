@@ -1,0 +1,600 @@
+<?php
+    $imgPath = BASE_URL . '/assets/f';
+    //_pr($userRemotii);
+?>
+<script>
+
+if(typeof String.prototype.trim !== 'function') {
+  String.prototype.trim = function() {
+    return this.replace(/^\s+|\s+$/g, ''); 
+  }
+}
+
+var refreshRate_in_msec = 1000; // msec
+var $remotiiList = null;
+var $inboundList = null;
+var	$ic_op_status_arr = null;
+var	$ic_op_color_arr = null;
+var	$ic_out_color_arr = null;
+var $iblisting = null;
+var $iocontrol = null;
+var last_message_id = '0';
+
+var cacheDOMElems = function () {
+	$remotiiList = $('#remotiiList'); // cache remotiiList object
+	$inboundList = $('#inbound_list');
+
+	$ic_op_status_arr = [];
+	$ic_op_color_arr = [];
+	$ic_out_color_arr = [];
+	for (var i = 1; i <= 3; i += 1) {
+		$ic_op_status_arr[i] = $(".ic_op_status"+i);
+		$ic_op_color_arr[i] = $(".ic_op_color"+i)
+	}
+
+	for (var i = 1; i <= 4; i += 1) {
+		$ic_out_color_arr[i] = $(".ic_out_color"+i);
+	}
+
+	$iocontrol = $(".iocontrol");
+	$iblisting = $(".iblisting");
+};
+
+$(document).ready(function() {
+    	cacheDOMElems();
+    	loadInboundData();
+    	
+    	$(window).scroll(function(){
+    		if ($(window).scrollTop()== $(document).height() - $(window).height()){
+    			loadMoreIBData();
+    		}
+    	});
+
+    	var previous;	
+        $remotiiList.focus(function () {
+            // Store the current value on focus and on change
+            isDisabled = $(this).find('option:selected').hasClass('disabled');
+            previous = this.value;
+        }).change(function() {
+			
+        	var remotiiId = $remotiiList.val();
+        	if($(this).find('option:selected').hasClass('disabled')){
+        		if( isDisabled == false ) { 
+            		//alert(previous);
+        			 $('#remotiiList').val(previous);
+            	}
+        		$('.spinfo').trigger('click');
+        		return false;
+            }
+        	
+        	window.location.href = '<?php echo BASE_URL;?>' + '/client/my-remotii/' + remotiiId;
+
+        });
+
+        $('.spinfo').click(function(e){
+            //if($(this).hasClass('iframe2')) return;
+            //e.preventDefault();
+        	var remotiiId = $remotiiList.val();
+        	var url = '<?php echo BASE_URL; ?>/client/service-provider-info?remotii_id='+remotiiId;
+        	$('.spinfo').attr('href', url);//.addClass('iframe2 cboxElement');
+        	//$('.spinfo').trigger('click');
+        });
+}); 
+
+
+function setDefaultRemotii()
+{
+	var remotiiId = $remotiiList.val();
+	var userId = '<?php echo $userId;?>';
+	
+	jQuery.ajax({
+        url: '<?php echo BASE_URL?>/client/set-default-remotii',
+        type: 'post',
+        async: true,
+        data: { userId:userId, remotiiId:remotiiId },
+        success: function(response) {
+            console.log( response );
+            response_arr = JSON.parse(response)
+            if(response_arr.status == 'OK')
+            {
+				//alert('Remotii successfully added as a default remotii to your account');
+            }else{
+            	alert( response_arr.message );
+            }
+        }/* ,
+        complete:function(response){
+        	console.log( data );
+        } */
+	});
+}
+
+//  Function defined to change the out put initial state
+function changeStatusOut( pin_number, status, obj ) {
+
+	if($(obj).hasClass('disabled')){
+		return;
+	}
+		
+	if( pin_number == 1 ) {
+		dout_sc = 1;
+	} else if( pin_number == 2 ) {
+		dout_sc = 2;
+	} else if( pin_number == 3 ) {
+		dout_sc = 4;
+	}
+	
+	var remotii_id = $("#remotii_id").val();
+	var remotii_mac_address = $("#remotii_mac_address").val();
+	var targateUrl = '<?php echo BASE_URL?>/client/change-config-status?dout_sc='+dout_sc+'&remotii_id='+remotii_id+'&remotii_mac_address='+remotii_mac_address+'&status='+status;
+
+    jQuery.ajax({
+        url: targateUrl,
+        type: 'get',
+        async: true,
+        success: function(response) {
+            //alert(response);
+        }
+        /*, complete:function(response) {
+            console.log(response);
+        } */
+    });
+}
+
+function loadIOControl()
+{
+	// var remotii_id =  $remotiiList.val();
+	
+	// if( remotii_id == "" )
+	// 	 return;
+	 
+	// targateUrl = '<?php echo BASE_URL?>/client/ajx-get-io-control?remotii_id='+remotii_id;
+
+	// jQuery.ajax({
+	//         url: targateUrl,
+	//         type: 'get',
+	//         async: true,
+	//         data: {},
+	//         success: function(response) {
+	//             $(".iocontrol").html(response);
+	//         },
+	//         complete:function(response) {
+	//             // console.log(response);
+	//         }
+	//  });
+	// var last_message_id = $("#inbound_list tr:first").attr('id');
+	var last_message_elem = $inboundList.find("tr:first");
+	last_message_id = last_message_elem.attr("id");
+	var outputElem;
+	var tooltip = '';
+	//alert(last_message_id);
+	if( last_message_id != "" && (typeof last_message_id != 'undefined')){
+		for(var i=1;i<=3;i++){
+			outputElem = last_message_elem.find(".output" + i);
+			out_status = outputElem.find(".status").text();
+			state = last_message_elem.find(".output" + i).attr('state');
+                        //alert("output" + i + "-" + state);
+			if((typeof state == 'undefined')) //break;
+                            {
+                                
+                            }
+			else
+                        {            
+                            if( state.trim() == '1')
+                            {
+                                    state = 'Energized';
+                            } else {
+                                    state = 'Not Energized';
+                            }
+
+                            tooltip = 'Pin: ' + i  + '\n' + 'State: ' + out_status +' ( '+state+' )';
+
+                            $ic_op_status_arr[i].text(out_status);
+                            $ic_op_color_arr[i].css("background", outputElem.find(".status_color").text()).attr("title", tooltip);
+                        }
+		}
+
+		for(var i=1;i<=4;i++){
+
+			state = last_message_elem.find(".input" + i).attr('state');
+			in_status = last_message_elem.find(".input" + i + " .status").text();
+                        //alert("input" + i + "-" +state);
+			if((typeof state == 'undefined')) //break;
+                        {
+                            
+                        }
+                            else
+                        {
+                            if( state.trim() == '1' )
+                            {
+                                    state = 'Energized';
+                            } else {
+                                    state = 'Not Energized';
+                            }
+
+                            tooltip = 'Pin: ' + i  + '\n' + 'State: ' + in_status +' ( '+state+' )';
+
+                            $ic_out_color_arr[i].css("background", last_message_elem.find(".input" + i + " .status_color").text()).attr("title", tooltip);
+                        }
+		}
+	}
+	$iocontrol.show();
+}
+
+var updateView = function (response) {
+	$inboundList.prepend(response); // add entry to table
+	$iblisting.show();
+	loadIOControl();
+};
+
+function loadInboundData()
+{
+	 var remotii_id =  $remotiiList.val();
+	 if( remotii_id == "" )
+		 return;
+
+	 //last_message_id = $inboundList.find("tr:first").attr('id');
+
+	// alert(last_message_id);
+	 if( last_message_id == "" )
+		 last_message_id = 0;
+	 
+	targateUrl = '<?php echo BASE_URL?>/client/ajx-get-inbound-data?limit=50&remotii_id='+remotii_id+'&last_message_id='+last_message_id;
+
+	jQuery.ajax({
+		url: targateUrl,
+		type: 'get',
+		async: true,
+		data: {},
+		success: function(response) {
+			//console.log(response);
+			chkSession(response);
+			updateView(response);
+		},
+		complete:function(response) {
+		    setTimeout(loadInboundData, refreshRate_in_msec);
+		} 
+	 });
+}
+
+function chkSession(response)
+{
+	try {
+		res_obj = $.parseJSON(response);
+		if( res_obj.session_expired == '1' )
+		{
+			window.top.location.href = "<?php print BASE_URL . '/user/login?se=1&mc=1&redirect='.$this->serverUrl(true);  ?>";
+		}
+	} catch (e) {
+	    // not json
+	}
+}
+
+function loadMoreIBData()
+{
+	var remotii_id =  $remotiiList.val();
+	if( remotii_id == "" )
+		 return;
+	 
+	var message_id = $inboundList.find("tr:last").attr('id');
+	if( message_id == "" )
+		return;
+	 
+	targateUrl = '<?php echo BASE_URL?>/client/ajx-get-inbound-data?limit=50&ltmsgid=1&remotii_id='+remotii_id+'&last_message_id='+message_id;
+
+	target = document.getElementById('load_more_ib');
+	opts.top = 20;
+	var spinner = new Spinner(opts);
+	spinner.spin(target);
+	
+	jQuery.ajax({
+		url: targateUrl,
+		type: 'get',
+		async: true,
+		data: {},
+		success: function(response) {
+			$inboundList.append(response);
+		}, 
+		complete:function(response) {
+			 spinner.stop(target);
+		}
+	 });
+	
+}
+</script>
+
+<style>
+.status_color{display:none;}
+</style>
+<!-- Tag line  -->
+<div class="tag-line">
+	<div class="wrapper">
+		<h2>User Remotii</h2>
+	</div>
+</div>
+<!-- Tag line ends -->
+<div class="content">
+	<div class="wrapper">
+
+
+		<div class="heading">
+		 <?php if($remotiiId || !empty($userRemotii)): ?>
+			
+            <h2>Viewing</h2>
+			<label class="sel">
+				<select name="remotiiList" id="remotiiList">
+                    <?php
+                        foreach($userRemotii as $uData) {
+                            if($uData->remotii_id == $remotiiId) {
+                                //$defaultRemotiiId = $uData->remotii_id;
+                                $selectd = 'selected';
+                            } else {
+                                $selectd = '';
+                            }
+                    ?>
+                        <option value="<?php print $uData->remotii_id; ?>" <?php if( $uData->remotii_status != ACTIVE ){ echo 'class="disabled"'; }?>
+							<?php print $selectd; ?>>
+							
+							<?php 
+							if($uData->remotii_status == ACTIVE) {
+								print $uData->remotii_name; 
+							}else {
+								print $uData->remotii_name . ' (Suspended)';
+							}
+							?>
+						</option>
+                    <?php
+                        }
+                    ?>
+                </select>
+			</label>
+			<div class="setting-option">
+				<a href="javascript:void(0);" class="btn-red setting-btn"> 
+				<span> 
+					<img src="<?php print $imgPath ?>/images/setting.png" alt="" >
+				</span>
+				</a>
+				<ul>
+					<li><a href="<?php echo BASE_URL?>/client/service-provider-info?remotii_id=<?php echo $remotiiId;?>"
+						class="spinfo iframe2">Service Provider Info</a></li>
+					<li><a class="iframe2" href="<?php print BASE_URL . '/client/remotii-setup' ?>">Add New Remotti</a></li>	
+                    <?php
+                        //foreach($userRemotii as $uData) {
+                    ?>
+                        <li class="rm modifySettings"
+						id="rm<?php print $remotiiId; ?>"
+						<?php if( !$remotiiId ) { print 'style="display: none;"'; } ?>><a
+						class="iframe2"
+						href="<?php print BASE_URL . '/client/remotii-setup/'.$remotiiId; ?>">Modify
+							Settings</a></li>
+                    <?php
+                        //}
+                    ?>
+                    <li><a href="#" onclick="setDefaultRemotii();">Set as Default</a></li>
+				</ul>
+			</div>
+       		<?php else:?>
+       		<div style="text-align: center;">
+	       		<div class="" style="font-size: 29px;
+	       							margin-bottom:40px;
+	       							font-weight: 500px;">
+	       			You currently have no configured Remotii's. Please click <br/>below to add a Remotii to your account.
+	       		</div>
+	       		<div>
+	       			<a class="btn-blue iframe2" href="<?php print BASE_URL . '/client/remotii-setup' ?>">Add New Remotti</a>
+	       		</div>
+       		</div>
+       		<?php endif;?>
+        </div>
+        <?php if($remotiiId || !empty($userRemotiiConfig['baseRec'][0]['remotii_id'])): ?>
+        <div>
+        	<input type="hidden" id="remotii_mac_address" value="<?php echo $userRemotiiConfig['baseRec'][0]['mac_address']?>" />
+        	<input type="hidden" id="remotii_id" value="<?php echo $userRemotiiConfig['baseRec'][0]['remotii_id']?>" />
+        </div>
+        
+        <div class="iocontrol" style="display:none;">
+        <h4>Output Control</h4>
+		<div class="box1 viewing">
+            <?php
+               // _pr($userRemotiiConfig);
+            ?>
+            <ul class="list2 alter">
+                <?php
+                
+                $i = 0;
+                foreach($userRemotiiConfig['outConfig'] as $outConfig) {
+				$i++;
+				
+				$tooltip = 'Pin: ' . $outConfig['pin_number'] . '&#10;' . 'State: '.$outConfig['active_label_text'].' ( Energized )';
+				
+                ?>
+                    <li>
+					<div class="fl">
+						<span class="name ic_op_name<?php echo $i;?>">
+							<?php print $outConfig['name']; ?>
+						</span>
+						<span title="<?php echo $tooltip?>" class="color-output ic_op_color<?php echo $i;?>" id="statusClr<?php print $outConfig['config_id']; ?>" style="background: 
+                                <?php
+                                    if($outConfig['output_initial_state'] == 1) { 
+                                        print $outConfig['active_label_color']; 
+                                    } else { 
+                                        print $outConfig['inactive_label_color']; 
+                                    }
+                                ?>;">
+                        </span>
+                        
+                        <label
+							id="statusTxt<?php print $outConfig['config_id']; ?>" class="ic_op_status<?php echo $i;?>">
+                                <?php
+                                    if($outConfig['output_initial_state'] == 1) {
+                                        print $outConfig['active_label_text'];
+                                    } else {
+                                        print $outConfig['inactive_label_text'];
+                                    }
+                                ?>
+                         </label>
+					</div>
+					<div class="fr">
+						
+						<?php 
+							if( $outConfig['is_output_momentary'] == '1' ) { 
+								$class = 'disabled btn6';
+							} else { 
+								$class = 'btn5';
+							} 
+						?>
+						
+						<?php if( $outConfig['is_output_momentary'] != '1' ):?>
+						<input type="button" name="button" class="<?php echo $class;?> ic_op_active<?php echo $i;?>"
+							id="actBtn<?php print $outConfig['config_id']; ?>"
+							data-value="<?php print $outConfig['output_initial_state']; ?>"
+							value="<?php print $outConfig['active_label_text']; ?>"
+							onclick="changeStatusOut(<?php echo $i?>, 'set', this);"/>
+
+						<input type="button" name="button" class="<?php echo $class;?> ic_op_inactive<?php echo $i;?>"
+							id="inactBtn<?php print $outConfig['config_id']; ?>" 
+							data-value="<?php print $outConfig['output_initial_state']; ?>"
+							value="<?php print $outConfig['inactive_label_text']; ?>"
+							onclick="changeStatusOut(<?php echo $i?>, 'clr', this);" />
+                         <?php else:?>   
+                            <?php if($outConfig['is_output_momentary'] == 1) { ?>
+                                <input type="button" name="toggleBtn"
+							value="Momentary" class="btn5" onclick="changeStatusOut(<?php echo $i?>, 'tgl', this);"/>
+                            <?php } else { ?>
+                            	<input type="button" name="toggleBtn"
+							value="Toggle" class="btn6" disabled />
+                            <?php } ?>
+                         <?php endif;?>
+                        </div>
+				</li>
+                <?php
+                }
+                ?>
+            </ul>
+		</div>
+
+		<h4>Input Status</h4>
+		<div class="box1">
+			<div class="input-color-wrap">
+                <?php
+                $i = 0;
+                
+                    $rmLastStatus = $userRemotiiConfig['baseRec'][0]['remotii_last_input_status'];
+                    foreach($userRemotiiConfig['inConfig'] as $inConfig) {
+                        $i = $inConfig['pin_number'];
+                        
+                        if($i == 1) {
+                            if($rmLastStatus & 1) {
+                                $tooltip = 'Pin: ' . $inConfig['pin_number'] . '&#10;' . 'State: '.$inConfig['active_label_text'].' ( Energized )';
+                
+                                print $custData = '<div class="input-color">
+                                    <span title="'.$tooltip.'" class="ic_out_color'.$i.'" style="background: '.$inConfig['active_label_color'].';"></span>
+                                    '.$inConfig['name'].'
+                                </div>';
+                            } else {
+                                $tooltip = 'Pin: ' . $inConfig['pin_number'] . '&#10;' . 'State: '.$inConfig['inactive_label_text'].' ( Not Energized )';
+                                print $custData = '<div class="input-color">
+                                    <span title="'.$tooltip.'" class="ic_out_color'.$i.'" style="background: '.$inConfig['inactive_label_color'].';"></span>
+                                    '.$inConfig['name'].'
+                                </div>';
+                            }
+                        }
+                        
+                        if($i == 2) {
+                            if($rmLastStatus & 2) {
+                                $tooltip = 'Pin: ' . $inConfig['pin_number'] . '&#10;' . 'State: '.$inConfig['active_label_text'].' ( Energized )';
+                
+                                print $custData = '<div class="input-color">
+                                    <span title="'.$tooltip.'" class="ic_out_color'.$i.'" style="background: '.$inConfig['active_label_color'].';"></span>
+                                    '.$inConfig['name'].'
+                                </div>';
+
+                            } else {
+                                $tooltip = 'Pin: ' . $inConfig['pin_number'] . '&#10;' . 'State: '.$inConfig['inactive_label_text'].' ( Not Energized )';
+                                print $custData = '<div class="input-color">
+                                    <span title="'.$tooltip.'" class="ic_out_color'.$i.'" style="background: '.$inConfig['inactive_label_color'].';"></span>
+                                    '.$inConfig['name'].'
+                                </div>';
+                            }
+                        }
+                        
+                        if($i == 3) {
+                            if($rmLastStatus & 4) {
+                                $tooltip = 'Pin: ' . $inConfig['pin_number'] . '&#10;' . 'State: '.$inConfig['active_label_text'].' ( Energized )';
+                
+                                print $custData = '<div class="input-color">
+                                    <span title="'.$tooltip.'" class="ic_out_color'.$i.'" style="background: '.$inConfig['active_label_color'].';"></span>
+                                    '.$inConfig['name'].'
+                                </div>';
+
+                            } else {
+                                $tooltip = 'Pin: ' . $inConfig['pin_number'] . '&#10;' . 'State: '.$inConfig['inactive_label_text'].' ( Not Energized )';
+                                print $custData = '<div class="input-color">
+                                    <span title="'.$tooltip.'" class="ic_out_color'.$i.'" style="background: '.$inConfig['inactive_label_color'].';"></span>
+                                    '.$inConfig['name'].'
+                                </div>';
+                            }
+                        }
+
+                        if($i == 4) {
+                            if($rmLastStatus & 8) {
+                                $tooltip = 'Pin: ' . $inConfig['pin_number'] . '&#10;' . 'State: '.$inConfig['active_label_text'].' ( Energized )';
+                                print $custData = '<div class="input-color">
+                                    <span title="'.$tooltip.'" class="ic_out_color'.$i.'" style="background: '.$inConfig['active_label_color'].';"></span>
+                                    '.$inConfig['name'].'
+                                </div>';
+                            } else {
+                                $tooltip = 'Pin: ' . $inConfig['pin_number'] . '&#10;' . 'State: '.$inConfig['inactive_label_text'].' ( Not Energized )';
+                                print $custData = '<div class="input-color">
+                                    <span title="'.$tooltip.'" class="ic_out_color'.$i.'" style="background: '.$inConfig['inactive_label_color'].';"></span>
+                                    '.$inConfig['name'].'
+                                </div>';
+                            }
+                        }
+
+                    }
+                ?>
+            </div>
+		</div>
+        </div>
+		
+		<div class="box1 iblisting" style="display: none;">
+			<table cellpadding="0" cellspacing="0" border="0" class="table1"
+				width="100%">
+				<thead>
+					<tr>
+						<th>Event Time</th>
+						<th>Input Status</th>
+						<th>Output Status</th>
+					</tr>
+				</thead>
+				<tbody id="inbound_list">
+                
+                </tbody>
+			</table>
+		</div>
+		<div id="load_more_ib" style="margin-bottom:200px;"></div>
+		<?php endif; ?>
+    </div>
+</div>
+<!--/content-->
+<script type="text/javascript" src="<?php echo BASE_URL . '/assets/c/js/spin.js' ?>"></script>
+<script>
+var opts = {
+        lines: 10, // The number of lines to draw
+        length: 10, // The length of each line
+        width: 4, // The line thickness
+        radius: 10, // The radius of the inner circle
+        corners: 1, // Corner roundness (0..1)
+        rotate: 0, // The rotation offset
+        direction: 1, // 1: clockwise, -1: counterclockwise
+        color: '#000', // #rgb or #rrggbb or array of colors
+        speed: 1, // Rounds per second
+        trail: 60, // Afterglow percentage
+        shadow: false, // Whether to render a shadow
+        hwaccel: false, // Whether to use hardware acceleration
+        className: 'spinner', // The CSS class to assign to the spinner
+        zIndex: 2e9, // The z-index (defaults to 2000000000)
+        top: 'auto', // Top position relative to parent in px
+        left: 'auto' // Left position relative to parent in px
+    };
+</script>

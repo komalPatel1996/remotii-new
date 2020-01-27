@@ -1,0 +1,490 @@
+ 
+<style>
+    #ioalgntop { vertical-align: top; }
+</style>
+<script>
+    var refreshRate_in_msec = 1000; // msec
+    var $remotiiList = null;
+    var $inboundList = null;
+    var $ic_op_status_arr = null;
+    var $ic_op_color_arr = null;
+    var $ic_out_color_arr = null;
+    var $iblisting = null;
+    var $iocontrol = null;
+    var last_message_id = '0';
+    var cacheDOMElems = function() {
+        $remotiiList = $('#remotiiList'); // cache remotiiList object
+        $inboundList = $('#inbound_list');
+
+        $ic_op_status_arr = [];
+        $ic_op_color_arr = [];
+        $ic_out_color_arr = [];
+        for (var i = 1; i <= 3; i += 1) {
+            $ic_op_status_arr[i] = $(".ic_op_status" + i);
+            $ic_op_color_arr[i] = $(".ic_op_color" + i)
+        }
+
+        for (var i = 1; i <= 4; i += 1) {
+            $ic_out_color_arr[i] = $(".ic_out_color" + i);
+        }
+
+        $iocontrol = $(".iocontrol");
+        $iblisting = $(".iblisting");
+
+    };
+
+
+    setInterval(function() {
+        updateRemotiiPeriodically();
+    }, 5000);
+
+
+    var TimeStamp = "<?php echo time(); ?>";
+    function updateRemotiiPeriodically() {
+
+        // alert(time);
+        obj = $('.box1');
+        $.post("<?php echo BASE_URL . "/client/iajax"; ?>",
+                {
+                    action: "getremotiiperiodically",
+                    params: {
+                        time: TimeStamp,
+                    }
+                },
+        function(data) {
+            console.log(data);
+//            return false;
+            for (index = 0; index < data.count; ++index) {
+                console.log(data.userRemotiiConf[index]);
+                $('.all-remotii .box1[remotii_id=' + data.userRemotiiConf[index].remotii_id + ']').html(data.userRemotiiConf[index].remotii_html);
+                if (data.userRemotiiConf[index].remotii_status == "1") {
+                    if (!$('.all-remotii .box1[remotii_id=' + data.userRemotiiConf[index].remotii_id + ']').hasClass("closeaction")) {
+                        $('.all-remotii .box1[remotii_id=' + data.userRemotiiConf[index].remotii_id + ']').addClass("closeaction");
+                    }
+                } else {
+                    $('.all-remotii .box1[remotii_id=' + data.userRemotiiConf[index].remotii_id + ']').removeClass("closeaction");
+                }
+            }
+            TimeStamp = data.time;
+            //alert(data.time);
+            //obj.html(data.userRemotiiConf);
+        },
+                "json");
+    }
+
+    $(document).ready(function() {
+        cacheDOMElems();
+//        loadInboundData();
+//
+//        $(window).scroll(function() {
+//            if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+//                loadMoreIBData();
+//            }
+//        });
+        $(".ajax").colorbox({width: "50%", height: "420px"});
+        $(".iframe").colorbox({iframe: true, width: "50%", height: "420px"});
+        $(".iframe2").colorbox({iframe: true, width: "50%", height: "470px"});
+        $(".iframe3").colorbox({iframe: true, width: "820px", height: "520px"});
+        var previous;
+        $remotiiList.focus(function() {
+            // Store the current value on focus and on change
+            isDisabled = $(this).find('option:selected').hasClass('disabled');
+            previous = this.value;
+        }).change(function() {
+            var remotiiId = $remotiiList.val();
+
+            if ($(this).find('option:selected').hasClass('disabled')) {
+                if (isDisabled == false) {
+                    //alert(previous);
+                    $('#remotiiList').val(previous);
+                }
+                $('.spinfo').trigger('click');
+                return false;
+            }
+
+            if (remotiiId == '')
+                window.location.href = '<?php echo BASE_URL; ?>' + '/client/my-remotii';
+            if (remotiiId != '') {
+                window.location.href = '<?php echo BASE_URL; ?>' + '/client/my-remotii/' + remotiiId;
+            }
+        });
+
+        $(".remotii-action").click(function(e) {
+            e.preventDefault();
+            obj = $(this).parent().parent();
+            obj.find(".remotii-wrap").slideToggle();
+            obj.toggleClass("closeaction");
+            status = $(this).attr('status');
+            shared_user_id = $(this).attr('shared_user_id');
+            user_remotii_id = $(this).attr('user_remotii_id');
+            current_obj = $(this);
+            $.post("<?php echo BASE_URL . "/client/iajax"; ?>",
+                    {
+                        action: "changeViewStatus",
+                        params: {
+                            status: status,
+                            shared_user_id: shared_user_id,
+                            user_remotii_id: user_remotii_id,
+                        }
+                    },
+            function(data) {
+                console.log(data);
+                if (data.stat == "success") {
+                    if (data.status == 0) {
+                        current_obj.attr('status', 0);
+                    }
+                    else {
+                        current_obj.attr('status', 1);
+                    }
+                }
+                else {
+                    alert(data.result);
+                }
+            },
+                    "json");
+        });
+    });
+
+
+    function setDefaultRemotii()
+    {
+        var remotiiId = $remotiiList.val();
+        var userId = '<?php echo $userId; ?>';
+
+        jQuery.ajax({
+            url: '<?php echo BASE_URL ?>/client/set-default-remotii',
+            type: 'post',
+            async: true,
+            data: {userId: userId, remotiiId: remotiiId},
+            success: function(response) {
+                console.log(response);
+                response_arr = JSON.parse(response)
+                if (response_arr.status == 'OK')
+                {
+                    //alert('Remotii successfully added as a default remotii to your account');
+                } else {
+                    //alert(response_arr.message);
+                }
+            }/* ,
+             complete:function(response){
+             console.log( data );
+             } */
+        });
+    }
+
+
+
+</script>
+
+<style>
+    .status_color{display:none;}
+</style>
+<!--container start-->
+
+<!-- Tag line  -->
+<div class="tag-line">
+    <div class="wrapper">  
+        <h2>User Remotii</h2>   
+    </div>
+</div>
+<!-- Tag line ends --> 
+<div class="content">
+    <div class="wrapper">
+        <div class="heading">
+            <?php if ($remotiiId || !empty($userRemotii)): ?>
+
+                <h2>Viewing</h2>
+                <label class="sel">
+                    <select name="remotiiList" id="remotiiList">
+                        <?php
+                        $i = 0;
+                        foreach ($userRemotii as $uData) {
+                            if ($uData->remotii_id == $remotiiId) {
+                                //$defaultRemotiiId = $uData->remotii_id;
+                                $selectd = 'selected';
+                            } else {
+                                $selectd = '';
+                            }
+                            ?>
+                            <?php if ($i == 0) { ?>
+
+                                <option value="">All remotii</option>
+                            <?php } ?>
+                            <option value="<?php print $uData->remotii_id; ?>" <?php
+                            if ($uData->remotii_status != ACTIVE) {
+                                echo 'class="disabled"';
+                            }
+                            ?>
+                                    <?php print $selectd; ?>>
+                                        <?php
+                                        if ($uData->remotii_status == ACTIVE) {
+                                            if ($uData->user_id == $userId) {
+                                                if ($uData->ur_default == 1) {
+                                                    print $uData->remotii_name . " " . '(default)';
+                                                } else {
+                                                    print $uData->remotii_name;
+                                                }
+                                            }
+                                            if ($uData->user_id != $userId) {
+                                                if ($uData->sr_is_default == 1) {
+                                                    print $uData->remotii_name . " " . '(default)';
+                                                } else {
+                                                    print $uData->remotii_name;
+                                                }
+                                            }
+                                        } else {
+                                            print $uData->remotii_name . ' (Suspended)';
+                                        }
+                                        ?>
+                            </option> 
+                            <?php
+                            $i++;
+                        }
+                        ?>
+                    </select>
+                </label>
+                <div class="setting-option">
+                    <a href="javascript:void(0);" class="btn-red setting-btn"> 
+                        <span> 
+                            Action
+                        </span>
+                    </a>
+                    <ul>
+
+                        <li><a class="iframe3" href="<?php print BASE_URL . '/client/remotii-setup' ?>">Add New Remotii</a></li>
+                        <li><a href="#" onclick="setDefaultRemotii();">Set as Default</a></li>
+                    </ul>
+                </div>
+            <?php else: ?>
+                <div style="text-align: center;">
+                    <div class="" style="font-size: 29px;
+                         margin-bottom:40px;
+                         font-weight: 500px;">
+                        You currently have no configured Remotii's. Please click <br/>below to add a Remotii to your account.
+                    </div>
+                    <div>
+                        <a class="btn-blue iframe3" href="<?php print BASE_URL . '/client/remotii-setup' ?>">Add New Remotii</a>
+                    </div>
+                </div>
+            <?php endif; ?>
+        </div>
+        <div class="all-remotii">
+            <?php
+            $k = 0;
+            foreach ($userRemotiiConf['baseRec'] as $userRemotiiConfig) {
+                $remotii_id = $userRemotiiConfig['remotii_id'];
+                ?>   
+                <div remotii_id='<?php echo $remotii_id; ?>' class="box1 half  <?php if ($userRemotiiConfig['view_status'] == 0) { ?><?php } else { ?> closeaction <?php } ?>"  >
+                    <p><a href="#" class="fr remotii-action" status="<?php echo $userRemotiiConfig['urv'] ?>" user_remotii_id="<?php echo $userRemotiiConfig['user_remotii_id'] ?>" shared_user_id="<?php echo $userRemotiiConfig['srv'] ?>" ></a><?php if ($userRemotiiConfig['user_id'] == $userId) { ?>  <a href="<?php print BASE_URL . '/client/my-remotii/' . $remotii_id; ?>"><?php
+                                if ($userRemotiiConfig['ur_default'] == 1) {
+                                    print $userRemotiiConfig['remotii_name'] . " " . '(default)';
+                                } else {
+                                    print $userRemotiiConfig['remotii_name'];
+                                }
+                                ?></a><?php } ?><?php if ($userRemotiiConfig['user_id'] != $userId) { ?> <a href="<?php print BASE_URL . '/client/my-remotii/' . $remotii_id; ?>"><?php
+                                
+                                 if ($userRemotiiConfig['sr_is_default'] == 1) {
+                                    print $userRemotiiConfig['remotii_name'] . " " . '(default)';
+                                } else {
+                                    print $userRemotiiConfig['remotii_name'];
+                                }
+                               
+                                ?></a> <?php } ?></p>
+
+                    <?php
+                    //if($userRemotiiConfig['view_status']==1){
+                    $i = 0;
+                    $rmLastStatus = $userRemotiiConfig['remotii_last_input_status'];
+                    ?>
+                    <div class="remotii-wrap" <?php if ($userRemotiiConfig['view_status'] == 0) { ?> style="display:none" <?php } ?> >
+                        <span> &nbsp;&nbsp;Input Controls </span>
+                        <div class="input-color-wrap">
+                            <?php
+                            foreach ($userRemotiiConf['inConfig'][$k] as $inConfig) {
+                                $i = $inConfig['pin_number'];
+
+                                if ($i == 1) {
+                                    if ($rmLastStatus & 1) {
+                                        $tooltip = 'Pin: ' . $inConfig['pin_number'] . '&#10;' . 'State: ' . $inConfig['active_label_text'] . ' ( Energized )';
+
+                                        print $custData = '<div class="input-color">
+                                    <span title="' . $tooltip . '" class="ic_out_color' . $i . '" style="background: ' . $inConfig['active_label_color'] . ';"></span>
+                                    ' . $inConfig['name'] . '
+                                </div>';
+                                    } else {
+                                        $tooltip = 'Pin: ' . $inConfig['pin_number'] . '&#10;' . 'State: ' . $inConfig['inactive_label_text'] . ' ( Not Energized )';
+                                        print $custData = '<div class="input-color">
+                                    <span title="' . $tooltip . '" class="ic_out_color' . $i . '" style="background: ' . $inConfig['inactive_label_color'] . ';"></span>
+                                    ' . $inConfig['name'] . '
+                                </div>';
+                                    }
+                                }
+
+                                if ($i == 2) {
+                                    if ($rmLastStatus & 2) {
+                                        $tooltip = 'Pin: ' . $inConfig['pin_number'] . '&#10;' . 'State: ' . $inConfig['active_label_text'] . ' ( Energized )';
+
+                                        print $custData = '<div class="input-color">
+                                    <span title="' . $tooltip . '" class="ic_out_color' . $i . '" style="background: ' . $inConfig['active_label_color'] . ';"></span>
+                                    ' . $inConfig['name'] . '
+                                </div>';
+                                    } else {
+                                        $tooltip = 'Pin: ' . $inConfig['pin_number'] . '&#10;' . 'State: ' . $inConfig['inactive_label_text'] . ' ( Not Energized )';
+                                        print $custData = '<div class="input-color">
+                                    <span title="' . $tooltip . '" class="ic_out_color' . $i . '" style="background: ' . $inConfig['inactive_label_color'] . ';"></span>
+                                    ' . $inConfig['name'] . '
+                                </div>';
+                                    }
+                                }
+
+                                if ($i == 3) {
+                                    if ($rmLastStatus & 4) {
+                                        $tooltip = 'Pin: ' . $inConfig['pin_number'] . '&#10;' . 'State: ' . $inConfig['active_label_text'] . ' ( Energized )';
+
+                                        print $custData = '<div class="input-color">
+                                    <span title="' . $tooltip . '" class="ic_out_color' . $i . '" style="background: ' . $inConfig['active_label_color'] . ';"></span>
+                                    ' . $inConfig['name'] . '
+                                </div>';
+                                    } else {
+                                        $tooltip = 'Pin: ' . $inConfig['pin_number'] . '&#10;' . 'State: ' . $inConfig['inactive_label_text'] . ' ( Not Energized )';
+                                        print $custData = '<div class="input-color">
+                                    <span title="' . $tooltip . '" class="ic_out_color' . $i . '" style="background: ' . $inConfig['inactive_label_color'] . ';"></span>
+                                    ' . $inConfig['name'] . '
+                                </div>';
+                                    }
+                                }
+
+                                if ($i == 4) {
+                                    if ($rmLastStatus & 8) {
+                                        $tooltip = 'Pin: ' . $inConfig['pin_number'] . '&#10;' . 'State: ' . $inConfig['active_label_text'] . ' ( Energized )';
+                                        print $custData = '<div class="input-color">
+                                    <span title="' . $tooltip . '" class="ic_out_color' . $i . '" style="background: ' . $inConfig['active_label_color'] . ';"></span>
+                                    ' . $inConfig['name'] . '
+                                </div>';
+                                    } else {
+                                        $tooltip = 'Pin: ' . $inConfig['pin_number'] . '&#10;' . 'State: ' . $inConfig['inactive_label_text'] . ' ( Not Energized )';
+                                        print $custData = '<div class="input-color">
+                                    <span title="' . $tooltip . '" class="ic_out_color' . $i . '" style="background: ' . $inConfig['inactive_label_color'] . ';"></span>
+                                    ' . $inConfig['name'] . '
+                                </div>';
+                                    }
+                                }
+                            }
+                            ?>
+
+                        </div>
+                        <div style="border-top:1px solid #ccc">
+                            <span> &nbsp;&nbsp; Output Controls </span>
+                            <div class="input-color-wrap">
+                                <?php
+                                $rmLastStatus = $userRemotiiConfig['remotii_last_output_status'];
+                                foreach ($userRemotiiConf['outConfig'][$k] as $outConfig) {
+                                    $i = $outConfig['pin_number'];
+
+                                    if ($i == 1) {
+                                        if ($rmLastStatus & 1) {
+                                            $tooltip = 'Pin: ' . $outConfig['pin_number'] . '&#10;' . 'State: ' . $outConfig['active_label_text'] . ' ( Energized )';
+
+                                            print $custData = '<div class="input-color">
+                                    <span title="' . $tooltip . '" class="ic_out_color' . $i . '" style="background: ' . $outConfig['active_label_color'] . ';"></span>
+                                    ' . $outConfig['name'] . '
+                                </div>';
+                                        } else {
+                                            $tooltip = 'Pin: ' . $outConfig['pin_number'] . '&#10;' . 'State: ' . $outConfig['inactive_label_text'] . ' ( Not Energized )';
+                                            print $custData = '<div class="input-color">
+                                    <span title="' . $tooltip . '" class="ic_out_color' . $i . '" style="background: ' . $outConfig['inactive_label_color'] . ';"></span>
+                                    ' . $outConfig['name'] . '
+                                </div>';
+                                        }
+                                    }
+
+                                    if ($i == 2) {
+                                        if ($rmLastStatus & 2) {
+                                            $tooltip = 'Pin: ' . $outConfig['pin_number'] . '&#10;' . 'State: ' . $outConfig['active_label_text'] . ' ( Energized )';
+
+                                            print $custData = '<div class="input-color">
+                                    <span title="' . $tooltip . '" class="ic_out_color' . $i . '" style="background: ' . $outConfig['active_label_color'] . ';"></span>
+                                    ' . $outConfig['name'] . '
+                                </div>';
+                                        } else {
+                                            $tooltip = 'Pin: ' . $outConfig['pin_number'] . '&#10;' . 'State: ' . $outConfig['inactive_label_text'] . ' ( Not Energized )';
+                                            print $custData = '<div class="input-color">
+                                    <span title="' . $tooltip . '" class="ic_out_color' . $i . '" style="background: ' . $outConfig['inactive_label_color'] . ';"></span>
+                                    ' . $outConfig['name'] . '
+                                </div>';
+                                        }
+                                    }
+
+                                    if ($i == 3) {
+                                        if ($rmLastStatus & 4) {
+                                            $tooltip = 'Pin: ' . $outConfig['pin_number'] . '&#10;' . 'State: ' . $outConfig['active_label_text'] . ' ( Energized )';
+
+                                            print $custData = '<div class="input-color">
+                                    <span title="' . $tooltip . '" class="ic_out_color' . $i . '" style="background: ' . $outConfig['active_label_color'] . ';"></span>
+                                    ' . $outConfig['name'] . '
+                                </div>';
+                                        } else {
+                                            $tooltip = 'Pin: ' . $outConfig['pin_number'] . '&#10;' . 'State: ' . $outConfig['inactive_label_text'] . ' ( Not Energized )';
+                                            print $custData = '<div class="input-color">
+                                    <span title="' . $tooltip . '" class="ic_out_color' . $i . '" style="background: ' . $outConfig['inactive_label_color'] . ';"></span>
+                                    ' . $outConfig['name'] . '
+                                </div>';
+                                        }
+                                    }
+                                }
+                                ?>
+
+                            </div>
+
+                            <!--                            <div class="input-color-wrap brdr"> 
+                            
+                            <?php
+                            // _pr($userRemotiiConf);
+                            $j = 0;
+                            foreach ($userRemotiiConf['outConfig'][$k] as $outConfig) {
+                                //$i++;
+                                $j = $outConfig['pin_number'];
+                                $tooltip = 'Pin: ' . $outConfig['pin_number'] . '&#10;' . 'State: ' . $outConfig['active_label_text'] . ' ( Energized )';
+                                ?>
+                                    
+                                                                        <div class="input-color">
+                                                                            <span title="<?php echo $tooltip ?>" class="color-output ic_op_color<?php echo $j; ?>" id="statusClr<?php print $outConfig['config_id']; ?>" style="background: 
+                                <?php
+                                if ($outConfig['output_initial_state'] == 1) {
+                                    print $outConfig['active_label_color'];
+                                } else {
+                                    print $outConfig['inactive_label_color'];
+                                }
+                                ?>;">
+                                                                            </span>
+                                                                            <label id="statusTxt<?php print $outConfig['config_id']; ?>" class="ic_op_status<?php echo $j; ?>">
+                                <?php
+                                if ($outConfig['output_initial_state'] == 1) {
+                                    print $outConfig['active_label_text'];
+                                } else {
+                                    print $outConfig['inactive_label_text'];
+                                }
+                                ?>
+                                                                            </label>
+                                                                        </div>
+                                                                        
+                                    
+                                <?php
+                            }
+                            ?>
+                            
+                                                        </div>-->
+                        </div>
+                    </div>
+                </div>
+                <?php
+                $k = $k + 1;
+            }
+            ?>
+        </div>
+    </div>
+</div>
+
+
+
+<!--container end-->

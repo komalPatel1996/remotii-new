@@ -1,0 +1,183 @@
+<?php
+foreach ($userRemotiiConfig['inConfig'] as $ic) {
+    $pin_numbers['ri_pin_numbers'][] = $ic['pin_number'];
+    $pin_numbers['ri_pin_info'][$ic['pin_number']] = $ic;
+}
+
+foreach ($userRemotiiConfig['outConfig'] as $oc) {
+    $pin_numbers['ro_pin_numbers'][] = $oc['pin_number'];
+    $pin_numbers['ro_pin_info'][$oc['pin_number']] = $oc;
+}
+
+foreach ($inboundData as $ib):
+    $dinBin = $ib->din;
+    $doutBin = $ib->dout;
+    $timestamp = strtotime($ib->receive_time);
+    $newTime = $timestamp + ((int) $this->offset) * 60;
+    ?>
+
+    <tr id="<?php echo $ib->message_id; ?>">
+        <td time="<?php echo date('m/d/Y h:i:s A', $newTime) ?> ">
+            <?php
+            $outTime = date('m/d/Y h:i:s A', $newTime);
+            $time = '';
+            for ($i = 0; $i < strlen($outTime); $i++) {
+                if ($outTime{$i} == ' ' && $i <= 15) {
+                    $time = $time . '&nbsp&nbsp' . $outTime{$i};
+                } else {
+                    $time = $time . $outTime{$i};
+                }
+            }
+            print $time;
+            ?> 
+
+        </td>
+        <td>
+            <table class="border0">
+                <?php
+                if (in_array(1, $pin_numbers['ri_pin_numbers'])) {
+                    if ($dinBin & 1) {
+                        echo '
+	                						<tr class="input1" state="1">
+		                						<td class="status_color">' . $pin_numbers['ri_pin_info'][1]['active_label_color'] . '</td>
+                                                                                    <td class="din_value">' . $dinBin . '</td>
+                                                                                   
+		                						<td class="in_name">' . $pin_numbers['ri_pin_info'][1]['name'] . '</td>
+												<td>:  <span class="status" id="ioalgntop">' . $pin_numbers['ri_pin_info'][1]['active_label_text'] . '</span></td>
+	                						</tr>';
+                    } else {
+                        echo '
+										<tr class="input1" state="0">
+												<td class="status_color">' . $pin_numbers['ri_pin_info'][1]['inactive_label_color'] . '</td>
+                                                                                                    <td class="din_value">' . $dinBin . '</td>
+												<td class="in_name">' . $pin_numbers['ri_pin_info'][1]['name'] . '</td>
+												<td>:  <span class="status" id="ioalgntop">' . $pin_numbers['ri_pin_info'][1]['inactive_label_text'] . '</span></td>
+				 							</tr>';
+                    }
+                }
+
+                if (in_array(2, $pin_numbers['ri_pin_numbers'])) {
+                    if ($dinBin & 2) {
+                        echo '<tr class="input2" state="1">
+	                							<td class="status_color">' . $pin_numbers['ri_pin_info'][2]['active_label_color'] . '</td>
+                                                                                    <td class="din_value">' . $dinBin . '</td>
+	                							<td class="in_name">' . $pin_numbers['ri_pin_info'][2]['name'] . '</td>
+	                							<td>:  <span class="status" id="ioalgntop">' . $pin_numbers['ri_pin_info'][2]['active_label_text'] . '</span></td>
+											  </tr>';
+                    } else {
+                        echo '<tr class="input2" state="0">
+												<td class="status_color">' . $pin_numbers['ri_pin_info'][2]['inactive_label_color'] . '</td>
+                                                                                                    <td class="din_value">' . $dinBin . '</td>
+												<td class="in_name">' . $pin_numbers['ri_pin_info'][2]['name'] . '</td>
+				 								<td>:  <span class="status" id="ioalgntop">' . $pin_numbers['ri_pin_info'][2]['inactive_label_text'] . '</span></td>
+				 							  </tr>';
+                    }
+                }
+
+                if (in_array(3, $pin_numbers['ri_pin_numbers'])) {
+                    if ($dinBin & 4) {
+                        echo '<tr class="input3" state="1">
+	                							<td class="status_color">' . $pin_numbers['ri_pin_info'][3]['active_label_color'] . '</td>
+                                                                                    <td class="din_value">' . $dinBin . '</td>
+	                							<td class="in_name">' . $pin_numbers['ri_pin_info'][3]['name'] . '</td> 
+												<td>:  <span class="status" id="ioalgntop">' . $pin_numbers['ri_pin_info'][3]['active_label_text'] . '</span></td>
+											  </tr>';
+                    } else {
+                        echo '<tr class="input3" state="0">
+												<td class="status_color">' . $pin_numbers['ri_pin_info'][3]['inactive_label_color'] . '</td>
+                                                                                                    <td class="din_value">' . $dinBin . '</td>
+		 										<td><span class="in_name">' . $pin_numbers['ri_pin_info'][3]['name'] . '</span></td> 
+												<td>:  <span class="status" id="ioalgntop">' . $pin_numbers['ri_pin_info'][3]['inactive_label_text'] . '</span></td>
+				 							  </tr>';
+                    }
+                }
+
+                if (in_array(4, $pin_numbers['ri_pin_numbers'])) {
+                    if ($dinBin & 8) {
+                        echo '<tr class="input4" state="1">
+	                							<td class="status_color">' . $pin_numbers['ri_pin_info'][4]['active_label_color'] . '</td>
+                                                                                    <td class="din_value">' . $dinBin . '</td>
+												<td class="in_name">' . $pin_numbers['ri_pin_info'][4]['name'] . '</td> 
+											  	<td>:  <span class="status" id="ioalgntop">' . $pin_numbers['ri_pin_info'][4]['active_label_text'] . '</span></td>
+											  </tr>';
+                    } else {
+                        echo '<tr class="input4" state="0">
+												<td class="status_color">' . $pin_numbers['ri_pin_info'][4]['inactive_label_color'] . '</td>
+                                                                                                    <td class="din_value">' . $dinBin . '</td>
+												<td class="in_name">' . $pin_numbers['ri_pin_info'][4]['name'] . '</td> 
+				 							  	<td>:   <span class="status" id="ioalgntop">' . $pin_numbers['ri_pin_info'][4]['inactive_label_text'] . '</span></td>
+				 							  </tr>';
+                    }
+                }
+                ?>
+
+            </table>
+        </td>
+        <td>
+            <table class="border0">
+                <?php
+                if (in_array(1, $pin_numbers['ro_pin_numbers'])) {
+                    if ($doutBin & 1) {
+                        echo '<tr class="output1" state="1">
+                						<td class="status_color">' . $pin_numbers['ro_pin_info'][1]['active_label_color'] . '</td>
+                						<td class="out_name">' . $pin_numbers['ro_pin_info'][1]['name'] . '</td>
+										<td>:  <span class="status" id="ioalgntop">' . $pin_numbers['ro_pin_info'][1]['active_label_text'] . '</span></td>
+									  </tr>';
+                    } else {
+                        echo '<tr class="output1" state="0">
+                						<td class="status_color">' . $pin_numbers['ro_pin_info'][1]['inactive_label_color'] . '</td>
+										<td class="out_name">' . $pin_numbers['ro_pin_info'][1]['name'] . '</td> 
+										<td>:  <span class="status" id="ioalgntop">' . $pin_numbers['ro_pin_info'][1]['inactive_label_text'] . '</span></td>
+									  </tr>';
+                    }
+                }
+
+                if (in_array(2, $pin_numbers['ro_pin_numbers'])) {
+                    if ($doutBin & 2) {
+                        echo '<tr class="output2" state="1">
+		                				<td class="status_color">' . $pin_numbers['ro_pin_info'][2]['active_label_color'] . '</td>
+		                				<td class="out_name">' . $pin_numbers['ro_pin_info'][2]['name'] . '</td>
+										<td>:  <span class="status" id="ioalgntop">' . $pin_numbers['ro_pin_info'][2]['active_label_text'] . '</span></td>
+				 					  </tr>';
+                    } else {
+                        echo '<tr class="output2" state="0">
+										<td class="status_color">' . $pin_numbers['ro_pin_info'][2]['inactive_label_color'] . '</td>
+										<td class="out_name">' . $pin_numbers['ro_pin_info'][2]['name'] . '</td> 
+										<td>:  <span class="status" id="ioalgntop">' . $pin_numbers['ro_pin_info'][2]['inactive_label_text'] . '</span></td>
+				 					  </tr>';
+                    }
+                }
+
+                if (in_array(3, $pin_numbers['ro_pin_numbers'])) {
+                    if ($doutBin & 4) {
+                        echo '<tr class="output3" state="1">
+				 						<td class="status_color">' . $pin_numbers['ro_pin_info'][3]['active_label_color'] . '</td>
+	                					<td class="out_name">' . $pin_numbers['ro_pin_info'][3]['name'] . '</td>
+	                					<td>:  <span class="status" id="ioalgntop">' . $pin_numbers['ro_pin_info'][3]['active_label_text'] . '</span></td>
+	                				  </tr>';
+                    } else {
+                        echo '<tr class="output3" state="0">
+										<td class="status_color">' . $pin_numbers['ro_pin_info'][3]['inactive_label_color'] . '</td>
+										<td class="out_name">' . $pin_numbers['ro_pin_info'][3]['name'] . '</td>
+										<td>:  <span class="status" id="ioalgntop">' . $pin_numbers['ro_pin_info'][3]['inactive_label_text'] . '</span></td>
+				 					  </tr>';
+                    }
+                }
+                ?>
+
+            </table>
+        </td>
+    </tr>
+
+    <?php
+endforeach;
+?> 
+<input type="hidden" class="permission" remotii_id="<?php echo $remotii_id; ?>" permission="<?php echo $permission; ?>" />
+<input type="hidden" class="heartbeat" value="<?php echo $latesttime ?>"/>
+<input type="hidden" class="recent-status" value="<?php echo $recentLastInputStatus ?>"/>
+
+<input type="hidden" class="alarm" value="<?php if($AlarmStatus)
+    { 
+    echo "1"; }
+    else {
+        echo "0";} ?>"/>

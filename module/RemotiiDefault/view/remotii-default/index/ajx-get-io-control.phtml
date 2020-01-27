@@ -1,0 +1,84 @@
+        <h4>Output Control</h4>
+		<div class="box1 viewing">
+            <?php
+               // _pr($userRemotiiConfig);
+            ?>
+            <ul class="list2 alter">
+                <?php
+                $i = 0;
+                foreach( $userRemotiiConfig['outConfig'] as $outConfig ) {
+				$i++;
+                ?>
+                    <li>
+					<div class="fl">
+						<span class="name ic_op_name<?php echo $i;?>">
+							<?php print $outConfig['name']; ?>
+						</span>
+						<span class="color-output ic_op_color<?php echo $i;?>" id="statusClr<?php print $outConfig['config_id']; ?>" style="background: 
+                                <?php
+                                    if($outConfig['output_initial_state'] == 1) { 
+                                        print $outConfig['active_label_color']; 
+                                    } else { 
+                                        print $outConfig['inactive_label_color']; 
+                                    }
+                                ?>;">
+                        </span>
+                        
+                        <label
+							id="statusTxt<?php print $outConfig['config_id']; ?>" class="ic_op_status<?php echo $i;?>">
+                                <?php
+                                    if($outConfig['output_initial_state'] == 1) {
+                                        print $outConfig['active_label_text'];
+                                    } else {
+                                        print $outConfig['inactive_label_text'];
+                                    }
+                                ?>
+                         </label>
+					</div>
+					<div class="fr">
+						<input type="button" name="button" class="btn5 ic_op_active<?php echo $i;?>"
+							id="actBtn<?php print $outConfig['config_id']; ?>"
+							data-value="<?php print $outConfig['output_initial_state']; ?>"
+							value="<?php print $outConfig['active_label_text']; ?>"
+							<?php //if($outConfig['output_initial_state'] == 1) { print 'disabled="disabled" class="btn5"'; } else { echo 'class="btn5"';} ?>
+							onclick="changeStatusOut(<?php echo $i?>, 'set');"/>
+
+						<input type="button" name="button" class="btn5 ic_op_inactive<?php echo $i;?>"
+							id="inactBtn<?php print $outConfig['config_id']; ?>" 
+							data-value="<?php print $outConfig['output_initial_state']; ?>"
+							value="<?php print $outConfig['inactive_label_text']; ?>"
+							<?php //if($outConfig['output_initial_state'] != 1) { print 'disabled="disabled" class="btn5"'; } else { echo 'class="btn5"';} ?>
+							onclick="changeStatusOut(<?php echo $i?>, 'clr');" />
+                            
+                            <?php if($outConfig['is_output_momentary'] == 1) { ?>
+                                <input type="button" name="toggleBtn"
+							value="Toggle" class="btn5" onclick="changeStatusOut(<?php echo $i?>, 'tgl');"/>
+                            <?php } else { ?>
+                            	<input type="button" name="toggleBtn"
+							value="Toggle" class="btn6" disabled />
+                            <?php } ?>
+                        </div>
+				</li>
+                <?php
+                }
+                ?>
+            </ul>
+		</div>
+
+		<h4>Input Control</h4>
+		<div class="box1">
+			<div class="input-color-wrap">
+                <?php
+                $i = 0;
+                    foreach($userRemotiiConfig['inConfig'] as $inConfig) {
+$i++;
+                ?>
+                        <div class="input-color">
+							<span class="ic_out_color<?php echo $i;?>" style="background: <?php print $inConfig['active_label_color']; ?>;"></span>
+                            <?php print $inConfig['name']; ?>
+                        </div>
+                <?php
+                    }
+                ?>
+            </div>
+		</div>

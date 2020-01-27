@@ -1,0 +1,311 @@
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video, input {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	vertical-align:middle;
+	font-family: 'Open Sans', sans-serif;
+	
+}
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+
+body {
+	line-height: 1;	
+	font-size:14px;
+	line-height:normal;
+	color:#4c4c4c;
+}
+
+ol, ul {
+	list-style: none;
+}
+
+blockquote, q {
+	quotes: none;
+}
+
+blockquote:before, blockquote:after, q:before, q:after {
+	content: '';
+	content: none;
+}
+
+/*table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}*/
+
+a {
+	text-decoration:none;
+	color:#1c5f8d;
+}
+a {outline : none!important;}
+a:active, a:focus { 
+ outline: none; 
+ ie-dummy: expression(this.hideFocus=true);
+}
+
+
+
+.block {
+	display:block;
+}
+
+.fr{
+	float:right;
+}
+.fl{
+	float:left;
+}
+
+.cl{
+	clear:both;
+}
+
+.hel_cf {
+	font-family:'Open Sans', Arial, Helvetica, sans-serif;
+}
+
+.hr_sep5 {
+	margin:0 5px 0 0
+}
+
+.p_l00 {
+	margin:0 20px 0 0;
+}
+
+.txt_under {
+	text-decoration:underline;
+}
+
+.tr {
+	text-align:right !important;
+}
+
+.tl {
+	text-align:left !important;
+}
+
+.tc {
+	text-align:center !important;
+}
+
+.white {
+	color:#fff !important;
+}
+
+.red ,.error{
+	color:#F00 !important;
+}
+.red a{
+	display:inline;
+	font-weight:normal;
+	font-size:12px
+}
+
+.pos_rel {
+	position:relative;
+}
+
+.p5 {
+	padding-top:5px !important;
+}
+
+/*2march css starts here*/
+.normal_text {
+	font-weight:normal !important
+}
+
+.bold_text {
+	font-weight:bold !important
+}
+
+.hr_sep {
+	margin:0 !important;
+	padding:0 !important;
+}
+
+.hr_sep12 {
+	margin-top:12px !important;
+}
+
+.p_l0 {
+	padding-left:0px !important;
+}
+
+.p_r0 {
+	padding-right:0 !important;
+}
+
+.border_none {
+	border-right:0 !important;
+}
+
+.green {
+	color:#3F9905 !important;
+}
+
+.over_hide {
+	overflow:hidden !important;
+}
+
+.ank_txt_under {
+	text-decoration:underline;
+}
+
+.ank_txt_under:hover {
+	text-decoration:none;
+}
+
+/*2march css ends here*/
+/*5march css starts here*/
+.p_t0 {
+	padding-top:0 !important;
+}
+
+.valign_top {
+	vertical-align:top !important;
+}
+
+.valign_mid {
+	vertical-align:middle !important;
+}
+
+.hr_sep22 {
+	margin-top:22px !important;
+}
+
+.hr_fixed {
+	padding-left:8px !important;
+}
+
+.left_full {
+	float:left;
+	width:100%;
+}
+
+.border_b_none {
+	border-bottom:0 !important;
+}
+
+.hr_sep15 {
+	margin:0 0 15px 0 !important
+}
+
+.hr_sep45 {
+	margin-top:45px !important
+}
+
+/*h1, h2 {
+	font-family:'Open Sans', Arial, Helvetica, sans-serif;
+}*/
+
+.p_l22 {
+	padding-left:22px !important;
+}
+
+.p_l15 {
+	padding-left:15px !important;
+}
+
+.clear {
+	clear:both;
+}
+
+.pos_abs {
+	position:absolute;
+}
+
+.border_r_none {
+	border-right:0 !important;
+}
+
+.hr_sep8 {
+	margin:8px 0 !important;
+}
+
+.fts_14px {
+	font-size:14px;
+}
+
+.hr_sep10 {
+	margin:0 10px 0 0;
+}
+
+.font16 {
+	font-size:16px!important;
+	font-weight:bold;
+}
+
+/*13march starts here*/
+.fts_18px {
+	font-size:18px !important;
+}
+
+.p6_20 {
+	padding:6px 0 20px 0;
+}
+
+/*13march ends here*/
+
+	
+.width_150px {
+	width:150px !important;
+}
+
+.p_t7 {
+	padding-top:7px !important;
+}
+
+/*.full_width{
+	width:100% !important;}*/
+	
+.width_220px {
+	width:220px !important;
+}
+
+.auto {
+	width:auto !important
+}
+
+.p_t10 {
+	padding-top:10px !important;
+}
+
+.border_allnone {
+	border:0px solid #fff !important;
+}
+
+.width_75px {
+	width:75px!important;
+}
+
+.left{
+	float:left !important
+}
+.right{
+	float:right !important;
+	clear:right
+}
+.w_50{
+	width:50px !important
+}
+.w_100{
+	width:100px !important
+}
+.w_150{
+	width:150px !important
+}
+.w_200{
+	width:200px !important
+}
+.w_250{
+	width:250px !important
+}
+.w_270{
+	width:270px !important
+}

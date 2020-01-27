@@ -1,0 +1,442 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Remotii Enduser</title>
+        <?php $baseUrl = BASE_URL . "/assets/f"; ?>
+        <link href="<?php echo $baseUrl; ?>/css/reset.css" type="text/css" rel="stylesheet">
+        <link href="<?php echo $baseUrl; ?>/css/main.css" type="text/css" rel="stylesheet" charset="utf-8">
+        <?php echo $this->headLink()->appendStylesheet($baseUrl . '/css/main-phase2.css'); ?>
+        <link href="<?php echo $baseUrl; ?>/css/main-phase2.css" type="text/css" rel="stylesheet" charset="utf-8">
+        <link href="<?php echo $baseUrl; ?>/css/buttons.css" type="text/css" rel="stylesheet" charset="utf-8">
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'>
+        <link href="<?php echo $baseUrl; ?>/css/screen.css" rel="stylesheet" type="text/css" media="screen" />
+        <link href="<?php echo $baseUrl; ?>/css/colorbox.css" rel="stylesheet" type="text/css" media="screen" />
+        <link href="<?php echo $baseUrl; ?>/css/jquery-ui.css" rel="stylesheet" type="text/css" media="screen" />
+        <script src="<?php echo $baseUrl; ?>/js/jquery-1.7.1.min.js" type="text/javascript"></script>
+        <script src="<?php echo $baseUrl; ?>/js/jquery-ui.js" type="text/javascript"></script>
+        <script  type="text/javascript" src="<?php echo $baseUrl; ?>/js/custom.js"></script>
+        <script type="text/javascript" src="<?php echo $baseUrl; ?>/js/easySlider1.7.js"></script>
+        <!--<script type="text/javascript" src="<?php echo $baseUrl; ?>/assets/b/js/jquery.colorbox.js"></script>-->
+
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $("#slider ul li").css({width: '750px', height: '450px'});
+                $("#slider").easySlider({controlsShow: false});
+                  $('.check').change(function() {
+                    if ($(this).is(":checked")) {
+                        $(this).parent('td').siblings().find('.radio').removeAttr('disabled');
+                        $(this).parent('td').siblings().find('.r1').attr("checked", "checked");
+                    }
+                    else {
+                        $(this).parent('td').siblings().find('.radio').attr('disabled', 'disabled');
+                        $(this).parent('td').siblings().find('.r1').removeAttr("checked", "checked");
+                    }
+                });
+                $(function() {
+                    $(".datepicker").datepicker({minDate: 0,
+                        showOn: "button",
+                        buttonImage: "<?php echo $baseUrl . "/images/calendar.png"; ?>",
+                        buttonImageOnly: true
+                    });
+                });
+
+            });
+        </script>
+        <script type="text/javascript">
+            // JavaScript Document
+            $(document).ready(function() {
+
+                // Time and Repetition
+                $(".onceSec").show();
+                $(".frequency").change(function() {
+//            alert("aaa");
+                    var val = $(this).val();
+//	console.log($(this).val());
+                    if (val == "0")
+                    {
+                        $(".timingSet").hide();
+                        $(".onceSec").show();
+                    }
+                    if (val == "1")
+                    {
+                        $(".timingSet").hide();
+                        $(".everydaySec").show();
+                    }
+                    if (val == "2")
+                    {
+                        $(".timingSet").hide();
+                        $(".daySec").show();
+                    }
+                    if (val == "3")
+                    {
+                        $(".timingSet").hide();
+                        $(".monthlySec").show();
+                    }
+                    if (val == "4")
+                    {
+                        $(".timingSet").hide();
+                        $(".yearlySec").show();
+                    }
+                }).trigger('change');
+                 $(".datepicker").change(function() {
+                    var inp = $(this);
+                    if (inp.val() != 'NULL') {
+                        $(this).parent('p').find('#lable').text('');
+                    }
+                });
+                $(".days").change(function() {
+                    var inp = $(this);
+                    if (inp.val() != 'NULL') {
+                        $(this).find('#lable1').text('');
+                    }
+                });
+                  $(".save").click(function() {
+                      if ($(this).parent('div').siblings().siblings().find('.t1').find('.sel').val() == 0) {
+                        if ($(this).parent('div').siblings().find('.datepicker').val() == '') {
+                            $(this).parent('div').siblings().find('#lable').css('display', 'inline-block');
+                            return false;
+                        }
+                    }
+                    else if ($(this).parent('div').siblings().siblings().find('.t1').find('.sel').val() == 2) {
+                        if ($(this).parent('div').siblings().find('input[name="days[]"]:checked').length == 0) {
+                            $(this).parent('div').siblings().find('#lable1').css('display', 'inline-block');
+                            return false;
+                        }
+                    }
+                    if ($(this).parent('div').siblings('.table').find('#check1').is(':checked')) {
+                        return true;
+                    }
+                    else {
+                        alert("Atleast one output pin should be selected");
+                        return false;
+                    }
+                    
+                });
+                $(".monthchange").change(function() {
+                    var prev_val = $(this).parent('p').find('.datechange').attr('value');
+                    // alert(prev_val);
+                    var value = $(this).val();
+                    if (value == 3 || value == 5 || value == 7 || value == 8 || value == 10 || value == 12) {
+                        num = 31;
+                        month1(num);
+                    }
+                    else if (value == 2 || value == 4 || value == 6 || value == 9 || value == 11) {
+                        num = 30;
+                        month1(num);
+                    }
+
+                    $(this).parent('p').find('.datechange').val(prev_val);
+                }).trigger('change');
+
+                function month1(num) {
+                    $('.datechange').html("");
+                    for (i = 1; i <= num; i++) {
+                        $('.datechange').append("<option value=" + i + ">" + i + "</option>");
+                    }
+                }
+
+            });
+
+        </script>
+    </head>
+    <?php
+    $form = $this->form;
+
+    $form->prepare();
+
+    $form->setAttribute('action', $this->url('remotiifrontend', array(
+                'action' => 'event-scheduler-edit',
+                'id' => $this->eventId,
+    )));
+    $form->setAttribute('method', 'post');
+    echo $this->form()->openTag($form);
+    ?>
+    <?php if (!empty($response)) { ?>
+        <span class="<?php echo $response['status']; ?> form_response"><?php echo $response['message']; ?></span>
+    <?php } ?>
+    <body>
+        <div class="remotii-setup modify scheduler">
+            <div id="slider">
+                <ul>
+                    <li>
+                        <h2>Update Event - <span><?php echo ($remotiiMacData[0]['remotii_name']); ?></span></h2>
+                        <div class="timimg">
+                            <p class="t"> <label>Event Name: </label> <input type="text" name="event_name" value="<?php echo $eventData['event_name'] ?>"class="small"></p>
+                            <h3>Output</h3>
+                        </div>
+                        <table width="100%" cellspacing="0"  class="table">
+                            <?php
+                            $i = 0;
+                            foreach ($OutputConfig as $outputconfig) {
+                                ?>
+                                <tr>
+                                    <td>
+                                        <input type="hidden" name="pin_output_config_id[<?php echo $outputconfig['config_id'] ?>]" value="<?php echo $outputconfig[pin_number] ?>">
+                                        <input type="hidden" name="pin_number[]" value="<?php echo $outputconfig[pin_number] ?>">
+                                        <input type="hidden" name="IsMomentary[<?php echo $outputconfig['config_id'] ?>]" value="<?php echo $outputconfig[is_output_momentary] ?>">
+
+                                        <?php
+                                        $form->get('outputname[]')->setCheckedValue($outputconfig['config_id']);
+                                        if (!empty($this->eventData['output_bits_flags'][((int) $outputconfig['pin_number'] - 1)])) {
+                                            $form->get('outputname[]')->setValue($outputconfig['config_id']);
+                                        }
+                                        if ($outputconfig[is_output_momentary] == 1) {
+                                            ?>
+                                            <?php echo $this->formRow($form->get('outputname[]')); ?>
+                                            <span> <?php echo $outputconfig['name'] . ' ' . '(Momentary)'; ?></span>
+                                            <?php
+                                        } else {
+                                            echo $this->formRow($form->get('outputname[]'));
+                                            ?><span> <?php
+                                                echo $outputconfig['name'];
+                                            }
+                                            ?></span>
+
+                                    </td>
+                                    <td>
+                                        <div class="colorbox" style="background:<?php echo $outputconfig['active_label_color'] ?>" ></div>
+                                        <?php
+                                        $radioStateDisabled="";
+                                        if (empty($this->eventData['output_bits_flags'][((int) $outputconfig['pin_number'] - 1)])) {
+                                            $radioStateDisabled="disabled='disabled'";
+                                        }
+                                        ?>
+                                            
+                                            <?php if ($outputconfig[is_output_momentary] == 0) { ?> 
+                                            <input type="radio" <?php echo!empty($this->eventData['dout_set_flags'][((int) $outputconfig['pin_number'] - 1)]) ? "checked='checked'" : ""; ?> name="radioState[<?php echo $outputconfig['config_id'] ?>]" value="1" class="radio r1"  <?php echo $radioStateDisabled; ?> />
+                                        <?php } ?>
+                                        <?php echo $outputconfig['active_label_text'] ?>
+                                    </td>
+                                    <td>
+                                        <div class="colorbox " style="background:<?php echo $outputconfig['inactive_label_color'] ?>" ></div>
+                                        <?php if ($outputconfig[is_output_momentary] == 0) { ?> 
+                                            <input type="radio" <?php echo!empty($this->eventData['dout_clr_flags'][((int) $outputconfig['pin_number'] - 1)]) ? "checked='checked'" : ""; ?> name="radioState[<?php echo $outputconfig['config_id'] ?>]" value="0" class="radio"  <?php echo $radioStateDisabled; ?>  />
+                                        <?php } ?>
+                                        <?php echo $outputconfig['inactive_label_text'] ?>
+                                    </td>
+                                </tr>
+                                <?php
+                                $i++;
+                            }
+                            ?>
+                        </table>
+                        <br>
+                        <div class="timimg">
+                            <h3>Time and Repetition</h3>
+                            <p class="t">
+                                <label>Time : </label>
+                                <select class="timing"  name="hours">
+
+
+                                    <option <?php echo (date("h", strtotime($this->eventData['occurence_time'])) == "01") ? "selected='selected'" : ""; ?> value="01">01</option>
+                                    <option <?php echo (date("h", strtotime($this->eventData['occurence_time'])) == "02") ? "selected='selected'" : ""; ?> value="02">02</option>
+                                    <option <?php echo (date("h", strtotime($this->eventData['occurence_time'])) == "03") ? "selected='selected'" : ""; ?> value="03">03</option>
+                                    <option <?php echo (date("h", strtotime($this->eventData['occurence_time'])) == "04") ? "selected='selected'" : ""; ?> value="04">04</option>
+                                    <option <?php echo (date("h", strtotime($this->eventData['occurence_time'])) == "05") ? "selected='selected'" : ""; ?> value="05">05</option>
+                                    <option <?php echo (date("h", strtotime($this->eventData['occurence_time'])) == "06") ? "selected='selected'" : ""; ?> value="06">06</option>
+                                    <option <?php echo (date("h", strtotime($this->eventData['occurence_time'])) == "07") ? "selected='selected'" : ""; ?> value="07">07</option>
+                                    <option <?php echo (date("h", strtotime($this->eventData['occurence_time'])) == "08") ? "selected='selected'" : ""; ?> value="08">08</option>
+                                    <option <?php echo (date("h", strtotime($this->eventData['occurence_time'])) == "09") ? "selected='selected'" : ""; ?> value="09">09</option>
+                                    <option <?php echo (date("h", strtotime($this->eventData['occurence_time'])) == "10") ? "selected='selected'" : ""; ?> value="10">10</option>
+                                    <option <?php echo (date("h", strtotime($this->eventData['occurence_time'])) == "11") ? "selected='selected'" : ""; ?> value="11">11</option>
+                                    <option <?php echo (date("h", strtotime($this->eventData['occurence_time'])) == "12") ? "selected='selected'" : ""; ?> value="12">12</option>
+                                </select>                      
+                                <select class="timing" name=" min">
+
+                                    <?php for ($i = 0; $i <= 59; $i++) { ?>
+
+                                        <option <?php echo (date("i", strtotime($this->eventData['occurence_time'])) == $i) ? "selected='selected'" : ""; ?> value="<?php echo $i; ?>"><?php
+                                            if ($i <= 9)
+                                                echo '0' . $i;
+                                            elseif ($i > 9)
+                                                echo $i;
+                                            ?></option>
+
+                                    <?php } ?>
+                                </select>
+                                <select class="timing"  name="am">
+                                    <option <?php echo (date("A", strtotime($this->eventData['occurence_time'])) == "AM") ? "selected='selected'" : ""; ?> value="AM">AM</option>
+                                    <option <?php echo (date("A", strtotime($this->eventData['occurence_time'])) == "PM") ? "selected='selected'" : ""; ?> value="PM">PM</option>                           
+                                </select><br>
+                            </p>
+                            <p class="t t1">
+                                <!--input type="text" value="11:30 AM" id="basicExample"--> 
+                                <label>Frequency : </label>  
+                                <select class="frequency sel" name="occurence_type">
+                                    <option <?php echo ($this->eventData['occurence_type'] == 0) ? "selected='selected'" : ""; ?> value="0">Once</option>
+                                    <option <?php echo ($this->eventData['occurence_type'] == 1) ? "selected='selected'" : ""; ?> value="1">Everyday</option>
+                                    <option <?php echo ($this->eventData['occurence_type'] == 2) ? "selected='selected'" : ""; ?> value="2">Set Of Days</option>
+                                    <option <?php echo ($this->eventData['occurence_type'] == 3) ? "selected='selected'" : ""; ?> value="3">Monthly</option>
+                                    <option <?php echo ($this->eventData['occurence_type'] == 4) ? "selected='selected'" : ""; ?> value="4">Yearly</option>
+                                </select></p>
+                            <p class="timingSet onceSec t"><label>Date : </label><input type="text" class="datepicker" name="occurence_date" value="<?php echo date('m/d/Y', strtotime($this->eventData['occurence_year'] . "-" . $this->eventData['occurence_month'] . "-" . $this->eventData['occurence_date'])); ?>"></input>
+                             <span id="lable" style="display: none; color:red; font-size: 10pt">Cannot be empty</span>
+                            </p>
+
+                            <p class="timingSet daySec days">
+                                <input <?php echo (in_array('Mon', $this->eventData['occurence_days'])) ? "checked='checked'" : ""; ?> type="checkbox" name="days[]" value="Mon" class="check1"> <span>Monday</span>
+                                <input <?php echo (in_array('Tue', $this->eventData['occurence_days'])) ? "checked='checked'" : ""; ?> type="checkbox" name="days[]" value="Tue" class="check1"> <span>Tuesday</span>
+                                <input <?php echo (in_array('Wed', $this->eventData['occurence_days'])) ? "checked='checked'" : ""; ?> type="checkbox" name="days[]" value="Wed" class="check1"> <span>Wednesday</span>
+                                <input <?php echo (in_array('Thu', $this->eventData['occurence_days'])) ? "checked='checked'" : ""; ?> type="checkbox" name="days[]" value="Thu" class="check1"> <span>Thursday</span>
+                                <input <?php echo (in_array('Fri', $this->eventData['occurence_days'])) ? "checked='checked'" : ""; ?> type="checkbox" name="days[]" value="Fri" class="check1"> <span>Friday</span>
+                                <input <?php echo (in_array('Sat', $this->eventData['occurence_days'])) ? "checked='checked'" : ""; ?> type="checkbox" name="days[]" value="Sat" class="check1"> <span>Saturday</span>
+                                <input <?php echo (in_array('Sun', $this->eventData['occurence_days'])) ? "checked='checked'" : ""; ?> type="checkbox" name="days[]" value="Sun" class="check1"> <span>Sunday</span>
+                              <span id="lable1" style="display: none; color:red; font-size: 10pt">Select atleast one</span>
+                            </p>
+                            <p class="timingSet monthlySec t"><label>Date : </label> 
+                                <select name="date1" class="d">
+                                    <option <?php echo ($this->eventData['occurence_date'] == 1) ? "selected='selected'" : ""; ?> value="1">1</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 2) ? "selected='selected'" : ""; ?> value="2">2</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 3) ? "selected='selected'" : ""; ?> value="3">3</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 4) ? "selected='selected'" : ""; ?> value="4">4</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 5) ? "selected='selected'" : ""; ?> value="5">5</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 6) ? "selected='selected'" : ""; ?> value="6">6</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 7) ? "selected='selected'" : ""; ?> value="7">7</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 8) ? "selected='selected'" : ""; ?> value="8">8</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 9) ? "selected='selected'" : ""; ?> value="9">9</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 10) ? "selected='selected'" : ""; ?> value="10">10</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 11) ? "selected='selected'" : ""; ?> value="11">11</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 12) ? "selected='selected'" : ""; ?> value="12">12</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 13) ? "selected='selected'" : ""; ?> value="13">13</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 14) ? "selected='selected'" : ""; ?> value="14">14</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 15) ? "selected='selected'" : ""; ?> value="15">15</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 16) ? "selected='selected'" : ""; ?> value="16">16</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 17) ? "selected='selected'" : ""; ?> value="17">17</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 18) ? "selected='selected'" : ""; ?> value="18">18</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 19) ? "selected='selected'" : ""; ?> value="19">19</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 20) ? "selected='selected'" : ""; ?> value="20">20</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 21) ? "selected='selected'" : ""; ?> value="21">21</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 22) ? "selected='selected'" : ""; ?> value="22">22</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 23) ? "selected='selected'" : ""; ?> value="23">23</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 24) ? "selected='selected'" : ""; ?> value="24">24</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 25) ? "selected='selected'" : ""; ?> value="25">25</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 26) ? "selected='selected'" : ""; ?> value="26">26</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 27) ? "selected='selected'" : ""; ?> value="27">27</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 28) ? "selected='selected'" : ""; ?> value="28">28</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 29) ? "selected='selected'" : ""; ?> value="29">29</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 30) ? "selected='selected'" : ""; ?> value="30">30</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 31) ? "selected='selected'" : ""; ?> value="31">31</option>
+                                </select></p>
+                            <p class="timingSet yearlySec t">
+                                <span class="ml10">Date : </span> 
+
+                                <select name="date" class="datechange d">
+                                    <option <?php echo ($this->eventData['occurence_date'] == 1) ? "selected='selected'" : ""; ?> value="1">1</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 2) ? "selected='selected'" : ""; ?> value="2">2</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 3) ? "selected='selected'" : ""; ?> value="3">3</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 4) ? "selected='selected'" : ""; ?> value="4">4</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 5) ? "selected='selected'" : ""; ?> value="5">5</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 6) ? "selected='selected'" : ""; ?> value="6">6</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 7) ? "selected='selected'" : ""; ?> value="7">7</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 8) ? "selected='selected'" : ""; ?> value="8">8</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 9) ? "selected='selected'" : ""; ?> value="9">9</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 10) ? "selected='selected'" : ""; ?> value="10">10</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 11) ? "selected='selected'" : ""; ?> value="11">11</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 12) ? "selected='selected'" : ""; ?> value="12">12</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 13) ? "selected='selected'" : ""; ?> value="13">13</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 14) ? "selected='selected'" : ""; ?> value="14">14</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 15) ? "selected='selected'" : ""; ?> value="15">15</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 16) ? "selected='selected'" : ""; ?> value="16">16</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 17) ? "selected='selected'" : ""; ?> value="17">17</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 18) ? "selected='selected'" : ""; ?> value="18">18</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 19) ? "selected='selected'" : ""; ?> value="19">19</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 20) ? "selected='selected'" : ""; ?> value="20">20</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 21) ? "selected='selected'" : ""; ?> value="21">21</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 22) ? "selected='selected'" : ""; ?> value="22">22</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 23) ? "selected='selected'" : ""; ?> value="23">23</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 24) ? "selected='selected'" : ""; ?> value="24">24</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 25) ? "selected='selected'" : ""; ?> value="25">25</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 26) ? "selected='selected'" : ""; ?> value="26">26</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 27) ? "selected='selected'" : ""; ?> value="27">27</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 28) ? "selected='selected'" : ""; ?> value="28">28</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 29) ? "selected='selected'" : ""; ?> value="29">29</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 30) ? "selected='selected'" : ""; ?> value="30">30</option>
+                                    <option <?php echo ($this->eventData['occurence_date'] == 31) ? "selected='selected'" : ""; ?> value="31">31</option>
+                                </select>
+                                <span class="mon">Month : </span> 
+                                <select name="month" class="monthchange m">
+                                    <option <?php echo ($this->eventData['occurence_month'] == "1") ? "selected='selected'" : ""; ?> value="1">Jan</option>
+                                    <option <?php echo ($this->eventData['occurence_month'] == "2") ? "selected='selected'" : ""; ?> value="2">Feb</option>
+                                    <option <?php echo ($this->eventData['occurence_month'] == "3") ? "selected='selected'" : ""; ?> value="3">Mar</option>
+                                    <option <?php echo ($this->eventData['occurence_month'] == "4") ? "selected='selected'" : ""; ?> value="4">Apr</option>
+                                    <option <?php echo ($this->eventData['occurence_month'] == "5") ? "selected='selected'" : ""; ?> value="5">May</option>
+                                    <option <?php echo ($this->eventData['occurence_month'] == "6") ? "selected='selected'" : ""; ?> value="6">June</option>
+                                    <option <?php echo ($this->eventData['occurence_month'] == "7") ? "selected='selected'" : ""; ?> value="7">July</option>
+                                    <option <?php echo ($this->eventData['occurence_month'] == "8") ? "selected='selected'" : ""; ?> value="8">Aug</option>
+                                    <option <?php echo ($this->eventData['occurence_month'] == "9") ? "selected='selected'" : ""; ?> value="9">Sept</option>
+                                    <option <?php echo ($this->eventData['occurence_month'] == "10") ? "selected='selected'" : ""; ?> value="10">Oct</option>
+                                    <option <?php echo ($this->eventData['occurence_month'] == "11") ? "selected='selected'" : ""; ?> value="11">Nov</option>
+                                    <option <?php echo ($this->eventData['occurence_month'] == "12") ? "selected='selected'" : ""; ?> value="12">Dec</option></select>
+                            </p>
+
+                        </div>
+                        <div class="alL">
+                            <?php echo $this->formSubmit($form->get('save')); ?> 
+                            <a href="javascript:void(0);" class="btn2 next-slide-btn">Set Input Condition</a></div>
+                    </li>
+                    <li>
+                        <h2>Set Input Status Conditions</h2>
+                        <div class="inputStatus">
+                            <span>When</span>
+                            <select name="condition_type">
+                                <option <?php echo ($this->eventData['condition_type'] == 0) ? "selected='selected'" : ""; ?> value="0">Any</option>
+                                <option <?php echo ($this->eventData['condition_type'] == 1) ? "selected='selected'" : ""; ?> value="1">All</option>
+                            </select>
+                            <span>of the following input conditions met.</span>
+                            <table width="100%" cellspacing="0">
+                                <?php
+                                $i = 0;
+                                foreach ($InputConfig as $inputconfig) {
+                                    ?>
+                                    <tr>
+                                        <td> 
+                                            <input type="hidden" name="pin_input_config_id[<?php echo $inputconfig['config_id'] ?>]" value="<?php echo $inputconfig[pin_number] ?>">
+                                            <input type="hidden" name="pin_number1[]" value="<?php echo $inputconfig[pin_number] ?>">
+                                            <?php
+                                            $form->get('inputname[]')->setCheckedValue($inputconfig['config_id']);
+                                            if (!empty($this->eventData['input_bits_flags'][((int) $inputconfig['pin_number'] - 1)])) {
+                                                $form->get('inputname[]')->setValue($inputconfig['config_id']);
+                                            }
+                                            echo $this->formRow($form->get('inputname[]'));
+                                            ?> 
+                                            <span><?php echo $inputconfig['name']; ?></span>
+                                        </td>
+                                        <td>
+                                          
+                                            <div class="colorbox"
+                                                 style="background:<?php echo $inputconfig['active_label_color'] ?>" >
+                                            </div>
+                                               <?php
+                                        $radioState1Disabled="";
+                                        if (empty($this->eventData['input_bits_flags'][((int) $inputconfig['pin_number'] - 1)])) {
+                                            $radioState1Disabled="disabled='disabled'";
+                                        }
+                                        ?>
+                                            <input type="radio" <?php echo!empty($this->eventData['input_cond_flags'][((int) $inputconfig['pin_number'] - 1)]) ? "checked='checked'" : ""; ?> name="radio1[<?php echo $inputconfig['config_id'] ?>]" value="1" class="radio r1" <?php echo $radioState1Disabled; ?>><?php echo $inputconfig['active_label_text'];  ?>
+                                        </td>
+                                        <td>
+                                            <div class="colorbox" style="background:<?php echo $inputconfig['inactive_label_color'] ?>" ></div>
+                                            <input type="radio" <?php echo empty($this->eventData['input_cond_flags'][((int) $inputconfig['pin_number'] - 1)]) && !empty($this->eventData['input_bits_flags'][((int) $inputconfig['pin_number'] - 1)]) ? "checked='checked'" : ""; ?> name="radio1[<?php echo $inputconfig['config_id'] ?>]" value="0" class="radio " <?php echo $radioState1Disabled; ?>><?php echo $inputconfig['inactive_label_text']; ?>
+                                        </td>
+                                    </tr><?php
+                                    $i++;
+                                }
+                                ?>
+
+                                <input type="hidden" name="remotii_id" value="<?php echo $this->rid ?>">
+                                <input type="hidden" name="mac_address" value="<?php echo $remotiiMacData[0]['mac_address'] ?>">
+
+
+
+                            </table>
+                            <br>
+                            <a href="javascript:void(0);" class=" btn2 prev-slide-btn" >Back</a>
+                            <a href="javascript:void(0);" class=" btn2 prev-slide-btn" >Set</a>
+                            
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </body>

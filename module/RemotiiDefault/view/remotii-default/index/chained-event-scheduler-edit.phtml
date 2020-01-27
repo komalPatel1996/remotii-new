@@ -1,0 +1,335 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Remotii Enduser</title>
+        <?php $baseUrl = BASE_URL . "/assets/f"; ?>
+        <link href="<?php echo $baseUrl; ?>/css/reset.css" type="text/css" rel="stylesheet">
+        <link href="<?php echo $baseUrl; ?>/css/main.css" type="text/css" rel="stylesheet" charset="utf-8">
+        <?php echo $this->headLink()->appendStylesheet($baseUrl . '/css/main-phase2.css'); ?>
+        <link href="<?php echo $baseUrl; ?>/css/main-phase2.css" type="text/css" rel="stylesheet" charset="utf-8">
+        <link href="<?php echo $baseUrl; ?>/css/buttons.css" type="text/css" rel="stylesheet" charset="utf-8">
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'>
+        <link href="<?php echo $baseUrl; ?>/css/screen.css" rel="stylesheet" type="text/css" media="screen" />
+        <link href="<?php echo $baseUrl; ?>/css/colorbox.css" rel="stylesheet" type="text/css" media="screen" />
+        <link href="<?php echo $baseUrl; ?>/css/jquery-ui.css" rel="stylesheet" type="text/css" media="screen" />
+        <script src="<?php echo $baseUrl; ?>/js/jquery-1.7.1.min.js" type="text/javascript"></script>
+        <script src="<?php echo $baseUrl; ?>/js/jquery-ui.js" type="text/javascript"></script>
+        <script  type="text/javascript" src="<?php echo $baseUrl; ?>/js/custom.js"></script>
+        <script type="text/javascript" src="<?php echo $baseUrl; ?>/js/easySlider1.7.js"></script>
+        <!--<script type="text/javascript" src="<?php echo $baseUrl; ?>/assets/b/js/jquery.colorbox.js"></script>-->
+    </head>
+    <?php
+    $form = $this->form;
+
+    $form->prepare();
+
+    $form->setAttribute('action', $this->url('remotiifrontend', array(
+                'action' => 'chained-event-scheduler-edit',
+                'id' => $this->eventId,
+    )));
+    $form->setAttribute('method', 'post');
+    echo $this->form()->openTag($form);
+    ?>
+    <?php if (!empty($response)) { ?>
+        <span class="<?php echo $response['status']; ?> form_response"><?php echo $response['message']; ?></span>
+    <?php } ?>
+    <body>
+        <div class="remotii-setup modify scheduler" style="overflow: hidden;">
+            <div id="slider">
+                <ul>
+                    <li>
+                        <h2>Update Event - <span><?php echo ($remotiiMacData[0]['remotii_name']); ?></span></h2>
+                        <input type="hidden" name="src_remotii_id" id="src_remotii_id" value="<?php echo $remotiiMacData[0]['remotii_id'] ?>">
+
+
+                        <div class="chained_event_list">
+                            <div class="input-div"> <label>Event</label> 
+                                <input type="text" name="event_name" class="small" value="<?php echo $eventData['event_name'] ?>">
+                                <span id="lable" class="hidden" style="color:red; font-size: 10pt">Cannot be empty</span>
+                            </div>
+                            <div class="input-div"> <label>Destination</label> 
+
+                                <select name="triggering_remotii" class="small" id="triggering_remotii">
+                                    <option value="0">Select Remotii</option>
+                                    <?php foreach ($userRemotii as $remotii) { ?>
+                                        <option value="<?php echo $remotii->remotii_id; ?>" <?php echo ($eventData['destination_remotii'] == $remotii->remotii_id) ? 'selected' : '' ?>><?php echo $remotii->remotii_name; ?></option>
+                                    <?php } ?>
+                                </select>
+                                <span id="lable2" class="hidden" style="color:red; font-size: 10pt">Select A Remotii</span>
+                            </div>
+                            <div class="input-div">
+                                <label>Condition</label>
+
+                                <select name="condition" class="small" id="condition">
+                                    <option value="0" <?php echo ($eventData['condition_type'] == 0) ? 'selected' : '' ?>>Any</option>
+                                    <option value="1" <?php echo ($eventData['condition_type'] == 1) ? 'selected' : '' ?>>All</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="timimg" style="padding: 0px 15px 15px 15px !important;overflow: auto;height: 300px;">
+                            <h3 class="m0" style="text-align: center">Trigger Condition ( <?php echo ($remotiiMacData[0]['remotii_name']); ?> )</h3>
+                            <h5 class="m0">Input</h5>
+                            <table width="100%" cellspacing="0" class="table chained_event_list_table">
+                                <?php
+                                $i = 0;
+                                foreach ($InputConfig as $inputconfig) {
+                                    ?>
+                                    <tr>
+                                        <td class="column">
+                                            <input type="hidden" name="pin_input_config_id[<?php echo $inputconfig['config_id'] ?>]" value="<?php echo $inputconfig[pin_number] ?>">
+                                            <input type="hidden" name="pin_number1[]" value="<?php echo $inputconfig['pin_number'] ?>">
+                                            <?php
+                                            $form->get('inputname[]')->setCheckedValue($inputconfig['config_id']);
+                                            if (!empty($this->eventData['src_input_bits_flags'][((int) $inputconfig['pin_number'] - 1)])) {
+                                                $form->get('inputname[]')->setValue($inputconfig['config_id']);
+                                            }
+                                            echo $this->formRow($form->get('inputname[]'));
+                                            ?> 
+                                            <span><?php echo $inputconfig['name']; ?></span>
+                                        </td>
+                                        <?php
+                                        $inRadioStateDisabled = "";
+                                        if (empty($eventData['src_input_bits_flags'][((int) $inputconfig['pin_number'] - 1)])) {
+                                            $inRadioStateDisabled = "disabled='disabled'";
+                                        }
+                                        ?>
+                                        <td class="column">
+                                            <div class="colorbox"
+                                                 style="background:<?php echo $inputconfig['active_label_color'] ?>" >
+                                            </div>
+                                            <input type="radio" class="radio r1 radio_space_after" name="radio1[<?php echo $inputconfig['config_id'] ?>]" value="1"  <?php echo!empty($eventData['src_din_set_flags'][((int) $inputconfig['pin_number'] - 1)]) ? "checked='checked'" : ""; ?>  <?php echo $inRadioStateDisabled; ?>><?php echo $inputconfig['active_label_text']; ?>
+                                        </td>
+                                        <td class="column">
+                                            <div class="colorbox" style="background:<?php echo $inputconfig['inactive_label_color'] ?>" ></div>
+                                            <input type="radio"  class="radio radio_space_after" name="radio1[<?php echo $inputconfig['config_id'] ?>]" value="0" <?php echo (empty($eventData['src_din_set_flags'][((int) $inputconfig['pin_number'] - 1)]) && !empty($this->eventData['src_input_bits_flags'][((int) $inputconfig['pin_number'] - 1)]) ) ? "checked='checked'" : ""; ?>  <?php echo $inRadioStateDisabled; ?>><?php echo $inputconfig['inactive_label_text']; ?>
+                                        </td>
+                                    </tr>
+                                    <?php
+                                }
+                                ?></table>
+                            <?php
+//                                $class=($eventData['destination_remotii'] != $remotiiMacData[0]['remotii_id'])?'':'hidden';
+                            $class = '';
+                            ?>
+                            <div id="output" class="<?php echo $class; ?>" >
+                                <h5 class="m0">Output</h5>
+                                <table width="100%" cellspacing="0" class="table chained_event_list_table">
+                                    <?php
+                                    $i = 0;
+                                    foreach ($srcoutputConfig as $srcOutputconfig) {
+                                        if ($srcOutputconfig['is_output_momentary'] != 1) {
+                                            ?>
+                                            <input type="hidden" name="pin_output_config_id[<?php echo $srcOutputconfig['config_id'] ?>]" value="<?php echo $srcOutputconfig['pin_number'] ?>">
+                                            <input type="hidden" name="pin_number[]" value="<?php echo $srcOutputconfig['pin_number'] ?>">
+                                            <input type="hidden" name="IsMomentary[<?php echo $srcOutputconfig['config_id'] ?>]" value="<?php echo $srcOutputconfig['is_output_momentary'] ?>">
+
+                                            <tr>
+
+
+
+                                                <td class="column">
+                                                    <?php
+                                                    $form->get('outputname[]')->setCheckedValue($srcOutputconfig['config_id']);
+                                                    if (!empty($this->eventData['src_output_bits_flags'][((int) $srcOutputconfig['pin_number'] - 1)])) {
+                                                        $form->get('outputname[]')->setValue($srcOutputconfig['config_id']);
+                                                    }
+                                                    ?>
+                                                    <?php
+                                                    echo $this->formRow($form->get('outputname[]'));
+                                                    ?><span> <?php
+                                                        echo $srcOutputconfig['name'];
+                                                        ?></span>
+                                                </td>
+                                                <td class="column">
+                                                    <div class="colorbox" style="background:<?php echo $srcOutputconfig['active_label_color'] ?>" ></div>
+                                                    <?php
+                                                    $radioStateDisabled = "";
+                                                    if (empty($eventData['src_output_bits_flags'][((int) $srcOutputconfig['pin_number'] - 1)])) {
+                                                        $radioStateDisabled = "disabled='disabled'";
+                                                    }
+                                                    ?>
+                                                    <?php if ($srcOutputconfig['is_output_momentary'] == 0) { ?> 
+                                                        <input type="radio" class ="radio r1 radio_space_after"  name="radioState[<?php echo $srcOutputconfig['config_id'] ?>]" <?php echo!empty($eventData['src_dout_set_flags'][((int) $srcOutputconfig['pin_number'] - 1)]) ? "checked='checked'" : ""; ?> value="1" <?php echo $radioStateDisabled; ?> /> 
+                                                    <?php } ?>
+
+                                                    <?php echo $srcOutputconfig['active_label_text'] ?>
+                                                </td>
+                                                <td class="column">
+                                                    <div class="colorbox " style="background:<?php echo $srcOutputconfig['inactive_label_color'] ?>" ></div>
+
+                                                    <?php if ($srcOutputconfig['is_output_momentary'] == 0) { ?> 
+                                                        <input type="radio" class ="radio radio_space_after" name="radioState[<?php echo $srcOutputconfig['config_id'] ?>]" <?php echo (empty($eventData['src_dout_set_flags'][((int) $srcOutputconfig['pin_number'] - 1)]) && !empty($this->eventData['src_output_bits_flags'][((int) $srcOutputconfig['pin_number'] - 1)])) ? "checked='checked'" : ""; ?> value="0" <?php echo $radioStateDisabled; ?>> 
+                                                    <?php } ?>
+                                                    <?php echo $srcOutputconfig['inactive_label_text'] ?>
+                                                </td>
+                                            </tr>
+                                            <?php
+                                        }
+                                    }
+                                    ?>
+                                </table>
+                            </div>
+
+                        </div>
+                        <br>
+                        <div class="alL modal-footer">
+                            <!--<a href="javascript:void(0);"  class="btn2 prev-slide-btn" style="background:#4c4c4c !important;">Cancel</a>-->
+                            <?php echo $this->formSubmit($form->get('save')); ?> 
+                            <a href="javascript:void(0);" class="btn2 next-slide-btn hidden" id="result_action">Set Resulting Action</a>
+                        </div>
+                    </li>
+                    <li>
+                        <h2 id="tr_remotii"> Set Resulting Action For - <span><?php echo $eventData['remotii_name']; ?></span></h2>
+                        <div class="timimg" id="dest_remotii" style="padding: 0px 15px 15px 15px !important">
+                            <table width="100%" cellspacing="0"  class="table" id="tr_remotii_output">
+                                <?php
+                                foreach ($OutputConfig as $outputconfig) {
+                                    $configName = ($outputconfig['is_output_momentary'] == 1) ? $outputconfig['name'] . ' ' . '(Momentary)' : $outputconfig['name'];
+                                    ?>
+                                    <tr> 
+
+                                    <input type="hidden" name="dest_pin_output_config_id[<?php echo $outputconfig['config_id'] ?>]" value="<?php echo $outputconfig['pin_number'] ?>">
+                                    <input type="hidden" name="dest_pin_number[]" value="<?php echo $outputconfig['pin_number'] ?>">
+                                    <input type="hidden" name="dest_IsMomentary[<?php echo $outputconfig['config_id'] ?>]" value="<?php echo $outputconfig['is_output_momentary'] ?>">
+
+
+                                    <td></td>
+                                    <td>
+                                        <?php
+                                        $tmpPin = (int) $outputconfig['pin_number'];
+                                        $srcOutputCheck = '';
+                                        $srcActiive = '';
+                                        $srcInactiive = '';
+                                        if (($eventData['dest_output_bits_flags'][($tmpPin - 1)] == 1)) {
+                                            $srcOutputCheck = 'checked';
+                                            if ($eventData['dest_dout_set_flags'][($tmpPin - 1)] == 1) {
+                                                $srcActiive = 'checked="checked"';
+                                            } else {
+                                                $srcInactiive = 'checked="checked"';
+                                            }
+                                        }
+                                        ?>
+                                        <input type="checkbox" name="dest_output[]" class="check dest_output" id="check2" value="<?php echo $outputconfig['config_id'] ?>" <?php echo $srcOutputCheck; ?>>
+                                        <span><?php echo $configName ?></span>
+                                    </td>
+                                    <td>
+                                        <div class="colorbox" style="background:<?php echo $outputconfig['active_label_color'] ?>" ></div>
+
+                                        <?php
+                                        $radioStateDisabled = "";
+                                        if (empty($eventData['dest_output_bits_flags'][($tmpPin - 1)])) {
+                                            $radioStateDisabled = "disabled='disabled'";
+                                        }
+                                        if ($outputconfig[is_output_momentary] == 0) {
+                                            ?>
+
+                                            <input type="radio" class ="radio dest_state r1"  name="dest_radioState[<?php echo $outputconfig['config_id'] ?>]" value="1"    <?php echo $srcActiive; ?> <?php echo $radioStateDisabled; ?>>
+                                            <?php
+                                            echo '<span>' . $outputconfig['active_label_text'] . '</span></td>';
+                                        } else {
+                                            ?>
+                                            <?php
+                                            echo '<span style="margin-left:14px;">' . $outputconfig['active_label_text'] . '</span></td>';
+                                        }
+                                        ?>
+                                    <td>
+                                        <div class="colorbox " style="background:<?php echo $outputconfig['inactive_label_color'] ?>" ></div>
+                                        <?php if ($outputconfig['is_output_momentary'] == 0) { ?>
+
+                                            <input type="radio" class ="radio" name="dest_radioState[<?php echo $outputconfig['config_id'] ?>]" value="0"   <?php echo $srcInactiive; ?> <?php echo $radioStateDisabled; ?>> 
+                                            <?php
+                                            echo '<span>' . $outputconfig['inactive_label_text'] . '</span></td></tr>';
+                                        } else {
+                                            ?>
+                                            <?php
+                                            echo '<span style="margin-left:14px;">' . $outputconfig['inactive_label_text'] . '</span></td></tr>';
+                                        }
+                                        ?></td></tr>
+                                <?php } ?>
+                            </table>
+                        </div>
+                        <div class="alL">
+                            <a href="javascript:void(0);"  class="btn2 prev-slide-btn" >Back</a>
+                        </div>
+                    </li>
+
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </body>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#result_action').show();
+            $("#slider ul li").css({width: '750px', height: '450px'});
+            $("#slider").easySlider({controlsShow: false});
+            $(document).on('change', '.check', function () {
+                if ($(this).is(":checked")) {
+                    $(this).parent('td').siblings().find('.radio').removeAttr('disabled');
+                    $(this).parent('td').siblings().find('.r1').attr("checked", "checked");
+                } else {
+                    $(this).parent('td').siblings().find('.radio').attr('disabled', 'disabled');
+                    $(this).parent('td').siblings().find('.r1').removeAttr("checked", "checked");
+                }
+            });
+            $('#triggering_remotii').on('change', function () {
+                var remotiiId = $('#triggering_remotii').val();
+//                if (remotiiId == $('#src_remotii_id').val()) {
+//                    $('#output').addClass('hidden');
+//                } else {
+//                    $('#output').removeClass('hidden');
+//                }
+                if (remotiiId != 0) {
+                    $('#lable2').addClass('hidden');
+                    $('#result_action').show();
+                } else {
+                    $('#lable2').removeClass('hidden');
+                    $('#result_action').hide();
+                }
+                var remotiiName = $('#triggering_remotii option:selected').text();
+                var src_remotii = $('#src_remotii_id').val();
+                $.ajax({
+                    type: "POST",
+                    data: "remotiiId=" + remotiiId + '&src_remotii=' + src_remotii,
+                    datatype: "text",
+                    url: '/client/get-remotii-output-config',
+                    success: function (result) {
+                        // <div class="hidden" id="tr_remotii_output">
+                        $('#tr_remotii').html('Set Resulting Action For - ' + remotiiName);
+                        $('#tr_remotii_output').html(result);
+                        $('#dest_remotii').removeClass('hidden');
+                        //                        $('.alL').removeClass('hidden');
+                    }
+                });
+            });
+            $(".save").click(function (e) {
+                e.preventDefault();
+                if ($('input[name="event_name"]').val() == '') {
+                    $('#lable').removeClass('hidden');
+                } else if ($('#triggering_remotii').val() == 0) {
+                    $('#lable').addClass('hidden');
+                    alert('Select a remotii');
+                    return false;
+                } else if ($('body .dest_output:checked').length <= 0) {
+                    $('#lable').addClass('hidden');
+                    alert('Atleast select one output pin for the Resulting Action');
+                    return false;
+                } else if ($('body .outputname:checked').length <= 0 && $('body .inputname:checked').length <= 0) {
+                    $('#lable').addClass('hidden');
+                    alert('Atleast select one Input/Output pin for the Trigger Condition');
+                    return false;
+                } else {
+                    $(this).unbind('click').click();
+                    return true;
+                }
+
+            });
+            $('.close').on('click', function () {
+                $("#cboxClose", parent.document).trigger('click');
+            });
+        });
+
+    </script>

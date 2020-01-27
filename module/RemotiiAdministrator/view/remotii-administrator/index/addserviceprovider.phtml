@@ -1,0 +1,211 @@
+<?php
+
+$title = 'Add New Service Provider';
+$this->headTitle($title);
+//  define the base url
+$base_url = BASE_URL . '/assets/b';
+$data = $responseData[0];
+?>
+<script type="text/javascript">
+
+<!--
+
+function edSF(o)
+{	
+	if( o.checked ) {
+		$("#service_fee").removeAttr('disabled');
+		$("#service_fee").val("");
+                $("#payaccdetails").show('slow');
+	} else { 
+		$("#service_fee").attr('disabled','disabled');
+		$("#service_fee").val("");
+                $("#payaccdetails").hide('slow');
+	}
+}
+
+function showHideBillingDetails(obj)
+{
+	if( obj.checked ) {
+		$("#billingDetails").show('slow');
+	} else { 
+		$("#billingDetails").hide('slow');
+	}
+}
+
+//-->
+
+</script>
+<div class="pageInfo"><h1>Add New Service Provider</h1></div>
+<!-- widget -->
+<div class="widget">
+    <div class="formWrap">
+        <form action="" name="add_service_provider" id="add_service_provider" method="post">
+        	<?php 
+        		if($errRes[1]['errorBillingDetails'] == 3 ) {
+        	?>
+                        <div id="response" class="error-msg">Error occured while processing transaction : <?php echo $errRes[1]['message'];?></div>
+        	<?php
+        		}
+        	?>
+            
+            <input type="text" name="company" value="<?php print $data->company; ?>" placeholder="Company Name" class="formInput <?php if($responseData['company'] <> '') { print 'error'; } ?>" />
+            <?php if($responseData['company'] == 1) { ?>
+                <span class="infoMsg"><?php print 'Please enter company name'; ?></span>
+            <?php } ?>
+             <?php if($responseData['company'] == 2) { ?>
+                <span class="infoMsg"><?php print 'Company name already exists'; ?></span>
+            <?php } ?>
+            
+            <input type="text" name="fName" value="<?php print $data->fname; ?>" placeholder="Contact First Name" class="formInput <?php if($responseData['errfName'] <> '') { print 'error'; } ?>" maxlength="100" />
+            <?php if($responseData['errfName'] <> '') { ?>
+                <span class="infoMsg"><?php print 'Please enter first name'; ?></span>
+            <?php } ?>
+            
+            <input type="text" name="lName" value="<?php print $data->lname; ?>" placeholder="Contact Last Name" class="formInput <?php if($responseData['errlName'] <> '') { print 'error'; } ?>" maxlength="100" />
+            <?php if($responseData['errlName'] <> '') { ?>
+                <span class="infoMsg"><?php print 'Please enter last name'; ?></span>
+            <?php } ?>
+            
+            <input type="text" name="phoneNumber" value="<?php print $data->phone; ?>" placeholder="Contact Phone Number" class="formInput <?php if($responseData['errphoneNumber'] <> '') { print 'error'; } ?>" maxlength="12" />
+            <?php if($responseData['errphoneNumber'] <> '') { ?>
+                <span class="infoMsg"><?php print 'Please enter valid phone number'; ?></span>
+            <?php } ?>
+            
+            <input type="text" name="emailId" value="<?php print $data->email; ?>" placeholder="Contact Email Address" class="formInput <?php if($responseData['erremailId'] <> '' || $responseData['errEmailDuplicasy'] <> '') { print 'error'; } ?>" maxlength="200" />
+            <?php if($responseData['erremailId'] <> '') { ?>
+                <span class="infoMsg"><?php print 'Please enter valid email id'; ?></span>
+            <?php } ?>
+            <?php if($responseData['errEmailDuplicasy'] <> '') { ?>
+                <span class="infoMsg"><?php print 'Email id already exist. Please use another'; ?></span>
+            <?php } ?>
+
+            <h2> <input type="checkbox" name="shbillingDetails" class="check" <?php if($data->shbillingDetails == 1 || !@array_key_exists('shbillingDetails', $data)){ echo 'checked="checked"'; } ?> onchange="showHideBillingDetails(this)" value="1"/> Billing Details </h2>
+            <div id="billingDetails" style="<?php if($data->shbillingDetails == 1 || !array_key_exists('shbillingDetails', $data)){ echo 'display:block;'; }else{ echo 'display:none;';} ?>">
+             
+            <select name="cardType">
+              <option <?php echo ($data->cardType == '' ? 'selected="selected"': '');?> value="">Card Type</option>
+              <option <?php echo ($data->cardType == 'American Express' ? 'selected="selected"': '');?> value="American Express">American Express</option>
+              <option <?php echo ($data->cardType == 'Carte Blanche' ? 'selected="selected"': '');?> value="Carte Blanche">Carte Blanche</option>
+              <option <?php echo ($data->cardType == 'Diners Club' ? 'selected="selected"': '');?> value="Diners Club">Diners Club</option>
+              <option <?php echo ($data->cardType == 'Discover' ? 'selected="selected"': '');?> value="Discover">Discover</option>
+              <option <?php echo ($data->cardType == 'Enroute' ? 'selected="selected"': '');?> value="Enroute">enRoute</option>
+              <option <?php echo ($data->cardType == 'JCB' ? 'selected="selected"': '');?> value="JCB">JCB</option>
+              <option <?php echo ($data->cardType == 'Maestro' ? 'selected="selected"': '');?> value="Maestro">Maestro</option>
+              <option <?php echo ($data->cardType == 'MasterCard' ? 'selected="selected"': '');?> value="MasterCard">MasterCard</option>
+              <option <?php echo ($data->cardType == 'Solo' ? 'selected="selected"': '');?> value="Solo">Solo</option>
+              <option <?php echo ($data->cardType == 'Switch' ? 'selected="selected"': '');?> value="Switch">Switch</option>
+              <option <?php echo ($data->cardType == 'Visa' ? 'selected="selected"': '');?> value="Visa">Visa</option>
+              <option <?php echo ($data->cardType == 'Visa Electron' ? 'selected="selected"': '');?> value="Visa Electron">Visa Electron</option>
+              <option <?php echo ($data->cardType == 'LaserCard' ? 'selected="selected"': '');?> value="LaserCard">Laser</option>
+            </select>
+            
+            <input type="text" name="card_holder" value="<?php print $data->card_holder; ?>" placeholder="Card Holder Name" class="formInput" maxlength='16' autocomplete="off"/>
+            <?php if($responseData['err_card_holder'] <> '') { ?>
+                <span class="infoMsg"><?php print 'Please enter card holder name'; ?></span>
+            <?php } ?>
+            
+                <input type="text" name="card_number" value="<?php print $data->card_number; ?>" placeholder="Credit Card Number" class="formInput" maxlength='16' autocomplete="off"/>
+            <?php if($responseData['errcnCC'] <> '') { ?>
+                <span class="infoMsg"><?php print 'Please enter valid credit card number'; ?></span>
+            <?php } ?>
+            
+            <div class="clear"></div>
+            <input type="text" style="display:none;">
+            <input type="password" name="cvv" placeholder="CVV" class="formInput onethird" style="width: 50px;" maxlength="4"  autocomplete="off"/> 
+            <select name="expMonth">
+                <option value="">Expiry Month</option>
+                <?php
+                    for($i=1; $i<=12; $i++) {
+                        $option .= '<option '.($data->expMonth == $i ? 'selected="selected"': '').' value="'.str_pad($i, 2, "0", STR_PAD_LEFT).'">'.date('F',  strtotime(date('Y-'.str_pad($i, 2, "0", STR_PAD_LEFT).'-d'))).'</option>';
+                    }
+                    print $option;
+                ?>
+            </select>
+            <select name="expYear">
+                <option value="">Expiry Year</option>
+                <?php
+                    $year = date('Y');
+                    $newYear = $year + 15;
+                    $option='';
+                    for($i=1; $year<=$newYear; $year++) {
+                        $option .= '<option '.($data->expYear == $year ? 'selected="selected"': '').' value="'.$year.'">'.$year.'</option>';
+                    }
+                    print $option;
+                ?>
+            </select>
+            
+            <div style="font-size:14px;padding-bottom: 10px;font-weight: 15px;">Billing Address</div>
+            <input type="text" name="street" value="<?php print $data->street; ?>" placeholder="Street" class="formInput" />
+            <input type="text" name="city" value="<?php print $data->city; ?>" placeholder="City" class="formInput" />
+            <div class="clear"></div>
+            <input type="text" name="state" value="<?php print $data->state; ?>" placeholder="State" class="formInput half" />
+            <input type="text" name="zip" value="<?php print $data->zip_code; ?>" placeholder="Zip Code" class="formInput half" />
+            <input type="text" name="country" value="<?php print $data->country; ?>" placeholder="Country" class="formInput" />
+            </div>
+            
+            <br/>
+            <div style="font-size:14px;padding-bottom: 10px;font-weight: 15px;">Contracted Wholesale Price Per Remotii</div>
+
+
+            <input type="text" name="contracted_price" value="<?php print $data->contracted_price; ?>" placeholder="$ (USD)" class="formInput" /> 
+             <?php if($responseData['contracted_price'] == 2) { ?>
+                <span class="infoMsg"><?php print 'Value cannot be negative'; ?></span>
+            <?php } ?>
+             <?php if($responseData['contracted_price'] == 1) { ?>
+                <span class="infoMsg"><?php print 'Value not in correct format'; ?></span>
+            <?php } ?>   
+            <div class="clear"></div>
+            
+            <div style="font-size:14px;padding-bottom: 10px;font-weight: 15px;">End User Price Per Remotii</div>
+            <input type="text" name="end_user_price" value="<?php print $data->end_user_price; ?>" placeholder="$ (USD)" class="formInput" />
+             <?php if($responseData['end_user_price'] == 2) { ?>
+                <span class="infoMsg"><?php print 'Value cannot be negative'; ?></span>
+            <?php } ?>
+             <?php if($responseData['end_user_price'] == 1) { ?>
+                <span class="infoMsg"><?php print 'Value not in correct format'; ?></span>
+            <?php } ?>   
+            
+            
+            <div class="clear"></div>
+            <br>
+            <div style="font-size:14px;padding-bottom: 10px;font-weight: 15px;">Available Credits</div>
+            <input type="text" name="service_provider_credit" value="<?php print $data->service_provider_credit; ?>" placeholder="$ (USD)" class="formInput" />
+             <?php if($responseData['service_provider_credit'] == 2) { ?>
+                <span class="infoMsg"><?php print 'Value cannot be negative'; ?></span>
+            <?php } ?>
+             <?php if($responseData['service_provider_credit'] == 1) { ?>
+                <span class="infoMsg"><?php print 'Value not in correct format'; ?></span>
+            <?php } ?> 
+            
+            <div class="clear"></div>
+            
+            
+            
+            <div class="clear h20"></div>
+            <input onchange="edSF(this);" type="checkbox" id="allow_end_user_billing" name="allow_end_user_billing" value="1" <?php if($data->allow_end_user_billing == 1) print 'checked=checked'; ?> class="check"><label>Allow automated Billing for End Users</label>
+            <div class="clear h20"></div>
+            <div id="payaccdetails" style="<?php if($data->allow_end_user_billing == 1){ echo 'display:block;'; }else{ echo 'display:none;';} ?>">
+                <input type="text" id="service_fee" name="service_fee" value="<?php print $data->service_fee; ?>" placeholder="Service Fee" class="formInput half" <?php if( $data->allow_end_user_billing != 1 ) { print 'disabled="disabled"'; } ?>/> &nbsp;% 
+                <div class="clear"></div>
+                <!--  receiving payment details start  -->
+                
+                <h2>Receiving Account details</h2>
+                <input type="text" name="routing_number" value="<?php print $data->routing_number; ?>" placeholder="Routing number" class="formInput" maxlength="200" />
+                <select name="account_type">
+                    <option value="">Account Type</option>
+                    <option <?php echo ($data->account_type == 'individual' ? 'selected="selected"': '');?> value="individual">Individual</option>
+                    <option <?php echo ($data->account_type == 'corporation' ? 'selected="selected"': '');?> value="corporation">Corporation</option>
+                </select>
+                <input type="text" name="account_number" value="<?php print $data->account_number; ?>" placeholder="Account Number" class="formInput" maxlength="200" />
+                <input type="text" name="name_on_bank" value="<?php print $data->name_on_bank; ?>" placeholder="Name" class="formInput" maxlength="200" />
+                <!--  receiving payment details end  -->
+            </div>
+
+            
+           
+            
+            <input class="submit-btn" type="submit" value="Add Service Provider" name="submit" title="Add Nag Screen">
+        </form>
+    </div>
+</div>
+<!-- /widget --> 

@@ -1,0 +1,137 @@
+<?php
+$title = 'End Users';
+$this->headTitle($title);
+//  define the base url
+$base_url = BASE_URL . '/assets/b';
+$sf = $_GET['sf'];
+?>
+<div class="pageInfo">
+    <div class="fr w150">
+    	<select onchange="window.location.href='<?php echo BASE_URL?>/admin/index/listclient?sf='+$(this).val()">
+    		<option value="0">All</option>
+    		<option value="<?php echo DELINQUENT?>" <?php echo $sf==DELINQUENT?'selected':""?>>Delinquent</option>
+    		<option value="<?php echo SUSPENDED?>" <?php echo $sf==SUSPENDED?'selected':""?>>Suspended</option>
+    	</select>
+    </div>
+    <h1>End Users</h1></div>
+<!-- widget -->
+<div class="widget users">
+    <table cellpadding="0" cellspacing="0" border="0" class="dTable" id="dynamic">
+        <thead>
+            <tr>
+                <th>Username<span class="sorting" style="display: block;"></span></th>
+                <th>Last Name/First Name</th>
+                <th>Contact Number</th>
+                <th>Email</th>
+                <th>Account Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            $i = 1;
+            foreach ($data as $userData) {
+                ?>
+                <tr <?php if($userData->acc_status == DELINQUENT) { print 'class=delenqred'; }?> id="eurow<?php echo $userData->user_id?>">
+                    <td><a href="<?php echo BASE_URL.'/admin/index/clientinfo/'.$userData->user_id?>"><?php echo $userData->username?></a></td>
+                    <td><?php echo $userData->lname . '/' . $userData->fname?> </td>
+                    <td><?php echo $userData->phone;?></td>
+                    <td><?php echo $userData->email;?></td>
+                    <td>
+                    <span id="accSttaus<?php echo $userData->user_id?>">
+                    <?php 
+                    	if($userData->acc_status== ACTIVE){
+                    		echo 'Active';
+                    	} else if($userData->acc_status== SUSPENDED) {
+                    		echo 'Suspended';
+                    	} else if($userData->acc_status== DELINQUENT) {
+                    		echo 'Delinquent';
+                    	}
+                    
+                    ?></span></td>
+                    <td width="126px">
+                    	<a href="<?php echo BASE_URL . '/admin/index/clientinfo/' . $userData->user_id; ?>"><img src="<?php print $base_url; ?>/images/info.png" alt=""></a>&nbsp;&nbsp;
+                        <a href="<?php echo BASE_URL . '/admin/index/deleteclient/' . $userData->user_id; ?>" onclick="return confirm('Are you sure you wish to delete?');"><img src="<?php print $base_url; ?>/images/delete-icon.png" alt="delete"></a>
+                        <?php
+                           if($userData->acc_status == DELINQUENT) {
+                        ?>
+                            <span id="delinqstatus<?php print $userData->user_id; ?>">
+                                <a href="javascript:void(0);" class="fr" onclick='billEUaccount(<?php print $userData->user_id; ?> );'>
+                                    <img src="<?php print $base_url . '/'; ?>images/billaccicon.png" alt="Bill Account" title="Bill Account">
+                                </a>
+                            </span>
+                         <?php
+                            }
+                         ?>
+                    </td>
+                </tr>
+                <?php
+                $i++;
+            }
+            ?>
+
+        </tbody>
+    </table>              
+
+</div>
+<!-- /widget --> 
+<script language="javascript">
+function billEUaccount(euId, amount) {
+    //alert(spId);
+    //alert(amount);
+    ajaxRequestBillAcc(euId, amount);
+}
+
+function ajaxRequestBillAcc(euId, amount) {
+    // Fire the ajax request
+    jQuery.ajax({
+        url: '<?php print BASE_URL ?>/admin/index/billacceu/'+euId,
+        type: 'post',
+        data: { postdata: amount },
+        success: function(response) {
+            
+            var obj = jQuery.parseJSON(response);
+            var paymentStatus = obj.data.paymentstatus;
+            var status = obj.status;
+            if(status == 'OK') {
+                var exeDate = obj.data.executedon;
+                var accStatus = obj.data.acc_status;
+                if(accStatus == <?php print ACTIVE; ?>) {
+                    jQuery('#accSttaus'+euId).html('Active');
+                    jQuery("#delinqstatus"+euId).remove();
+                    jQuery('#eurow'+euId).removeClass('delenqred');
+                    //jQuery('#delinqstatus'+euId).parent().html($(".action .suspended #asusId").attr('onclick','changeAccStatus('+euId+');').parent().html()).remove('#delinqstatus'+euId);
+                }
+                
+                if(accStatus == <?php print SUSPENDED; ?>) {
+                    jQuery('#accSttaus'+euId).html('Suspended');
+                    jQuery('#delinqstatus'+euId).parent().html($(".action .active #asusId").attr('onclick','changeAccStatus('+euId+');').parent().html()).remove('#delinqstatus'+euId);
+                    
+                }
+
+                if(paymentStatus == 1) {
+                    jQuery('#pstatus'+euId).html('Success');
+                } else {
+                    jQuery('#pstatus'+euId).html('Failed');
+                }
+                
+                var orderDate = <?php print date('m/d/Y'); ?>;
+                jQuery('#pdate'+euId).html(orderDate);
+                
+                //alert(response);
+                //jQuery('#delinqstatus'+spId).css('display','none');
+                jQuery('#sprow'+euId).removeClass('delenqred');
+                
+            } else {
+                if(obj.message != "")
+                {
+                	alert( obj.message );
+                } else {
+					alert('Transaction Failed');
+                }
+				
+            }
+        }
+    });//  Ajax function closed
+}
+</script>

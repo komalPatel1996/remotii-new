@@ -1,0 +1,350 @@
+<?php
+$base_url = BASE_URL . '/assets/b';
+?>
+
+<div class="pageInfo">
+    <!--    <div class="dataTables_filter fr mt0" id="dynamic_filter">
+            <form name="srchFrm" id="srchFrm" method="post">
+                <input type="text" name="remotiiId" id="remotiiId" value="<?php print $searchRemotii; ?>" placeholder="Search Remotii" class="formInput" />
+                <input type="submit" class="btn3" name="filterRemotii" value="Go"/>
+            </form>
+        </div>-->
+    <h1>Remotii's</h1>
+</div>
+
+
+<div class="widget">
+    <?php if (!empty($response)) { ?>
+        <div id="response" class="<?php echo $response['status']; ?>"><?php echo $response['message']; ?></div>
+    <?php } ?>
+
+    <div class="serviceProvider">
+        <div class="inner">   
+            <table cellpadding="0" cellspacing="0" border="0" class="dTable remotiis" id="dynamic">
+                <thead>
+                    <tr>                              
+                        <th> Mac Address </th>
+                        <th> Remotii Name </th>
+                        <th style="display:none">Notes</th>
+                        <th>End User</th>
+                        <th>Last Received Time</th>
+                        <th>Action</th> 
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($spRemotii as $dataRemotii) {
+                        ?>
+                        <tr>                                                         
+                            <td><?php print $dataRemotii->mac_address; ?> </td>
+                            <td><?php print $dataRemotii->remotii_name; ?>
+                            
+                                <div class="notes-popup" id="notes-popup_<?php echo $dataRemotii->user_remotii_id ?>">
+
+                                    <div class="notes-popup-inner">
+                                        <a href="javascript:void(0)" class="close">X</a>
+                                        <div class="notes-btn">
+                                            <h2>Notes</h2>
+                                            <textarea id="<?php echo $dataRemotii->user_remotii_id ?>"><?php echo $dataRemotii->rsp_notes ?></textarea>
+                                            <button id="btnSave_<?php $dataRemotii->user_remotii_id ?>" class="submit-btn ">Save</button>
+                                        </div>
+                                    </div>        
+                                </div>
+
+
+
+                            </td> 
+                            <td style="display:none"><?php echo $dataRemotii->rsp_notes ?></td> 
+                            <td>
+                                <a href="<?php print BASE_URL . '/sp/active-deactive-remotii/' . $dataRemotii->user_id; ?>" class="">
+                                    <?php if($dataRemotii->user_role != 2) print $dataRemotii->uname; ?>
+                                </a>
+                            </td>
+                            <td><?php
+                                $time = 0;
+                                if ($dataRemotii->day_light_saving == 0) {
+                                    $time = $dataRemotii->offset;
+                                }
+                                if ($dataRemotii->day_light_saving == 1) {
+                                    $time = $dataRemotii->offset;
+                                    $time = $time - 60;
+                                }
+                                $hour = intval($time / 60);
+
+
+                                $minutes = $time % 60;
+                                $Time = '+00:00';
+
+                                if ($time < 0) {
+                                    $hour = -$hour;
+                                    $minutes = -$minutes;
+                                    if ($hour < 10) {
+                                        if ($minutes < 10) {
+                                            $Time = "-0$hour:0$minutes";
+                                        }
+                                        if ($minutes >= 10) {
+                                            $Time = "-0$hour:$minutes";
+                                        }
+                                    }
+
+                                    if ($hour >= 10) {
+                                        if ($minutes < 10) {
+                                            $Time = "-$hour:0$minutes";
+                                        }
+                                        if ($minutes > 10) {
+                                            $Time = "-$hour:$minutes";
+                                        }
+                                    }
+                                }
+
+                                if ($time > 0) {
+                                    if ($hour < 10) {
+                                        if ($minutes < 10) {
+                                            $Time = "+0$hour:0$minutes";
+                                        }
+                                        if ($minutes >= 10) {
+                                            $Time = "+0$hour:$minutes";
+                                        }
+                                    }
+
+                                    if ($hour >= 10) {
+                                        if ($minutes < 10) {
+                                            $Time = "+$hour:0$minutes";
+                                        }
+                                        if ($minutes > 10) {
+                                            $Time = "+$hour:$minutes";
+                                        }
+                                    }
+                                }
+                                $formatted_last_receive_time = $dataRemotii->remotii_last_received_time + ($dataRemotii->offset) * 60;
+                                if ($formatted_last_receive_time > 0 && $dataRemotii->remotii_last_received_time > 0) {
+                                    $date = date('m/d/Y h:i:s', $formatted_last_receive_time);
+                                    $time_with_space = '';
+                                    for ($i = 0; $i < strlen($date); $i++) {
+                                        if ($date{$i} == ' ' && $i <= 15) {
+                                            $time_with_space = $time_with_space . '&nbsp&nbsp' . $date{$i};
+                                        } else {
+                                            $time_with_space = $time_with_space . $date{$i};
+                                        }
+                                    }
+                                    print $time_with_space . " GMT(" . $Time . ")";
+                                } else {
+                                    echo $dataRemotii->remotii_last_received_time;
+                                }
+                                ?></td>
+                            <td>
+                                <a href="<?php print BASE_URL . '/sp/deleteremotii/' . $dataRemotii->remotii_id; ?>" class="" onclick="return confirm('Are you sure you wish to delete?');">
+                                    <img src="<?php print $base_url . '/'; ?>images/crose.png" alt="" />
+                                </a>
+                                <a href="javascript:void();" class="notes-btn" title="<?php echo $dataRemotii->rsp_notes ?>" id="<?php echo $dataRemotii->user_remotii_id ?>"><img src="<?php print $base_url; ?>/images/notes.png"></a>
+
+                            </td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+            <form name="remFrm" id="remFrm">
+                <h3>Add Remotii</h3>
+                <div class="box1 col1">
+                    <ul class="list1 customList" id="rmCustul">
+                        <!-- -->
+
+                    </ul>
+                    <br/>
+                    <ul class="pad-list">
+                        <li class="add-remotii">
+                            <textarea id="remotiiVal" style="height:170px;width:280px;"></textarea>
+                            <pre>
+Example:
+11-22-33-44-55-66
+11-22-33-44-55-67
+11-22-33-44-55-68
+                            </pre>                    	
+                        </li>
+                        <li class="add-remotii nbr"><a href="javascript:void(0);" id="addMore" id="remotiiSave" class="add-btn">Add New MAC ID</a></li>
+                    </ul>
+                </div>
+
+            </form>
+
+            <div class="clear"></div>
+
+            <div class="clear"></div>
+        </div>
+    </div>
+</div>
+<!-- /widget -->
+
+<script>
+                                $(document).ready(function() {
+                                    $("a.notes-btn").click(function() {
+                                        // alert("#notes-popup_"+$(this).attr('id'));
+
+                                        $("#notes-popup_" + $(this).attr('id')).show();
+                                    });
+
+                                    //close custom popup  
+                                    text = "";
+                                    id = "";
+                                    $(".submit-btn").live('click', function() {
+//    val=$(this).parent('div').children('textarea').attr();
+                                        text = $(this).prev('textarea').val();
+                                        id = $(this).prev('textarea').attr('id');
+                                        console.log(id);
+                                        //if (text != "") {
+                                            $.post("<?php echo BASE_URL . "/sp/iajax"; ?>",
+                                                    {
+                                                        action: "addNoteToSP",
+                                                        params: {
+                                                            ur_id: id,
+                                                            note: text,
+                                                        }
+                                                    },
+                                            function(data) {
+                                                //console.log(data);
+
+                                                if (data.status == "success") {
+                                                    window.location.reload();
+                                                } else {
+                                                    alert(data.result);
+                                                }
+                                            },
+                                                    "json");
+                                        //}
+
+
+//    console.log(text);
+                                    });
+
+                                    $(".notes-popup a.close, .notes-popup .submit-btn").click(function() {
+                                        $(".notes-popup").hide();
+                                    });
+                                });
+
+                                function ValidateRemotii(RemotiiMacAdd)
+                                {
+                                    var capture = '';
+                                    // Fire the ajax request
+                                    jQuery.ajax({
+                                        url: '<?php print BASE_URL ?>/sp/remotichk',
+                                        type: 'post',
+                                        async: false,
+                                        data: {postdata: RemotiiMacAdd},
+                                        success: function(response) {
+                                            capture = response;
+                                        }
+                                    });//  Ajax function closed
+                                    return capture;
+                                }
+
+//  Remotii JS aded
+                                var i = 0;
+
+                                //  jQuery(function() {
+                                jQuery(document).ready(function() {
+                                    //$("#remotiiVal").mask("**-**-**-**-**-**");
+                                    //$("#remotiiId").mask("**-**-**-**-**-**");
+                                    jQuery("#addMore").click(function() {
+
+                                        var chkVal = '';
+                                        var txtValue = jQuery('#remotiiVal').val();
+
+                                        var macAddressesArr = txtValue.split('\n');
+                                        //alert(macAddressesArr.length);
+                                        for (var i = 0; i < macAddressesArr.length; i++)
+                                        {
+                                            macId = macAddressesArr[i].trim();
+                                            if (macId == "") {
+                                                continue;
+                                            }
+                                            if (!checkMACAddress(macId))
+                                                continue;
+
+                                            //  get the already added items
+                                            jQuery('#rmCustul li').each(function()
+                                            {
+                                                //alert($(this).text());
+                                                var liValue = $(this).text();
+                                                if (macId.trim() == liValue.trim()) {
+                                                    alert('Mac Address ' + macId + ' Already added in the queue, Please enter another.');
+                                                    macAddressesArr[i] = '';
+                                                    jQuery('#remotiiVal').val('');
+                                                }
+
+                                            });
+
+                                            //  get the text box value to add
+                                            if (macId.trim() != "") {
+                                                chkVal = ValidateRemotii(macId);
+                                                if (chkVal >= 1) {
+                                                    alert('Mac Address ' + macId + ' already exist, Please use another');
+                                                } else {
+                                                    $(".customList").append('<a href="javascript:void(0);" class="fr"></a><input type="hidden" class="clsMacVal" name="hdnMacVal" value="' + macId + '"/> ');
+                                                }
+                                                jQuery('#remotiiVal').val('');
+                                            }
+                                        }
+
+                                        if ($(".clsMacVal").length > 0) {
+                                            $("#remotiiSave").css({"color": "#FFFFFF", "cursor": "pointer"});
+                                        }
+                                        saveMacAddrs();
+                                    }); //  click event END
+
+                                    //
+                                    //  Delete the clicked li item
+                                    $('.itemDelete a').live('click', function() {
+                                        $(this).closest('li').remove();
+                                        if ($(".clsMacVal").length == 0) {
+                                            $("#remotiiSave").css({"color": "#B2D3E8", "cursor": "default"});
+                                        }
+                                    });
+
+                                });
+
+
+                                function saveMacAddrs() {
+                                    if ($(".clsMacVal").length == 0) {
+                                        return false;
+                                    }
+                                    var cust = [];
+                                    jQuery('.clsMacVal').each(function()
+                                    {
+                                        cust.push(this.value);
+                                    });
+                                    SaveRemotiiMac(jQuery.unique(cust));
+                                }
+
+
+                                function SaveRemotiiMac(RemotiiMacAdd) {
+                                    // Fire the ajax request
+                                    jQuery.ajax({
+                                        url: '<?php print BASE_URL . '/sp/remotiisave'; ?>',
+                                        type: 'post',
+                                        async: false,
+                                        data: {postdata: RemotiiMacAdd},
+                                        success: function(response) {
+                                            //alert('Remotiis added successfully');
+                                            window.location.href = "<?php print BASE_URL . '/sp/remotiis'; ?>";
+                                        }
+                                    });//  Ajax function closed
+                                }
+
+                                function checkMACAddress(macAddress) {
+                                    //var macAddress=document.getElementById('mac').value;
+                                    var macAddressRegExp = /^([0-9A-F]{2}-){5}[0-9A-F]{2}$/i;
+
+                                    /*if(macAddress.length!=17) {
+                                     alert('Mac Address is not the proper length.');
+                                     return false;
+                                     }*/
+
+                                    if (macAddressRegExp.test(macAddress) == false) { //if match failed
+                                        alert("Invalid MAC Address " + macAddress);
+                                        return false;
+                                    }
+
+                                    return true;
+                                }
+
+</script>
+

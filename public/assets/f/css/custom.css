@@ -1,0 +1,153 @@
+@charset "utf-8";
+/* CSS Document */
+.editCname1{background: url(../images/edit-icon.png) 0 0 no-repeat; display: inline-block; width: 20px; height:20px;
+            vertical-align: middle;  right: 20px; top: 2px; z-index: 1000;}
+.editok1{background: url(../images/right-icon.png) 50% 50% no-repeat;display: inline-block; width: 20px; height:20px;
+         vertical-align: middle;  right: 20px; top: 2px; z-index: 1000;}
+.delete_share{background: url(../images/delete-icon.png) 0 0 no-repeat; display: inline-block; width: 20px; height:20px;
+              vertical-align: middle;  right: 20px; top: 2px; z-index: 1000;}
+.timingSet .datepicker {
+    margin-left: 4px;
+    width: 106px;
+}
+.alL {
+    bottom: 10px;
+    position: absolute;
+    text-align: left;
+}
+.remotii-setup h2 span {
+    display: inline-block;
+    font-weight: 300;
+    margin-top: 0px;
+}
+div.add-event-wrap table tr td a.btn3.active, div.add-event-wrap table tr td a.btn3.inactive {
+    width: 56px;
+}
+.img_loader {
+    display: inline-block;
+}
+.sharebox .img_loader {
+    margin-left: -26px;
+    margin-right: 6px;
+}
+
+.img_loader.hide {
+    display: none;
+}
+.modify table th {
+    text-align: left;
+}
+.scheduler select[name="condition_type"]{
+    width: 70px;
+}
+.onceSec .datepicker {
+    margin-left: 5px;
+    width: 105px !important;
+}
+
+.share-sec{position: relative; display: inline-block; float: right; margin-top: 6px;}
+.share-sec ul{position: absolute; top: 34px; width: 120px; background:#FFFFFF; padding: 5px; border-radius:5px; display: none; border:1px solid;margin-left: -105px;}
+.share-sec ul li{color:#000000;}
+.share-sec2{position: relative; display: inline-block;float: right; margin-top: 6px;}
+.share-sec2 ul{position: absolute; top: 34px; width: 120px; background:#FFFFFF ; padding: 5px; border-radius:5px; display: none; border:1px solid;margin-left: -105px;}
+.share-sec2 ul li{color:#000000;}
+.ajx-time{position: relative; width: 400px; display: inline-block; float: right; margin-top: -50px;}
+.ajx-time h4{ display: inline;} 
+.modify .rinput input[type="text"].ename{height: 30px;line-height: 30px;width: 120px;}
+.t label{width:86px !important;}
+.scheduler input[type="text"].small{width: 152px;margin-right: 10px;height: 28px;line-height: 28px;}
+.modify table td{ padding-left: 0 !important;}
+.m0{
+    margin: 0px;
+}
+.timimg h3{
+    margin: 8px 0 3px 0;
+}
+.box1.iblisting.disabled {
+    display: none !important;
+
+}
+.notes-popup{width: 100%; position: fixed; top: 0; left: 0px; height:100%; display: none; z-index: 9999; background: rgba(0, 0, 0, 0.5) !important;}
+.notes-popup-inner{width: 450px; margin:160px auto; text-align: center; background: #fff; position: relative; padding:40px 20px;}
+.notes-popup a.close{width: 22px; height: 22px; line-height: 22px;position: absolute; top: -13px; right: -12px; border: 1px solid #787878; background:#e2e2e2; border-radius: 50px;}
+.notes-popup textarea{min-height:95px;}
+.notes-popup .submit-btn{border: 0; font-family: arial;}
+.notes-popup h2{text-align: left}
+.rsp_register_form input[type="text"],input[type="password"]
+{
+    margin-bottom: 20px;
+}
+.rsp_register_form select
+{
+    padding: 6px 3px;
+    display: flex !important;
+    margin-bottom: 20px !important;
+}
+.clear {
+    clear: both;
+    display: block;
+}
+.h20 {
+    height: 20px;
+}
+.rsp_register_form .infoMsg {
+    color: #757575;
+    display: block;
+    font-size: 14px;
+    margin-bottom: 20px;
+    margin-top: -20px;
+    width: 500px;
+}
+
+.card_info {display:inline-block;}
+.card_info [type=password] {float:left; margin-right:1em;}
+.card_info select {width:211px; float:left;}
+.card_info select.exp_month {margin-right:1em !important;}
+
+.rsp_register_button
+{
+    float: right;
+    width: 16%;
+    text-align: center;
+}
+.hidden{
+    display: none;
+}
+.chained_event_list label{
+    margin: 0 0 3px 0;
+    padding: 0px;
+    display: block;
+}
+.chained_event_list .input-div{
+    float: left;
+    margin-right: 10px;
+}
+.chained_event_list{
+    margin-bottom: 0px;
+    overflow: auto;
+    text-align: left;
+    border-bottom: 1px solid #DDDDDD;
+    padding-bottom: 20px;
+    padding-left: 15px;
+}
+.chained_event_list .span-error{
+    position: absolute;
+}
+.chained_event_list_table{
+    /*border: 1px solid #ddd !important;*/
+    width: 100% !important;
+    max-width: 100% !important;
+    border-spacing: 0 !important;
+    border-collapse: collapse !important;
+    background-color: transparent !important;
+    margin-bottom: 10px;
+}
+.chained_event_list_table tr td{
+    padding: 5px 10px 5px 10px !important;
+}
+.chained_event_list_table .radio_space_after{
+    margin-right: 5px !important;
+}
+.modal-footer{
+    margin-bottom: 20px !important;
+}

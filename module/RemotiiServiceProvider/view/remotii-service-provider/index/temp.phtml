@@ -1,0 +1,1931 @@
+<?php
+$baseUrl = BASE_URL . '/assets/b';
+//echo $this->doctype();
+//echo $mac_address;exit;
+$remotii_name = $remotiiMacData[0]['remotii_name'];
+$mac_address = $remotiiMacData[0]['mac_address'];
+$remotii_id = $remotiiMacData[0]['remotii_id'];
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="https://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="utf-8">
+            <?php echo $this->headTitle('Remotii')->setSeparator(' - ')->setAutoEscape(false) ?>
+
+            <?php echo $this->headMeta()->appendName('viewport', 'width=device-width, initial-scale=1.0') ?>
+            <?php //<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'> ?>
+            <?php
+            $this->headMeta()->appendName("width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0", "viewport");
+            $this->headLink()->appendStylesheet($baseUrl . '/css/styles.css');
+            $this->headLink()->appendStylesheet($baseUrl . '/css/popup.css');
+            $this->headLink()->appendStylesheet($baseUrl . '/css/screen.css');
+            $this->headLink()->appendStylesheet($baseUrl . '/css/evol.colorpicker.css');
+
+            echo $this->headlink();
+            ?>
+            <style type="text/css">
+                #remotiiName, #macAddress{ width:160px;}
+                .offset {
+                    padding:6px 3px;
+                    margin: 0;
+                    -webkit-border-radius:4px;
+                    -moz-border-radius:4px;
+                    border-radius:5px;
+                    -webkit-box-shadow:0 2px 2px #D7D9D9 inset;
+                    -moz-box-shadow: 0 2px 2px #D7D9D9 inset;
+                    box-shadow: 0 2px 2px #D7D9D9 inset;
+                    background: #E5E7E7;
+                    color:#888;
+                    border:none;
+                    outline:none;
+                    display: inline-block;   
+                    cursor:pointer;
+                    border: #c4c4c4 1px solid;
+                    font-family: 'Open Sans', sans-serif;
+                    font-size: 15px;
+                } .sms-popup{
+                    width: 120px;
+                }
+                .sel3 {
+                    padding:4px 3px;
+                    margin: 0px 5px;
+                    -webkit-border-radius:4px;
+                    -moz-border-radius:4px;
+                    border-radius:4px;
+                    -webkit-box-shadow:0 2px 2px #D7D9D9 inset;
+                    -moz-box-shadow: 0 2px 2px #D7D9D9 inset;
+                    box-shadow: 0 2px 2px #D7D9D9 inset;
+                    background: #E5E7E7;
+                    color:#888;
+                    border:none;
+                    outline:none;
+                    display: inline-block;   
+                    cursor:pointer;
+                    border: #c4c4c4 1px solid;
+                    margin-right: -75px;
+                    margin-top: 6px;
+                    margin-left: 1px;
+                } 
+                .off{
+                    margin-left: 41px;
+                }
+                input[name="day_saving"] {
+                    bottom: -3px;
+                    display: inline-block;
+                    position: relative;
+                }
+                #confirmBox
+                {
+                    display: none;
+                    background-color: #eee;
+                    border-radius: 5px;
+                    border: 1px solid #aaa;
+                    position: fixed;
+                    width: 300px;
+                    left: 50%;
+                    margin-left: -150px;
+                    padding: 6px 8px 8px;
+                    box-sizing: border-box;
+                    text-align: center;
+                    margin-top: 167px;
+                    height: 111px;
+                }
+                #confirmBox .button {
+                    background-color: #ccc;
+                    display: inline-block;
+                    border-radius: 3px;
+                    border: 1px solid #aaa;
+                    padding: 2px;
+                    text-align: center;
+                    width: 80px;
+                    cursor: pointer;
+                }
+                #confirmBox .button:hover
+                {
+                    background-color: #ddd;
+                }
+                #confirmBox .message
+                {
+                    text-align: left;
+                    margin-bottom: 8px;
+                }
+            </style>
+            <script src="<?php echo $baseUrl ?>/js/jquery.min.js" type="text/javascript"></script>
+            <script type="text/javascript" src="<?php echo $baseUrl ?>/js/easySlider1.7.js"></script>
+            <script type="text/javascript" src="<?php echo $baseUrl ?>/js/jquery.maskedinput-1.3.min.js"></script>
+            <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js" type="text/javascript"></script>
+            <script type="text/javascript" src="<?php echo $baseUrl ?>/js/evol.colorpicker.js"></script>
+
+            <script type="text/javascript">
+                var rsw_error_flag = 0;
+                function rsw_validate()
+                {
+                    rsw_error_flag = 0;
+                    var pageno = $(".pageno span").text();
+                    var page_numbers = new Array();
+
+<?php if ($modifyRemotiiId): ?>
+
+                        /**
+                         * In case of add new remotii
+                         */
+                        page_numbers[2] = '2';
+                        page_numbers[3] = '3';
+                        page_numbers[6] = '6';
+                        page_numbers[7] = '7';
+                        page_numbers[9] = '9';
+                        page_numbers[4] = '4';
+                        page_numbers[10] = '10';
+
+<?php else: ?>
+
+                        /**
+                         * In case of modify remotii
+                         */
+                        page_numbers[2] = '2';
+                        page_numbers[3] = '3';
+                        page_numbers[6] = '6';
+                        page_numbers[7] = '7';
+                        page_numbers[9] = '9';
+                        page_numbers[4] = '4';
+                        page_numbers[10] = '10';
+
+
+<?php endif; ?>
+
+                    page_validate_no = page_numbers.indexOf(pageno);
+                    // alert(page_validate_no);
+
+                    if (page_validate_no !== -1) {
+
+                        if (pageno == 6 || pageno == 7) {
+
+                            if ($('#ri_enable_ntfn_1').is(':checked') && $('.box8-in1').children("span").text() == "" && !($("#ri_sound_1").is(':checked'))) {
+
+                                $('.box8-in1').css('border', '1px solid red');
+                                rsw_error_flag = 1;
+                                return false;
+                            } else {
+                                $('.box8-in1').css("border", "1px solid #C4C4C4");
+                            }
+                            if ($('#ri_enable_ntfn_2').is(':checked') && $('.box8-in2').children("span").text() == "" && !($("#ri_sound_2").is(':checked'))) {
+                                $('.box8-in2').css('border', '1px solid red');
+                                rsw_error_flag = 1;
+                                return false;
+                            } else {
+                                $('.box8-in2').css("border", "1px solid #C4C4C4");
+                            }
+                            if ($('#ri_enable_ntfn_3').is(':checked') && $('.box8-in3').children("span").text() == "" && !($("#ri_sound_3").is(':checked'))) {
+                                $('.box8-in3').css('border', '1px solid red');
+                                rsw_error_flag = 1;
+                                return false;
+
+                            } else {
+                                $('.box8-in3').css("border", "1px solid #C4C4C4");
+                            }
+                            if ($('#ri_enable_ntfn_4').is(':checked') && $('.box8-in4').children("span").text() == "" && !($("#ri_sound_4").is(':checked'))) {
+                                $('.box8-in4').css('border', '1px solid red');
+                                rsw_error_flag = 1;
+                                return false;
+                            } else {
+                                $('.box8-in4').css("border", "1px solid #C4C4C4");
+                            }
+                        }
+                        if (pageno == 9) {
+<?php if ($modifyRemotiiId): ?>
+                                $(".pulse-time").each(function()
+                                {
+                                    var value = $(this).val();
+                                    if (value < 0.1) {
+                                        $(this).css('border', '1px solid red');
+                                        rsw_error_flag = 1;
+                                        return false;
+                                    }
+                                    else {
+                                        $(this).css("border", "1px solid #C4C4C4");
+                                    }
+                                });
+<?php endif; ?>
+                        } else if (pageno == 10) {
+<?php if (!$modifyRemotiiId): ?>
+                                $(".pulse-time").each(function()
+                                {
+                                    var value = $(this).val();
+                                    if (value < 0.1) {
+                                        $(this).css('border', '1px solid red');
+                                        rsw_error_flag = 1;
+                                        return false;
+                                    }
+                                    else {
+                                        $(this).css("border", "1px solid #C4C4C4");
+
+                                    }
+                                });
+<?php endif; ?>
+                        } else {
+
+                            $(".rsw_v" + page_validate_no + " .rsw_vr").each(function() {
+                                if ("" == $(this).val() && !$(this).is(':disabled'))
+                                {
+                                    $(this).css('border', '1px solid red');
+                                    $(this).click(function() {
+                                        $(this).css("border", "1px solid #C4C4C4");
+                                    });
+                                    rsw_error_flag = 1;
+                                }
+                            });
+
+                        }
+                    }
+<?php if (empty($mac_address)) { ?>
+                        if (page_validate_no == 2) {
+                            rsw_error_flag = 1;
+                            var macID = $('#macAddress').val();
+                            var mf = macIDconfigChk(macID);
+                            var remotiiName = $('input[name=remotiiName]').val();
+                            var rnf = remotiiNameExists(remotiiName);
+
+                            //  Making request to get the remotii price and user information
+                            var rUserInfo = getRemotiiNuserInfo(macID);
+
+                            if ((mf | rnf) == 0 || mf == 3) {
+                                rsw_error_flag = 0;
+                            }
+                        }
+                        var alwEndBllValue = $("#alwEndBll").val();
+                        if (page_validate_no == 3 && alwEndBllValue == 1) {
+                            //alert('IN ONE');
+
+                            var ccTypeC = $('#cardType').val();
+                            var ccHolderC = $('#card_holder').val();
+                            var ccNumC = $('#card_number').val();
+                            var ccCVV = $('#cvv').val();
+                            var ccExpMonth = $('#expMonth').val();
+                            var ccExpYear = $('#expYear').val();
+
+                            if (ccTypeC != '' && ccHolderC != '' && ccNumC != '' && ccCVV != '' && ccExpMonth != '' && ccExpYear != '') {
+                                //  Making request to get the Stripe Profile Id
+                                var stripeProfileId = createCustomerStripeProfile(ccTypeC, ccHolderC, ccNumC, ccCVV, ccExpMonth, ccExpYear);
+                            }
+                        }
+
+                        //  IF setting is not provided by SP
+                        if (page_validate_no == 4) {
+                            if (jQuery("input:radio[name=configSetting]:checked").val() == 'default') {
+                                var macID = $('#macAddress').val();
+                                chkSPdefaultConfig(macID);
+                            }
+                        }
+
+<?php } else { ?>
+    <?php if (!empty($mac_address) && $remotiiPaymentStatus == 0) { ?>
+                            if (page_validate_no == 2) {
+                                var macID = $('#macAddress').val();
+                                //  Making request to get the remotii price and user information
+                                //alert(macID);
+                                var rUserInfo = getRemotiiNuserInfo(macID);
+                            }
+                            var alwEndBllValue = $("#alwEndBll").val();
+
+                            if (page_validate_no == 3 && alwEndBllValue == 1) {
+                                //alert('IN three');
+
+                                var ccTypeC = $('#cardType').val();
+                                var ccHolderC = $('#card_holder').val();
+                                var ccNumC = $('#card_number').val();
+                                var ccCVV = $('#cvv').val();
+                                var ccExpMonth = $('#expMonth').val();
+                                var ccExpYear = $('#expYear').val();
+
+                                if (ccTypeC != '' && ccHolderC != '' && ccNumC != '' && ccCVV != '' && ccExpMonth != '' && ccExpYear != '') {
+                                    //  Making request to get the Stripe Profile Id
+                                    var stripeProfileId = createCustomerStripeProfile(ccTypeC, ccHolderC, ccNumC, ccCVV, ccExpMonth, ccExpYear);
+                                }
+                            }
+    <?php } ?>
+                        //  IF setting is not provided by SP
+                        if (page_validate_no == 4) {
+                            if (jQuery("input:radio[name=configSetting]:checked").val() == 'default') {
+                                var macID = $('#macAddress').val();
+                                chkSPdefaultConfig(macID);
+                            }
+                        }
+
+<?php } ?>
+                }
+                function doConfirm(msg, yesFn, noFn) {
+                    var confirmBox = $("#confirmBox");
+                    confirmBox.find(".message").text(msg);
+                    confirmBox.find(".yes").unbind().click(function() {
+                        confirmBox.hide();
+                        $("#nextBtn a").trigger('click');
+
+                    });
+                    confirmBox.find(".no").unbind().click(function() {
+                        confirmBox.hide();
+
+                    });
+                    confirmBox.find(".yes").click(yesFn);
+                    confirmBox.find(".no").click(noFn);
+                    confirmBox.show();
+                }
+
+
+                $(document).ready(function() {
+
+<?php if (empty($modifyRemotiiId)): ?>
+                        $('input[name=configSetting]').change(function() {
+                            if ($(this).val() == 'default') {
+                                $(".optDefaultCustom").after($('.rpdc').html());
+                            } else {
+                                $('#slider .rpdc2').remove();
+                            }
+                        });
+                        $(".totalSlides").text('5');
+<?php endif; ?>
+                    $(".drs_cancel").click(function() {
+                        $("#cboxClose", parent.document).trigger('click');
+                    });
+
+                    $("#slider ul li").css({width: '750px', height: '400px'});
+                    $("#slider").easySlider();
+
+                    $('.noIndColor').colorpicker({
+                        displayIndicator: false,
+                        width: "0px"
+                    });
+
+                    $("#macAddress").mask("**-**-**-**-**-**");
+                    $('.sms-popup').mask('(**)****-****');
+
+
+                    //  Function defined to display the next button in case deafult
+                    $('#prevBtn').click(function() {
+
+                        var pageno = $(".pageno span").text();
+                        $('#nextBtn').show();
+                        if (pageno == 4) {
+                            resetConfig();
+                        }
+                    });
+
+                    $("#nextBtn").click(function() {
+                        var pageno = $(".pageno span").text();
+                        var radVal = jQuery("input:radio[name=configSetting]:checked").val();
+                        var id = '<?php echo $modifyRemotiiId; ?>';
+                        //  show hide call to dispaly the setup
+
+                        if (radVal == 'custom' && id == '') {
+                            $(".totalSlides").text('11');
+                            if (pageno == 11) {
+                                $('#nextBtn').hide();
+                            } else {
+                                $('#nextBtn').show();
+                            }
+                            $('#customSetup').show();
+                            $('#defaultSetup').hide();
+                        }
+                        if (radVal == 'copy' && id == '') {
+                            $(".totalSlides").text('11');
+                            if (pageno == 11) {
+                                $('#nextBtn').hide();
+                            } else {
+                                $('#nextBtn').show();
+                            }
+                        }
+
+                        if (radVal == 'default' && id == '') {
+                            $(".totalSlides").text('<?php echo $modifyRemotiiId ? '10' : '5' ?>');
+                            if (pageno == <?php echo $modifyRemotiiId ? '10' : '5' ?>) {
+                                $('#nextBtn').hide();
+                            } else {
+                                $('#nextBtn').show();
+                            }
+                        }
+
+                        if (pageno == 5)
+                        {
+                            if (jQuery("input:radio[name=configSetting]:checked").val() == 'copy')
+                            {
+                                if (!($('.remotii_mac').val()) == "") {
+                                    mac_add = $('.remotii_mac').children(':selected').attr('value');
+                                    // alert(mac_add);
+                                    getInputOutputConfig(mac_add);
+                                }
+
+                            } else {
+                                getInputOutputConfig($('#macAddress').val());
+                            }
+                        }
+
+                        if (true)
+                        {
+                            var ri_enabled_1 = $('#ri_enabled_1').is(':checked');
+                            var ri_enabled_2 = $('#ri_enabled_2').is(':checked');
+                            var ri_enabled_3 = $('#ri_enabled_3').is(':checked');
+                            var ri_enabled_4 = $('#ri_enabled_4').is(':checked');
+
+                            if (ri_enabled_1)
+                            {
+                                $("#ri_input_name_1").text($("#ri_name_1").val());
+                                $("#ri_active_label_1").text($("#ri_asl_1").val());
+                                $("#ri_inactive_label_1").text($("#ri_iasl_1").val());
+                                $("#rii_input_name_1").text($("#ri_name_1").val());
+                                $("#rii_active_label_1").text($("#ri_asl_1").val());
+                                $("#rii_inactive_label_1").text($("#ri_iasl_1").val());
+
+
+                                $("#ri_enable_ntfn_1").attr("disabled", false);
+                                $("#rii_enable_ntfn_1").attr("disabled", false);
+                                $('#ri_pin_number_1').val(1);
+
+                                $('#rii_pin_number_1').val(1);
+
+                            } else {
+
+                                $("#ri_enable_ntfn_1").attr("disabled", "disabled");
+                                $('#ri_pin_number_1').val(1);
+                                $("#rii_enable_ntfn_1").attr("disabled", "disabled");
+                                $('#rii_pin_number_1').val(1);
+                            }
+
+                            if (ri_enabled_2)
+                            {
+                                $("#ri_input_name_2").text($("#ri_name_2").val());
+                                $("#ri_active_label_2").text($("#ri_asl_2").val());
+                                $("#ri_inactive_label_2").text($("#ri_iasl_2").val());
+                                $("#rii_input_name_2").text($("#ri_name_2").val());
+                                $("#rii_active_label_2").text($("#ri_asl_2").val());
+                                $("#rii_inactive_label_2").text($("#ri_iasl_2").val());
+
+
+                                $("#ri_enable_ntfn_2").attr("disabled", false);
+                                $('#ri_pin_number_2').val(2);
+                                $("#rii_enable_ntfn_2").attr("disabled", false);
+                                $('#rii_pin_number_2').val(2);
+
+                            } else {
+                                $("#ri_enable_ntfn_2").attr("disabled", "disabled");
+                                $('#ri_pin_number_2').val(2);
+                                $("#rii_enable_ntfn_2").attr("disabled", "disabled");
+                                $('#rii_pin_number_2').val(2);
+                            }
+
+                            if (ri_enabled_3)
+                            {
+                                $("#ri_input_name_3").text($("#ri_name_3").val());
+                                $("#ri_active_label_3").text($("#ri_asl_3").val());
+                                $("#ri_inactive_label_3").text($("#ri_iasl_3").val());
+                                $("#rii_input_name_3").text($("#ri_name_3").val());
+                                $("#rii_active_label_3").text($("#ri_asl_3").val());
+                                $("#rii_inactive_label_3").text($("#ri_iasl_3").val());
+                                $("#ri_enable_ntfn_3").attr("disabled", false);
+                                $('#ri_pin_number_3').val(3);
+                                $("#rii_enable_ntfn_3").attr("disabled", false);
+                                $('#rii_pin_number_3').val(3);
+
+                            } else {
+                                $("#ri_enable_ntfn_3").attr("disabled", "disabled");
+                                $('#ri_pin_number_3').val(3);
+                                $("#rii_enable_ntfn_3").attr("disabled", "disabled");
+                                $('#rii_pin_number_3').val(3);
+
+                            }
+
+                            if (ri_enabled_4)
+                            {
+                                $("#ri_input_name_4").text($("#ri_name_4").val());
+                                $("#ri_active_label_4").text($("#ri_asl_4").val());
+                                $("#ri_inactive_label_4").text($("#ri_iasl_4").val());
+                                $("#rii_input_name_4").text($("#ri_name_4").val());
+                                $("#rii_active_label_4").text($("#ri_asl_4").val());
+                                $("#rii_inactive_label_4").text($("#ri_iasl_4").val());
+
+                                $("#ri_enable_ntfn_4").attr("disabled", false);
+                                $('#ri_pin_number_4').val(4);
+                                $('#ri_pin_number_1').val(1);
+                                $("#rii_enable_ntfn_4").attr("disabled", false);
+                                $('#rii_pin_number_4').val(4);
+                                $('#rii_pin_number_1').val(1);
+                            } else {
+                                $("#ri_enable_ntfn_4").attr("disabled", "disabled");
+                                $('#ri_pin_number_4').val(4);
+                                $("#rii_enable_ntfn_4").attr("disabled", "disabled");
+                                $('#rii_pin_number_4').val(4);
+                            }
+
+                        }
+                        var ri_enable_ntfn_1 = $('#ri_enable_ntfn_1').is(':checked');
+                        var ri_enable_ntfn_2 = $('#ri_enable_ntfn_2').is(':checked');
+                        var ri_enable_ntfn_3 = $('#ri_enable_ntfn_3').is(':checked');
+                        var ri_enable_ntfn_4 = $('#ri_enable_ntfn_4').is(':checked');
+                        var ri_ntfn_active_trigger_1 = $('#ri_ntfn_active_trigger_1').is(':checked');
+                        var ri_ntfn_active_trigger_2 = $('#ri_ntfn_active_trigger_2').is(':checked');
+                        var ri_ntfn_active_trigger_3 = $('#ri_ntfn_active_trigger_3').is(':checked');
+                        var ri_ntfn_active_trigger_4 = $('#ri_ntfn_active_trigger_4').is(':checked');
+                        var ri_ntfn_inactive_trigger_1 = $('#ri_ntfn_inactive_trigger_1').is(':checked');
+                        var ri_ntfn_inactive_trigger_2 = $('#ri_ntfn_inactive_trigger_2').is(':checked');
+                        var ri_ntfn_inactive_trigger_3 = $('#ri_ntfn_inactive_trigger_3').is(':checked');
+                        var ri_ntfn_inactive_trigger_4 = $('#ri_ntfn_inactive_trigger_4').is(':checked');
+                        var ri_ntfn_any_trigger_1 = $('#ri_ntfn_any_trigger_1').is(':checked');
+                        var ri_ntfn_any_trigger_2 = $('#ri_ntfn_anye_trigger_2').is(':checked');
+                        var ri_ntfn_any_trigger_3 = $('#ri_ntfn_any_trigger_3').is(':checked');
+                        var ri_ntfn_any_trigger_4 = $('#ri_ntfn_any_trigger_4').is(':checked');
+                        if (ri_enable_ntfn_1) {
+                            //$("#rii_enable_ntfn_1").attr("checked", true);
+                            $("#rii_sms_1").attr("disabled", false);
+                            $("#enable_mail_1").attr("disabled", false);
+                            $('#enable_mail_1').addClass("addBtn1");
+                            $("#enable_sms_1").attr("disabled", false);
+                            $(".box8-in1").attr("disabled", false);
+
+                        }
+                        if (ri_enable_ntfn_2) {
+                            // $("#rii_enable_ntfn_2").attr("checked", true);
+                            $("#rii_sms_2").attr("disabled", false);
+                            $("#enable_mail_2").attr("disabled", false);
+                            $('#enable_mail_2').addClass("addBtn1");
+                            $("#enable_sms_2").attr("disabled", false);
+                            $(".box8-in2").attr("disabled", false);
+
+                        }
+                        if (ri_enable_ntfn_3) {
+                            // $("#rii_enable_ntfn_3").attr("checked", true);
+                            $("#rii_sms_3").attr("disabled", false);
+                            $("#enable_mail_3").attr("disabled", false);
+                            $('#enable_mail_3').addClass("addBtn1");
+                            $("#enable_sms_3").attr("disabled", false);
+                            $(".box8-in3").attr("disabled", false);
+
+                        }
+                        if (ri_enable_ntfn_4) {
+
+                            //$("#rii_enable_ntfn_4").attr("checked", true);
+                            $("#rii_sms_4").attr("disabled", false);
+                            $("#enable_mail_4").attr("disabled", false);
+                            $('#enable_mail_4').addClass("addBtn1");
+
+                            $("#enable_sms_4").attr("disabled", false);
+                            $(".box8-in4").attr("disabled", false);
+
+                        }
+                        if (ri_ntfn_active_trigger_1) {
+                            $("#rii_ntfn_active_trigger_1").attr("disabled", false);
+                            $("#rii_ntfn_inactive_trigger_1").attr("disabled", "disabled");
+                            $("#rii_ntfn_any_trigger_1").attr("disabled", "disabled");
+                            $("#rii_ntfn_active_trigger_1").attr("checked", true);
+                        } else if (ri_ntfn_inactive_trigger_1) {
+                            $("#rii_ntfn_inactive_trigger_1").attr("disabled", false);
+                            $("#rii_ntfn_active_trigger_1").attr("disabled", "disabled");
+                            $("#rii_ntfn_any_trigger_1").attr("disabled", "disabled");
+                            $("#rii_ntfn_inactive_trigger_1").attr("checked", true);
+                        } else if (ri_ntfn_any_trigger_1) {
+                            $("#rii_ntfn_any_trigger_1").attr("disabled", false);
+                            $("#rii_ntfn_inactive_trigger_1").attr("disabled", "disabled");
+                            $("#rii_ntfn_active_trigger_1").attr("disabled", "disabled");
+                            $("#rii_ntfn_any_trigger_1").attr("checked", true);
+                        }
+                        if (ri_ntfn_active_trigger_2) {
+                            $("#rii_ntfn_active_trigger_2").attr("disabled", false);
+                            $("#rii_ntfn_inactive_trigger_2").attr("disabled", "disabled");
+                            $("#rii_ntfn_active_trigger_2").attr("disabled", "disabled");
+                            $("#rii_ntfn_active_trigger_2").attr("checked", true);
+                        }
+                        else if (ri_ntfn_inactive_trigger_2) {
+                            $("#rii_ntfn_inactive_trigger_2").attr("disabled", false);
+                            $("#rii_ntfn_active_trigger_2").attr("disabled", "disabled");
+                            $("#rii_ntfn_any_trigger_2").attr("disabled", "disabled");
+                            $("#rii_ntfn_inactive_trigger_2").attr("checked", true);
+                        }
+                        else if (ri_ntfn_any_trigger_2) {
+                            $("#rii_ntfn_any_trigger_2").attr("disabled", false);
+                            $("#rii_ntfn_active_trigger_2").attr("disabled", "disabled");
+                            $("#rii_ntfn_inactive_trigger_2").attr("disabled", "disabled");
+                            $("#rii_ntfn_any_trigger_2").attr("checked", true);
+                        }
+                        if (ri_ntfn_active_trigger_3) {
+                            $("#rii_ntfn_active_trigger_3").attr("disabled", false);
+                            $("#rii_ntfn_inactive_trigger_3").attr("disabled", "disabled");
+                            $("#rii_ntfn_any_trigger_3").attr("disabled", "disabled");
+                            $("#rii_ntfn_active_trigger_3").attr("checked", true);
+                        }
+                        else if (ri_ntfn_inactive_trigger_3) {
+                            $("#rii_ntfn_inactive_trigger_3").attr("disabled", false);
+                            $("#rii_ntfn_active_trigger_3").attr("disabled", "disabled");
+                            $("#rii_ntfn_any_trigger_3").attr("disabled", "disabled");
+                            $("#rii_ntfn_inactive_trigger_3").attr("checked", true);
+                        }
+                        else if (ri_ntfn_any_trigger_3) {
+                            $("#rii_ntfn_any_trigger_3").attr("disabled", false);
+                            $("#rii_ntfn_inactive_trigger_3").attr("disabled", "disabled");
+                            $("#rii_ntfn_active_trigger_3").attr("disabled", "disabled");
+                            $("#rii_ntfn_any_trigger_3").attr("checked", true);
+                        }
+                        if (ri_ntfn_active_trigger_4) {
+                            $("#rii_ntfn_active_trigger_4").attr("disabled", false);
+                            $("#rii_ntfn_inactive_trigger_4").attr("disabled", "disabled");
+                            $("#rii_ntfn_any_trigger_4").attr("disabled", "disabled");
+                            $("#rii_ntfn_active_trigger_4").attr("checked", true);
+                        }
+                        else if (ri_ntfn_inactive_trigger_4) {
+                            $("#rii_ntfn_inactive_trigger_4").attr("disabled", false);
+                            $("#rii_ntfn_active_trigger_4").attr("disabled", "disabled");
+                            $("#rii_ntfn_any_trigger_4").attr("disabled", "disabled");
+                            $("#rii_ntfn_inactive_trigger_4").attr("checked", true);
+                        } else if (ri_ntfn_any_trigger_4) {
+                            $("#rii_ntfn_any_trigger_4").attr("disabled", false);
+                            $("#rii_ntfn_inactive_trigger_4").attr("disabled", "disabled");
+                            $("#rii_ntfn_active_trigger_4").attr("disabled", "disabled");
+                            $("#rii_ntfn_any_trigger_4").attr("checked", true);
+                        }
+
+                        if (true)
+                        {
+                            var ro_enabled_1 = $('#ro_enabled_1').is(':checked');
+                            var ro_enabled_2 = $('#ro_enabled_2').is(':checked');
+                            var ro_enabled_3 = $('#ro_enabled_3').is(':checked');
+
+                            if (ro_enabled_1)
+                            {
+                                $("#ro_input_name_1").text($("#ro_name_1").val());
+                                $("#ro_active_label_1").text($("#ro_asl_1").val());
+                                $("#ro_inactive_label_1").text($("#ro_iasl_1").val());
+                                $("#ro_step2_name_1").text($("#ro_name_1").val());
+                                $("#ro_step2_active_label_1").text($("#ro_asl_1").val());
+                                $("#ro_step2_inactive_label_1").text($("#ro_iasl_1").val());
+                                $("#ro_momentary_1").attr("disabled", false);
+                                if ($("#ro_momentary_1").is(":checked")) {
+                                    $("#ro_active_initialState_1").attr("disabled", false);
+                                    $("#ro_inactive_initialState_1").attr("disabled", false);
+                                    $("#ro_step2_time_1").attr("disabled", false);
+                                }
+                                $("#ro_enable_ntfn_1").attr("disabled", false);
+                                $('#ro_pin_number_1').val(1);
+
+                            } else {
+                                $("#ro_momentary_1").attr("disabled", "disabled");
+                                $("#ro_active_initialState_1").attr("disabled", "disabled");
+                                $("#ro_inactive_initialState_1").attr("disabled", "disabled");
+                                $("#ro_step2_time_1").attr("disabled", "disabled");
+                                $("#ro_enable_ntfn_1").attr("disabled", "disabled");
+                                $('#ro_pin_number_1').val(1);
+                            }
+                            if ($("#ro_momentary_1").is(":checked")) {
+                                $("#ro_step2_time_1").attr("disabled", false);
+                            }
+                            else {
+                                $("#ro_step2_time_1").attr("disabled", "disabled");
+                            }
+                            if (ro_enabled_2)
+                            {
+                                $("#ro_input_name_2").text($("#ro_name_2").val());
+                                $("#ro_active_label_2").text($("#ro_asl_2").val());
+                                $("#ro_inactive_label_2").text($("#ro_iasl_2").val());
+                                $("#ro_step2_name_2").text($("#ro_name_2").val());
+                                $("#ro_step2_active_label_2").text($("#ro_asl_2").val());
+                                $("#ro_step2_inactive_label_2").text($("#ro_iasl_2").val());
+                                $("#ro_momentary_2").attr("disabled", false);
+                                if ($("#ro_momentary_2").is(":checked")) {
+                                    $("#ro_active_initialState_2").attr("disabled", false);
+                                    $("#ro_inactive_initialState_2").attr("disabled", false);
+                                    $("#ro_step2_time_2").attr("disabled", false);
+                                }
+                                $("#ro_enable_ntfn_2").attr("disabled", false);
+                                $('#ro_pin_number_2').val(2);
+
+                            } else {
+
+                                $("#ro_momentary_2").attr("disabled", "disabled");
+                                $("#ro_active_initialState_2").attr("disabled", "disabled");
+                                $("#ro_inactive_initialState_2").attr("disabled", "disabled");
+                                $("#ro_step2_time_2").attr("disabled", "disabled");
+
+                                $("#ro_enable_ntfn_2").attr("disabled", "disabled");
+                                $('#ro_pin_number_2').val(2);
+                            }
+
+                            if (ro_enabled_3)
+                            {
+                                $("#ro_input_name_3").text($("#ro_name_3").val());
+                                $("#ro_active_label_3").text($("#ro_asl_3").val());
+                                $("#ro_inactive_label_3").text($("#ro_iasl_3").val());
+                                $("#ro_step2_name_3").text($("#ro_name_3").val());
+                                $("#ro_step2_active_label_3").text($("#ro_asl_3").val());
+                                $("#ro_step2_inactive_label_3").text($("#ro_iasl_3").val());
+
+                                $("#ro_momentary_3").attr("disabled", false);
+                                if ($("#ro_momentary_3").is(":checked")) {
+                                    $("#ro_active_initialState_3").attr("disabled", false);
+                                    $("#ro_inactive_initialState_3").attr("disabled", false);
+                                    $("#ro_step2_time_3").attr("disabled", false);
+
+                                }
+                                $("#ro_enable_ntfn_3").attr("disabled", false);
+                                $('#ro_pin_number_3').val(3);
+
+                            } else {
+
+                                $("#ro_momentary_3").attr("disabled", "disabled");
+                                $("#ro_step2_time_3").attr("disabled", "disabled");
+                                $("#ro_active_initialState_3").attr("disabled", "disabled");
+                                $("#ro_inactive_initialState_3").attr("disabled", "disabled");
+                                http://start.ubuntu.com/12.04/Google/?sourceid=hp
+                                        $("#ro_enable_ntfn_3").attr("disabled", "disabled");
+                                $('#ro_pin_number_3').val(3);
+                            }
+
+                        }
+
+                        /* if( pageno == 4 )
+                         {
+                         getInputOutputConfig( $('#macAddress').val() );
+                         } */
+
+                    });
+
+                    $(".sms").click(function() {
+                        id = $(this).attr('msg_checked_id');
+                        if ($(this).is(':checked')) {
+                            $('#rii_value_sms_' + id).attr("disabled", false);
+                            $('#rii_operator_sms_' + id).attr("disabled", false);
+                        }
+                        else {
+                            $('#rii_value_sms_' + id).attr("disabled", "disabled");
+                            $('#rii_operator_sms_' + id).attr("disabled", "disabled");
+                            $('#rii_value_sms_' + id).val("");
+                            $('#rii_operator_sms_' + id).val("");
+                        }
+
+                    });
+
+                    $(".rio_enable").click(function() {
+                        var this_id = $(this).attr('id');
+                        n = this_id.split("_");
+                        id_first = n[0];
+                        id_last = n[n.length - 1];
+
+                        if ($(this).attr("checked")) {
+                            $("#" + id_first + "_name_" + id_last).attr("disabled", false);
+                            $("#" + id_first + "_asl_" + id_last).attr("disabled", false);
+                            $("#" + id_first + "_iasl_" + id_last).attr("disabled", false);
+                        } else {
+                            $("#" + id_first + "_name_" + id_last).attr("disabled", "disabled").val("");
+                            $("#" + id_first + "_asl_" + id_last).attr("disabled", "disabled").val("");
+                            $("#" + id_first + "_iasl_" + id_last).attr("disabled", "disabled").val("");
+                        }
+                    });
+
+                    for (var i = 1; i <= 4; i++) {
+                        $('#ri_enable_ntfn_' + i).click(function() {
+                            var this_id = $(this).attr('id');
+                            enable_disable_ntfn(this_id);
+                        });
+                        $('#rii_enable_ntfn_' + i).click(function() {
+                            var this_id = $(this).attr('id');
+                            enable_disable_ntfn(this_id);
+                        });
+                    }
+
+                    for (var i = 1; i <= 3; i++) {
+                        $('#ro_momentary_' + i).click(function() {
+                            var this_id = $(this).attr('id');
+                            check_momentary_output(this_id);
+                        });
+                    }
+
+                    //  Function defined to chk that user has already setup the remotii OR not.
+                    /*   
+                     
+                     $('#macAddress').change(function() {
+                     var macID = $('#macAddress').val();
+                     macIDconfigChk(macID);
+                     
+                     });
+                     
+                     $('input[name=remotiiName]').blur( function() { 
+                     var remotiiName = $(this).val();
+                     if( remotiiNameExists(remotiiName) == 1 ){
+                     rsw_error_flag = 1;
+                     }else{
+                     rsw_error_flag = 0;
+                     }
+                     }); 
+                     
+                     */
+
+                    $(".closePopUp,#prevBtn,#nextBtn, .box8-popup img").click(function(e) {
+                        $(".box8-popup").hide();
+                    });
+                    $(".closePopUp1,#prevBtn,#nextBtn, .box8-popup img").click(function(e) {
+                        $(".box8-popup").hide();
+                    });
+                    $(".addBtn").click(function(e) {
+
+                        $(this).parent().next("div").children("input[id=check-email]").prop('checked', true);
+                        $(this).parent().next("div").children("input[id=check-phone]").prop('checked', false);
+                        $(this).parent().next("div").children("div.open-email").css("display", "");
+                        $(this).parent().next("div").children("div.open-phone").css("display", "none");
+                        if ($(this).attr("disabled") != "disabled") {
+                            $(this).parent().next().show();
+                        }
+                        else {
+                            $(this).parent().next().hide();
+                        }
+                        $(this).parent().next("div").children().children("input[class=email-popup]").focus();
+                        $(this).parent().next("div").children().children("input[class=sms-popup]").focus();
+
+                    });
+                });
+                function getInputOutputConfig(macAddress)
+                {
+                    if (macAddress == "")
+                        return;
+
+<?php if (empty($modifyRemotiiId)): ?>
+                        if (jQuery("input:radio[name=configSetting]:checked").val() == 'copy') {
+                            url = '<?php echo BASE_URL . '/client/get-client-default-config/' ?>' + macAddress;
+                        } else {
+                            url = '<?php echo BASE_URL . '/client/get-sp-default-config/' ?>' + macAddress;
+                        }
+<?php else: ?>
+                        if ($("input:radio[value=default]").attr("checked")) {
+                            url = '<?php echo BASE_URL . '/client/get-sp-default-config/' ?>' + macAddress;
+                        } else {
+    <?php if ($mac_address) { ?>
+                                url = '<?php echo BASE_URL . '/client/get-client-default-config/' ?>' + macAddress;
+    <?php } else { ?>
+                                resetConfig();
+                                url = '';
+    <?php } ?>
+                        }
+<?php endif; ?>
+
+                    if (url != '')
+                        jQuery.ajax({
+                            url: url,
+                            type: 'post',
+                            async: false,
+                            // data: { remotiiId: remotiiId },
+                            success: function(response) {
+                                obj = jQuery.parseJSON(response);
+
+                                //alert(obj.spInputConfig[0].config_id);
+                                var i;
+                                var j;
+                                var inputConfig = obj.spInputConfig;
+                                var outputConfig = obj.spOutputConfig;
+                                //   alert(inputConfig['spInputConfig']);
+                                //for( i = 0; i < inputConfig.length; i++ )
+                                for (i = 1; i <= 4; i++)
+                                {
+                                    if (inputConfig[i] == undefined)
+                                        continue;
+
+                                    j = inputConfig[i].pin_number;//i+ 1;
+
+                                    $('#ri_enabled_' + j).attr("checked", "checked");
+                                    $('#ri_name_' + j).attr("disabled", false);
+                                    $('#ri_name_' + j).val(inputConfig[i].name);
+                                    $('#ri_asl_' + j).attr("disabled", false);
+                                    $('#ri_asl_' + j).val(inputConfig[i].active_label_text);
+                                    $('#ri_iasl_' + j).attr("disabled", false);
+                                    $('#ri_iasl_' + j).val(inputConfig[i].inactive_label_text);
+
+                                    $('input[name=ri_active_color_' + j + ']').colorpicker({
+                                        displayIndicator: false,
+                                        width: "0px",
+                                        color: inputConfig[i].active_label_color
+                                    });
+
+                                    $('input[name=ri_inactive_color_' + j + ']').colorpicker({
+                                        displayIndicator: false,
+                                        width: "0px",
+                                        color: inputConfig[i].inactive_label_color
+                                    });
+
+                                    if (inputConfig[i].enable_notification != null
+                                            && inputConfig[i].enable_notification != 0) {
+                                        $('#ri_enable_ntfn_' + j).attr("checked", "checked");
+
+                                        if (inputConfig[i].notification_trigger == 1) {
+                                            $('#ri_ntfn_active_trigger_' + j).attr("checked", "checked");
+                                        } else if (inputConfig[i].notification_trigger == 0) {
+                                            $('#ri_ntfn_inactive_trigger_' + j).attr("checked", "checked");
+                                        }
+                                        else if (inputConfig[i].notification_trigger == 2) {
+                                            $('#ri_ntfn_any_trigger_' + j).attr("checked", "checked");
+                                        }
+                                        if (inputConfig[i].SoundFlag == 1) {
+                                            $('#ri_sound_' + j).attr("checked", "checked");
+                                        }
+//                                        if (inputConfig[i].is_sms == 1) {
+//                                            $('#rii_sms_' + j).attr("checked", "checked");
+//                                            for (l = 1; l <= (inputConfig[i].sms_value).length; l++) {
+//
+//                                                $('#ri_sms_' + j).children('div').append('<span>' + inputConfig[i].sms_value[l - 1] + '<img src="<?php echo BASE_URL; ?>/assets/b/images/closebtn.png"></span>');
+//                                                $('#ri_sms_' + j).children('div').prepend("<input type='hidden' name='phone[" + i + "][" + l + "]' value=" + inputConfig[i].sms_value[l - 1] + ">");
+//                                                // $('#ri_mail_' + j).val(inputConfig[i].notification_email);
+//                                            }
+//                                            //$('#rii_value_sms_' + j).val(inputConfig[i].sms_value);
+//                                            $('#rii_operator_sms_' + j).val(inputConfig[i].sms_provider);
+//                                            $('#rii_value_sms_' + j).attr("disabled", false);
+//                                            $('#rii_operator_sms_' + j).attr("disabled", false);
+//                                        }
+                                        if (inputConfig[i].notification_email != null
+                                                && inputConfig[i].notification_email != 0) {
+                                            for (k = 1; k <= (inputConfig[i].notification_email).length; k++) {
+
+                                                $('#ri_mail_' + j).children('div').append('<span><img src="<?php echo BASE_URL; ?>/assets/b/images/closebtn.png">' + inputConfig[i].notification_email[k - 1] + '</span>');
+                                                $('#ri_mail_' + j).children('div').prepend("<input type='hidden' name='email[" + i + "][" + k + "]' value=" + inputConfig[i].notification_email[k - 1] + ">");
+                                                // $('#ri_mail_' + j).val(inputConfig[i].notification_email);
+                                            }
+                                        }
+
+                                        $('#ri_ntfn_active_trigger_' + j).attr("disabled", false);
+                                        $('#ri_ntfn_inactive_trigger_' + j).attr("disabled", false);
+                                        $('#ri_ntfn_any_trigger_' + j).attr("disabled", false);
+                                        $('#ri_mail_' + j).attr("disabled", false);
+                                        $('#ri_sound_' + j).attr("disabled", false);
+                                        $('.box8-in' + j).attr("disabled", 'disabled');
+                                        $('#rii_sms_' + j).attr("disabled", false);
+
+                                    } else {
+                                        $('#ri_ntfn_active_trigger_' + j).attr("disabled", 'disabled');
+                                        $('#ri_ntfn_inactive_trigger_' + j).attr("disabled", 'disabed');
+                                        $('#ri_ntfn_any_trigger_' + j).attr("disabled", 'disabed');
+                                        $('.box8-in' + j).attr("disabled", 'disabled');
+                                        $('#ri_mail_' + j).attr("disabled", 'disabled');
+                                        $('#ri_sound_' + j).attr("disabled", 'disabled');
+                                        $('#rii_sms_' + j).attr("disabled", 'disabled');
+                                    }
+
+
+                                }
+
+                                //for( i = 0; i < outputConfig.length; i++ )
+                                for (i = 1; i <= 4; i++)
+                                {
+                                    if (outputConfig[i] == undefined)
+                                        continue;
+
+                                    j = outputConfig[i].pin_number;//i+ 1;
+
+                                    $('#ro_enabled_' + j).attr("checked", "checked");
+                                    $('#ro_name_' + j).attr("disabled", false);
+                                    $('#ro_name_' + j).val(outputConfig[i].name);
+                                    $('#ro_asl_' + j).attr("disabled", false);
+                                    $('#ro_asl_' + j).val(outputConfig[i].active_label_text);
+                                    $('#ro_iasl_' + j).attr("disabled", false);
+                                    $('#ro_iasl_' + j).val(outputConfig[i].inactive_label_text);
+
+                                    $('input[name=ro_active_color_' + j + ']').colorpicker({
+                                        displayIndicator: false,
+                                        width: "0px",
+                                        color: outputConfig[i].active_label_color
+                                    });
+
+                                    $('input[name=ro_inactive_color_' + j + ']').colorpicker({
+                                        displayIndicator: false,
+                                        width: "0px",
+                                        color: outputConfig[i].inactive_label_color
+                                    });
+
+                                    if (outputConfig[i].enable_notification != null
+                                            && outputConfig[i].enable_notification != 0) {
+                                        $('#ro_enable_ntfn_' + j).attr("checked", "checked");
+                                    }
+
+                                    if (outputConfig[i].is_output_momentary != 0) {
+                                        $('#ro_momentary_' + j).attr("checked", "checked");
+                                    }
+
+                                    if (outputConfig[i].output_initial_state != 0) {
+                                        $('#ro_active_initialState_' + j).attr("checked", "checked");
+                                    } else {
+                                        $('#ro_inactive_initialState_' + j).attr("checked", "checked");
+                                    }
+
+                                    if (outputConfig[i].notification_trigger != 0) {
+                                        $('#ro_ntfn_active_trigger_' + j).attr("checked", "checked");
+                                    } else {
+                                        $('#ro_ntfn_inactive_trigger_' + j).attr("checked", "checked");
+                                    }
+
+                                    if (outputConfig[i].notification_email != null
+                                            && outputConfig[i].notification_email != 0) {
+                                        $('#ro_mail_' + j).val(outputConfig[i].notification_email);
+                                    }
+                                    if (outputConfig[i].pulse_width != 0)
+                                    {
+                                        $('#ro_step2_time_' + j).val(outputConfig[i].pulse_width);
+                                    }
+                                    if (outputConfig[i].pulse_width == 0)
+                                    {
+                                        $('#ro_step2_time_' + j).val("1");
+                                    }
+                                }
+                            }
+                            /*, complete: function(response){
+                             console(response);
+                             } */
+                        });
+                }
+
+                function resetConfig()
+                {
+                    var i;
+
+                    for (i = 0; i < 4; i++)
+                    {
+                        j = i + 1;
+                        $('#ri_enabled_' + j).attr("checked", false);
+                        $('#ri_name_' + j).attr("disabled", true);
+                        $('#ri_name_' + j).val("");
+                        $('#ri_asl_' + j).attr("disabled", true);
+                        $('#ri_asl_' + j).val("");
+                        $('#ri_iasl_' + j).attr("disabled", true);
+                        $('#ri_iasl_' + j).val("");
+                        $('input[name=ri_active_color_' + j + ']').val("#00CC00");
+                        $('input[name=ri_inactive_color_' + j + ']').val("#FF0000");
+                        $('#ri_enable_ntfn_' + j).attr("checked", false);
+                        $('#ri_ntfn_active_trigger_' + j).attr("checked", "checked").attr('disabled', 'disabled');
+                        $('#ri_ntfn_inactive_trigger_' + j).attr("checked", false).attr('disabled', 'disabled');
+                        $('#ri_mail_' + j).val("").attr('disabled', 'disabled');
+                        $('#ri_ntfn_sound_' + j).attr("checked", false);
+                        $('#ri_ntfn_sms_' + j).attr("checked", false);
+                        $('#rii_enable_ntfn_' + j).attr("checked", false);
+                        $('#rii_ntfn_active_trigger_' + j).attr("checked", "checked").attr('disabled', 'disabled');
+                        $('#rii_ntfn_inactive_trigger_' + j).attr("checked", false).attr('disabled', 'disabled');
+                        $('#rii_mail_' + j).val("").attr('disabled', 'disabled');
+                        $('#rii_ntfn_sound_' + j).attr("checked", false);
+                        $('#rii_ntfn_sms_' + j).attr("checked", false);
+                    }
+
+                    for (i = 0; i < 3; i++)
+                    {
+                        j = i + 1;
+                        $('#ro_enabled_' + j).attr("checked", false);
+                        $('#ro_name_' + j).attr("disabled", true);
+                        $('#ro_name_' + j).val("");
+                        $('#ro_asl_' + j).attr("disabled", true);
+                        $('#ro_asl_' + j).val("");
+                        $('#ro_iasl_' + j).attr("disabled", true);
+                        $('#ro_iasl_' + j).val("");
+                        $('#ro_active_color_' + j).val("");
+                        $('#ro_inactive_color_' + j).val("");
+                        $('#ro_enable_ntfn_' + j).attr("checked", false);
+                        $('#ro_momentary_' + j).attr("checked", false);
+                        $('#ro_active_initialState_' + j).attr("checked", "checked");
+                        $('#ro_inactive_initialState_' + j).attr("checked", false);
+                        $('#ro_ntfn_active_trigger_' + j).attr("checked", "checked").attr('disabled', 'disabled');
+                        $('#ro_ntfn_inactive_trigger_' + j).attr("checked", false).attr('disabled', 'disabled');
+                        $('#ro_mail_' + j).val("").attr('disabled', 'disabled');
+                        $('#ro_step2_time_' + j).val("1").attr('disabled', 'disabled');
+                    }
+                }
+
+                function macIDconfigChk(RemotiiMacAdd)
+                {
+                    var macRes = 4;
+                    if (RemotiiMacAdd != "")
+                    {
+                        // Fire the ajax request
+                        jQuery.ajax({
+                            url: '<?php print BASE_URL ?>/client/remotiiconfigchk',
+                            type: 'post',
+                            async: false,
+                            data: {postdata: RemotiiMacAdd},
+                            success: function(response) {
+                                macRes = response;
+                                //alert(response);
+                                if (response == 0 || response == 3) {
+                                    $('#errMsg').html('');
+                                    $('#nextBtn').show();
+                                }
+                                if (response == 1) {
+                                    $('#errMsg').html('This remotii already configured.');
+                                    $('#nextBtn').hide();
+                                }
+                                if (response == 2) {
+                                    $('#errMsg').html('Either remotii is suspended or does not exist.');
+                                    $('#nextBtn').hide();
+                                }
+                            }
+                        }); //Ajax function closed
+                    }
+                    return macRes;
+                }
+
+                function getRemotiiNuserInfo(RemotiiMacAdd) {
+                    var macRes = 4;
+                    if (RemotiiMacAdd != "") {
+                        // Fire the ajax request
+                        jQuery.ajax({
+                            url: '<?php print BASE_URL ?>/client/remotiiuserpinfo',
+                            type: 'post',
+                            async: false,
+                            data: {postdata: RemotiiMacAdd},
+                            success: function(response) {
+                                macRes = response;
+                                var dataObj = jQuery.parseJSON(response);
+                                var spIdCust = dataObj.service_provider_id;
+                                var macIdCust = dataObj.mac_address;
+                                var enduPriceCust = dataObj.end_user_price;
+                                var alwEnduBillCust = dataObj.allow_end_user_billing;
+                                var compNameCust = dataObj.company_name;
+                                var euTotalAmount = <?php print ENDUSER_BILL_MONTHS; ?> * enduPriceCust;
+
+                                $('#rmtPriceCust').html('$' + euTotalAmount);
+                                $('#spCompCust').html(compNameCust);
+                                $('#alwEndBll').val(alwEnduBillCust);
+                                if (alwEnduBillCust == 1) {
+                                    //alert('one');
+                                    //  CC Screen
+                                    $(".ccFrmCust").css("display", "block");
+                                    $(".infoCust").css("display", "none");
+                                } else {
+                                    //alert('Two');
+                                    $("#paymntC").removeClass("rsw_v3");
+                                    //  Info Screen
+                                    $(".ccFrmCust").css("display", "none");
+                                    $(".infoCust").css("display", "block");
+
+                                }
+                            },
+                            error: function() {
+                                alert('eror');
+                            }
+                        }); //Ajax function closed
+                    }
+                    return macRes;
+                }
+
+                //  Ajax function call to create customer stripe profile
+                function createCustomerStripeProfile(ccTypeC, ccHolderC, ccNumC, ccCVV, ccExpMonth, ccExpYear) {
+                    // Fire the ajax request
+                    jQuery.ajax({
+                        url: '<?php print BASE_URL ?>/client/stripeprofilecreate',
+                        type: 'post',
+                        async: false,
+                        data: {ccType: ccTypeC, ccHolder: ccHolderC, card_number: ccNumC, cvv: ccCVV, expMonth: ccExpMonth, expYear: ccExpYear},
+                        success: function(response) {
+                            var dataObj = jQuery.parseJSON(response);
+                            var customerId = dataObj.stripeId;
+                            var stripeMsg = dataObj.stripeId;
+                            if (customerId != '') {
+                                $('#stripeCustProfile').val(customerId);
+                            }
+                        }
+                    }); //Ajax function closed
+                }
+
+                //  Ajax function call to chk that default setting is provided by SP or not
+                function chkSPdefaultConfig(macID) {
+                    // Fire the ajax request
+                    jQuery.ajax({
+                        url: '<?php print BASE_URL ?>/client/checkspdefaultconfig',
+                        type: 'post',
+                        async: false,
+                        data: {macAddrs: macID},
+                        success: function(response) {
+
+                            if (response > 0) {
+                                $('.spcnfgmsg').hide();
+                                $('.spcnfgmsg2').show();
+                            } else {
+                                $('.spcnfgmsg').show();
+                                $('.spcnfgmsg2').hide();
+                            }
+
+                        }
+                    }); //Ajax function closed
+                }
+
+                function remotiiNameExists(remotiiName)
+                {
+                    var rnRes = 4;
+                    if (remotiiName.trim() != "") {
+                        // Fire the ajax request
+                        jQuery.ajax({
+                            url: '<?php print BASE_URL ?>/client/remotii-name-exists?remotiiName=' + remotiiName,
+                            type: 'get',
+                            async: false,
+                            data: {},
+                            success: function(response) {
+                                rnRes = response;
+                                if (response == 0) {
+                                    $('#errMsgRN').html('');
+                                    $('#nextBtn').show();
+                                }
+                                if (response == 1) {
+                                    $('#errMsgRN').html('This remotii name already exists.');
+                                    $('#nextBtn').hide();
+                                }
+                            }
+                        }); //Ajax function closed
+                    }
+                    return rnRes;
+                }
+
+                function enable_disable_ntfn(id)
+                {
+                    var arr = id.split('_');
+                    var io = arr[0];
+                    var ntfn_no = arr[arr.length - 1];
+                    var ntfn_id = '#' + io + '_enable_ntfn_' + ntfn_no;
+
+                    if ($(ntfn_id).is(":checked")) {
+
+                        $("input[name=" + io + "_ntfn_trigger_" + ntfn_no + "],input[name=" + io + "_ntfn_sound_" + ntfn_no + "],input[name=" + io + "_ntfn_sms_" + ntfn_no + "], input[name=" + io + "_ntfn_mail_" + ntfn_no + "]").attr("disabled", false);
+                        $('#enable_mail_' + ntfn_no).attr("disabled", false);
+                        $('#enable_mail_' + ntfn_no).addClass("addBtn1");
+                        $('#enable_sms_' + ntfn_no).attr("disabled", false);
+                    } else {
+                        $("input[name=" + io + "_ntfn_trigger_" + ntfn_no + "], input[name=" + io + "_ntfn_sound_" + ntfn_no + "],input[name=" + io + "_ntfn_sms_" + ntfn_no + "],input[name=" + io + "_ntfn_mail_" + ntfn_no + "]").attr("disabled", true);
+                        $('#enable_mail_' + ntfn_no).attr("disabled", true);
+                        $('#enable_mail_' + ntfn_no).removeClass("addBtn1");
+                        $('.box8-in' + ntfn_no).html("");
+                        $('#enable_sms_' + ntfn_no).attr("disabled", false);
+                    }
+
+                }
+
+                function check_momentary_output(id) {
+                    var arr = id.split('_');
+                    var io = arr[2];
+                    momentry_check_id = "#" + id;
+                    if ($(momentry_check_id).is(":checked")) {
+                        $("#ro_active_initialState_" + io).attr("disabled", false);
+                        $("#ro_inactive_initialState_" + io).attr("disabled", false);
+                        $("#ro_inactive_initialState_" + io).prop('checked', true);
+                        $("#ro_step2_time_" + io).attr("disabled", false);
+                    }
+                    else {
+                        $("#ro_active_initialState_" + io).prop('checked', false);
+                        $("#ro_inactive_initialState_" + io).prop('checked', false);
+                        $("#ro_active_initialState_" + io).attr("disabled", true);
+                        $("#ro_inactive_initialState_" + io).attr("disabled", true);
+                        $("#ro_step2_time_" + io).attr("disabled", true);
+                        $("#ro_step2_time_" + io).val("1");
+                    }
+                }
+
+                function checkMACAddress(macAddress) {
+                    //var macAddress=document.getElementById('mac').value;
+                    var macAddressRegExp = /^([0-9A-F]{2}-){5}[0-9A-F]{2}$/i;
+
+                    /*if(macAddress.length!=17) {
+                     alert('Mac Address is not the proper length.');
+                     return false;
+                     }*/
+
+                    if (macAddressRegExp.test(macAddress) == false) { //if match failed
+                        alert("Invalid MAC Address " + macAddress);
+                        return false;
+                    }
+
+                    return true;
+                }
+
+                $(document).ready(function() {
+                    $(".remotii_mac").hide();
+                    $(".copyRemotii").change(function(e) {
+                        if ($(this).val() == "copy" && $(this).is(':checked'))
+                        {
+                            $(this).parent('div').find('.remotii_mac').show();
+                            var mac_address = $(this).attr('value');
+                            $.post("<?php echo BASE_URL . "/client/iajax"; ?>",
+                                    {
+                                        action: "copyRemotii",
+                                        params: {
+                                            mac_add: mac_address,
+                                        }
+                                    },
+                            function(data) {
+                                console.log(data);
+                                if (data.message == "Success") {
+
+                                }
+                            },
+                                    "json");
+                        }
+                        else
+                        {
+                            $(this).parent('div').find('.remotii_mac').hide();
+                        }
+                        if ($(this).val() == "default" && $(this).is(':checked'))
+                        {
+                            doConfirm();
+                        }
+
+                    });
+                    $(".box8-in span img").live("click", function() {
+                        $(this).closest(".box8-in span").remove();
+                    });
+
+                    $(".closePopUp").live("click", function() {
+                        var value1 = $(this).prev().val();
+                        if (value1 != '') {
+                            $(this).parent('div').parent('div').siblings().children('div').prepend("<span><img src='http://remotii.com/assets/b/images/closebtn.png'>" + value1 + "</span>");
+                            var length = $(this).parent('div').parent('div').siblings().children('div').children('span').length;
+                            var id = $(this).parent('div').parent('div').siblings().attr('value');
+                            $(this).parent('div').parent('div').siblings().children('div').prepend("<input type='hidden' name='email[" + id + "][" + length + "]' value=" + value1 + ">");
+                            $(".email-popup").val("");
+                        }
+
+                    });
+                    $(".closePopUp1").live("click", function() {
+                        var value1 = $(this).prev().val();
+                        var value2 = $(this).prev().prev().prev().val();
+                        if (value1 != '' && value2 != '') {
+                            $(this).parent('div').parent('div').siblings().children('div').prepend("<span><img src='http://remotii.com/assets/b/images/closebtn.png'>" + value2 + "@" + value1 + "</span>");
+                            var length = $(this).parent('div').parent('div').siblings().children('div').children('span').length;
+                            var id = $(this).parent('div').parent('div').siblings().attr('value');
+                            $(this).parent('div').parent('div').siblings().children('div').prepend("<input type='hidden' name='email[" + id + "][" + length + "]' value=" + value2 + "@" + value1 + ">");
+                            $(".sms-popup").val("");
+                        }
+
+                    });
+                    $('input:radio[value=phone]').on('change', function() {
+                        $(".open-phone").show();
+                        $(".open-phone").children("input[class=sms-popup]").focus();
+                        $(".open-email").hide();
+
+                    });
+                    $('input:radio[value=email]').on('change', function() {
+
+                        $(".open-email").show();
+                        $(".open-email").children("input[class=email-popup]").focus();
+                        $(".open-phone").hide();
+
+                    });
+
+                });
+
+            </script>
+
+    </head>
+
+    <body>
+        <div id="confirmBox">
+            <div class="message">Are you sure you want to restore the default values?
+            </div>
+            <span class="button yes">Yes</span>
+            <span class="button no">Cancel</span>
+        </div>
+        <form name="form_default_remotii_setup" id="form_default_remotii_setup">
+            <input type="hidden" name="xDefaultRemotiiDataSubmission" value="true">
+                <input type="hidden" name="modifyRemotiiId" value="<?php echo $modifyRemotiiId; ?>">
+                    <div class="remotii-setup modify"> 
+                        <h2>Remotii Setup Wizard<span style="float:right;font-size:15px;margin-right:20px;" class="pageno"><span>1</span>/<label class="totalSlides">10</label></span></h2>
+                        <div id="slider">
+                            <ul>
+                                <li>
+                                    <div>
+                                        <p style="margin-top: 100px;">Hi.  This wizard will help you set default Remotii setup.<br> We just have a few questions </p>
+
+                                        <a class="btn-red drs_cancel" href="#" style="z-index:200000">Cancel</a>
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <div class="form rinput rsw_v2">
+                                        <?php
+                                        if ($mac_address) {
+                                            $disabled = 'disabled';
+                                        }
+                                        ?>
+                                        <input type="text" value="<?php print rtrim($remotii_name, ' (shared)'); ?>" class="rsw_vr" id="remotiiName" name="remotiiName" placeholder="Remotii Name" /> <span id="errMsgRN" class="red"></span>
+                                        <p>
+                                            Your chosen Remotii name will be displayed to you on your Remotii data page so that you can easily identify this Remotii.
+                                        </p>
+                                        <input type="text" <?php echo $disabled; ?> value="<?php print $mac_address ?>" class="rsw_vr" name="macAddress" id="macAddress" placeholder="Mac Address" />  <span id="errMsg" class="red"></span>
+                                        <input type="hidden" name="macAddress1" value="<?php print $mac_address ?>" />
+                                        <p>
+                                            You can find your MAC address on the bottom of your Remotii.
+                                        </p>
+                                        <div style="width:670px">
+                                            <select name="offset" class="offset" remotii_id="<?php echo $modifyRemotiiId; ?>">
+
+                                                <?php foreach ($offsetArray as $oData) { ?>
+                                                    <option value="<?php echo $oData['zone_id']; ?>" <?php if ($remotiiMacData[0]['zone_id'] == $oData['zone_id']) { ?> selected="selected" <?php } ?>><?php echo $oData['zone_name']; ?></option><?php } ?> 
+                                            </select>   &nbsp;  &nbsp;  &nbsp;
+                                            <input type="checkbox" value="1" name="day_saving" <?php if ($remotiiMacData[0]['day_light_saving'] == 1) { ?> checked="checked"<?php } ?>></input>  Day light saving
+                                        </div>
+                                        <p>  Select your Remotii's Time Zone.</p>
+                                    </div>
+                                </li>
+
+
+
+                                <!-- -->
+                                <?php if ($modifyRemotiiId == '' || ($modifyRemotiiId <> '' && $remotiiPaymentStatus == 0 && $remotiiAlwEndBill == 1)) { ?>
+                                    <li class="ccFrmCust" style="display:none;">
+                                        <div class="form rinput rsw_v3" id="paymntC">
+                                            <p>
+                                                Remotii's are billed by the year. The one year term rate is <b><label id="rmtPriceCust" style="font-size: 18px; color: #1e80bb;"></label></b> dollars.
+                                                Please enter your preferred billing source on the screen below and press next when complete.
+                                                <input type="hidden" name="alwEndBll" id="alwEndBll" value="" />
+                                                <input type="hidden" name="stripeCustProfile" id="stripeCustProfile" value="" />
+                                            </p>
+                                            <div class="form rinput">
+                                                <table width="100%" class="ccenduserfrm">
+                                                    <tr>
+                                                        <td>
+                                                            Card Type
+                                                        </td>
+                                                        <td>
+                                                            <select name="cardType" id="cardType" class="rsw_vr">
+                                                                <option value="Visa">Visa</option>
+                                                                <option value="American Express">American Express</option>
+                                                                <option value="Carte Blanche">Carte Blanche</option>
+                                                                <option value="Diners Club">Diners Club</option>
+                                                                <option value="Discover">Discover</option>
+                                                                <option value="Enroute">enRoute</option>
+                                                                <option value="JCB">JCB</option>
+                                                                <option value="Maestro">Maestro</option>
+                                                                <option value="MasterCard">MasterCard</option>
+                                                                <option value="Solo">Solo</option>
+                                                                <option value="Switch">Switch</option>
+                                                                <option value="Visa Electron">Visa Electron</option>
+                                                                <option value="LaserCard">Laser</option>
+                                                            </select>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            Card Number
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" name="card_number" id="card_number" placeholder="Credit Card Number" value="" class="half rsw_vr" maxlength="16" autocomplete="off">
+                                                        </td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td>
+                                                            Card Holder Name
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" name="card_holder" id="card_holder" placeholder="Card Holder" value="" class="half rsw_vr" maxlength="150" autocomplete="off">
+                                                        </td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td>
+                                                            Card Expiry Date
+                                                        </td>
+                                                        <td>
+                                                            <select name="expMonth" id="expMonth" class="rsw_vr">
+                                                                <option value="">Expiry Month</option>
+                                                                <option value="01">January</option>
+                                                                <option value="02">February</option>
+                                                                <option value="03">March</option>
+                                                                <option value="04">April</option>
+                                                                <option value="05">May</option>
+                                                                <option value="06">June</option>
+                                                                <option value="07">July</option>
+                                                                <option value="08">August</option>
+                                                                <option value="09">September</option>
+                                                                <option value="10">October</option>
+                                                                <option value="11">November</option>
+                                                                <option value="12">December</option>
+                                                            </select>
+                                                            <select name="expYear" id="expYear" class="rsw_vr">
+                                                                <option value="">Expiry Year</option>
+                                                                <option value="2013">2013</option><option value="2014">2014</option><option value="2015">2015</option><option value="2016">2016</option><option value="2017">2017</option><option value="2018">2018</option><option value="2019">2019</option><option value="2020">2020</option><option value="2021">2021</option><option value="2022">2022</option><option value="2023">2023</option><option value="2024">2024</option><option value="2025">2025</option><option value="2026">2026</option><option value="2027">2027</option><option value="2028">2028</option>
+                                                            </select>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            Security Code ('CVC' or 'CVV')
+                                                        </td>
+                                                        <td>
+                                                            <input type="password" name="cvv" id="cvv" placeholder="CVV" class="one-third rsw_vr cvv" maxlength="4" autocomplete="off">
+                                                        </td>
+                                                    </tr>
+
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="infoCust" style="display:none;">
+                                        <div class="form rinput">
+                                            <p>
+                                                This Remotii is being billed by your RSP, <b><label id="spCompCust" style="font-size: 18px; color: #1e80bb;"></label></b>, and does not require 
+                                                any payment information to be specified at this time.
+                                            </p>
+                                        </div>
+                                    </li>
+                                <?php } ?>
+
+
+                                <?php
+                                if ($mac_address) {
+                                    $customChecked = 'checked';
+                                } else {
+                                    $spDefaultChecked = 'checked';
+                                }
+                                ?>
+
+                                <li class="optDefaultCustom">
+                                    <div class="form rinput">
+                                        <input type="radio" class="copyRemotii" name="configSetting"  value="default" <?php echo $spDefaultChecked; ?> placeholder="Remotii Name" /> Recommended Service Provider Configuration
+                                        <br />
+                                        <input type="radio" class="copyRemotii" name="configSetting" value="custom" <?php echo $customChecked ?> placeholder="Mac Address" /> Custom Configuration
+                                        <br /><?php if (!empty($remotiiData) && count($remotiiData) > 1) { ?>
+                                            <input type="radio" class="copyRemotii" name="configSetting" value="copy" placeholder="Mac Address" /> Copy From Another Remotii  
+                                            <select class='remotii_mac sel3' name="remotii_mac" value=" <?php print $data['remotii_name']; ?>">
+                                            <?php } ?>
+                                            <?php
+                                            foreach ($remotiiData as $data) {
+                                                if ($mac_address != $data['mac_address']) {
+                                                    ?>
+                                                    <option value="<?php print $data['mac_address']; ?>">
+                                                        <?php
+                                                        if (!empty($data['shared_user_id']))
+                                                            print $data['remotii_name'] . ' ' . '(shared)';
+                                                        else
+                                                            print $data['remotii_name'];
+                                                        ?></option> <?php
+                                                }
+                                            }
+                                            ?>
+                                        </select>
+                                        <input type="hidden" value="<?php $remotiiMacData['mac_address'] ?>">
+
+                                    </div>
+                                </li>
+                                <?php if (empty($modifyRemotiiId)): ?>
+                                    <li class='cust rpdc2'>
+                                        <div id="msg_tpl_1" style="padding-top: 100px;">
+
+                                            <p class="spcnfgmsg" style="display:none;">Default service provider settings are not available, 
+                                                Please follow Custom Configuration step for Remotii Setup.</p>
+
+                                            <p class="spcnfgmsg2" style="display:none;">We're are all done. Thanks to set a default Remotii setup for your users.</p>
+                                            <p class="spcnfgmsg2" style="display:none;"><a href="#" class="btn2" onclick="return checkSetUpRemotii();">Finish</a></p>
+
+                                        </div>
+                                        <div id="setup_finish" style="padding-top: 160px;display:none;"></div>
+                                    </li>
+                                <?php endif; ?>
+
+                                <!-- Custom Setup START -->
+                                <div id="customSetup">
+                                    <li class='cust'>
+                                        <p style="padding-top: 88px;">In this section, we will configure Remotii inputs.</p>
+                                    </li>
+
+                                    <li class='cust rsw_v5'>
+                                        <div class="form rinput">
+                                            <table width="100%">
+                                                <tr>
+                                                    <td><strong>Pin</strong></td>
+                                                    <td><strong>Enable</strong></td>
+                                                    <td><strong>Input Names</strong></td>
+                                                    <td><strong>Energized State</strong></td>
+                                                    <td><strong>Not Energized State</strong></td>
+                                                </tr>
+
+                                                <?php for ($i = 1; $i <= 4; $i++): ?>
+                                                    <tr>
+                                                        <td>
+                                                            <?php echo $i; ?>
+                                                            <input type="hidden" name="ri_pin_number_<?php echo $i; ?>" id="ri_pin_number_<?php echo $i; ?>" value="<?php echo $i; ?>">
+                                                        </td>
+                                                        <td>
+                                                            <input type="checkbox" class="rio_enable" name="ri_enabled_<?php echo $i; ?>" id="ri_enabled_<?php echo $i; ?>">
+                                                        </td>
+                                                        <td>
+                                                            <input disabled type="text" class="rsw_vr" name="ri_name_<?php echo $i ?>" id="ri_name_<?php echo $i ?>" placeholder="Input<?php echo $i; ?> Name">
+                                                        </td>
+                                                        <td>
+                                                            <input disabled type="text" class="rsw_vr" name="ri_asl_<?php echo $i; ?>" id="ri_asl_<?php echo $i; ?>" placeholder="Active Label">
+                                                                <div class="colorPicker">	 
+                                                                    <input class="noIndColor" value="#92cddc" class="rsw_vr" name="ri_active_color_<?php echo $i; ?>"/>
+                                                                </div>	
+                                                        </td>
+                                                        <td>
+                                                            <input disabled type="text" class="rsw_vr" name="ri_iasl_<?php echo $i; ?>" id="ri_iasl_<?php echo $i; ?>" placeholder="Inactive Label">
+                                                                <div class="colorPicker">	 
+                                                                    <input class="noIndColor" value="#92cddc" name="ri_inactive_color_<?php echo $i; ?>"/>
+                                                                </div>
+                                                        </td>
+                                                    </tr>
+                                                <?php endfor; ?>
+
+                                            </table>
+                                        </div>
+                                    </li>
+
+                                    <li class='cust rsw_v6'>
+                                        <div class="form rinput">
+                                            <table width="100%">
+                                                <tr>
+                                                    <td><strong>Pin</strong></td>
+                                                    <td><strong>Enable Notification</strong></td> 
+                                                    <td><strong>Notification Trigger</strong></td>
+                                                    <td style=" width: 256px; "><strong>Notification Email</strong></td>
+                                                    <td align="center"
+                                                        ><strong>Play Sound</strong></td>
+
+                                                </tr>
+                                                <?php for ($i = 1; $i <= 4; $i++): ?>
+                                                    <tr>
+                                                        <td style="padding-top: 20px;"><?php echo $i; ?></td>
+                                                        <td style="padding-top: 20px;"><input name="ri_enable_ntfn_<?php echo $i; ?>" id="ri_enable_ntfn_<?php echo $i; ?>" type="checkbox" >&nbsp;<label id="ri_input_name_<?php echo $i; ?>">Input<?php echo $i; ?></label></td>
+                                                        <td class="ri_ntfn_trigger">
+                                                            <span> <input type="radio" disabled value="1" name="ri_ntfn_trigger_<?php echo $i; ?>" id="ri_ntfn_active_trigger_<?php echo $i; ?>">&nbsp;<label id="ri_active_label_<?php echo $i ?>">Active</label> </span>
+                                                            <span> <input type="radio" disabled value="0" checked name="ri_ntfn_trigger_<?php echo $i; ?>" id="ri_ntfn_inactive_trigger_<?php echo $i; ?>">&nbsp;<label id="ri_inactive_label_<?php echo $i ?>">Inactive</label></span>
+                                                            <span><input type="radio" disabled  value="2" name="ri_ntfn_trigger_<?php echo $i; ?>" id="ri_ntfn_any_trigger_<?php echo $i; ?>">&nbsp;<label id="ri_any_label_<?php echo $i ?>">Both</label>    </span>
+                                                        </td>
+                                                        <td>
+                                                            <div class="box8Wrap">
+                                                                <div class="box8" id="ri_mail_<?php echo $i ?>" value="<?php echo $i ?>">
+                                                                    <span class="addBtn" disabled id="enable_mail_<?php echo $i; ?>">+</span>
+                                                                    <div disabled="true" class="box8-in box8-in<?php echo $i; ?>" >
+                                                                    </div>	
+                                                                </div>
+
+                                                                <div class="box8-popup" >
+                                                                    <img src="<?php echo BASE_URL; ?>/assets/b/images/closebtn.png">
+                                                                        <input type="radio" name="enable_one_<?php echo $i ?>" id="check-email" class="check" value="email">Email</input>
+                                                                        <input type="radio" name="enable_one_<?php echo $i ?>" id="check-phone" class="check"  value="phone">Phone</input>
+                                                                        <!--                                                                    <h4>Enter Your Email</h4>-->
+                                                                        <div class="open-email" style="display:none">
+                                                                            <input type="text"class="email-popup" style="height:28px;line-height: 28px;" placeholder="Enter Email" />
+                                                                            <button type="button" class="closePopUp">Ok</button></div>
+                                                                        <div class="open-phone" style="display:none">   
+                                                                            <input type="text"class="sms-popup" style="height:28px;line-height: 30px; width: 125px !important;" title="Phone Number" autofocus="true" /></br>
+                                                                            <select  class="sel3" name="ri_operator_sms_<?php echo $i; ?>" id="rii_operator_sms_<?php echo $i; ?>"   
+                                                                                     title="Area Code"   >&nbsp;
+                                                                                         <?php foreach ($numbersList as $numbers) { ?>
+                                                                                    <option value="<?php echo $numbers['value']; ?>"><?php echo $numbers['name']; ?></option>
+
+                                                                                <?php } ?>
+                                                                            </select>
+                                                                            <button type="button" class="closePopUp1">Ok</button>
+                                                                        </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </td>
+                                                        <td align="center" style="padding-top: 20px;"><input disabled name="ri_ntfn_sound_<?php echo $i; ?>" id="ri_sound_<?php echo $i; ?>" type="checkbox" value="1" >&nbsp;</td>
+
+                                                    </tr>
+                                                <?php endfor; ?>
+                                            </table>
+                                        </div>
+                                    </li>
+                                    <!--                                    <li class='cust rsw_v7'>
+                                                                            <div class="form rinput">
+                                                                                <table width="100%">
+                                                                                    <tr>
+                                                                                        <td><strong>Pin</strong></td>
+                                                                                        <td align="center"><strong>Enable SMS Notifications</strong></td> 
+                                                                                        <td><strong>Phone Number</strong></td
+                                                                                        <td></td>
+                                                                                        <td></td>
+                                    
+                                                                                    </tr>
+                                    <?php //for ($i = 1; $i <= 4; $i++):   ?>
+                                                                                        <tr>
+                                                                                            <td><?php //echo $i;                                 ?></td>
+                                                                                            <td align="center"><input disabled name="ri_ntfn_sms_<?php // echo $i;                                 ?>" id="rii_sms_<?php echo $i; ?>" class="sms" msg_checked_id="<?php echo $i; ?>" type="checkbox" value="1" >&nbsp;</td>
+                                    
+                                    
+                                                                                            <td>    
+                                                                                                    <input disabled name="ri_value_sms_<?php //echo $i;                                        ?>" id="rii_value_sms_<?php echo $i; ?>" class="phone" type="text" title="Phone Number" >&nbsp;
+                                                                                                        <select disabled class="sel3" name="ri_operator_sms_<?php //echo $i;                                 ?>" id="rii_operator_sms_<?php echo $i; ?>"   
+                                                                                                            title="Area Code"   >&nbsp;<option value="airtel">Airtel</option>
+                                                                                                        <option value="aircel">Aircel</option>
+                                                                                                        <option value="vodafone">Vodafone</option>
+                                                                                                <div class="box8" id="ri_sms_<?php //echo $i                                 ?>" value="<?php //echo $i                                 ?>">
+                                                                                                    <span class="addBtn" disabled id="enable_sms_<?php //echo $i;                                 ?>">+</span>
+                                                                                                    <div class="box8-in">
+                                                                                                    </div>	
+                                                                                                </div>
+                                                                                                <div class="box8-popup" >
+                                                                                                    <img src="<?php echo BASE_URL; ?>/assets/b/images/closebtn.png">
+                                                                                                        <h4>Enter Your Number & Provider</h4>
+                                                                                                        <div class="open-phone">        <input type="text"class="sms-popup" style="height:30px;line-height: 30px; width: 135px;"/></br>
+                                                                                                            <select disabled class="sel3" name="ri_operator_sms_<?php //echo $i;                                 ?>" id="rii_operator_sms_<?php echo $i; ?>"   
+                                                                                                                    title="Area Code"   >&nbsp;<option value="airtel">Airtel</option>
+                                                                                                                <option value="aircel">Aircel</option>
+                                                                                                                <option value="vodafone">Vodafone</option></select>
+                                                                                                            <button type="button" class="closePopUp1">Ok</button>
+                                                                                                        </div></div></td>
+                                                                                            <td></td>    </tr>
+                                    <?php //endfor;   ?>
+                                                                                </table>
+                                                                            </div>
+                                                                        </li>-->
+
+                                    <li class='cust'>
+                                        <p style="padding-top: 88px;">In this section, we will configure Remotii outputs.</p>
+                                    </li>
+
+                                    <li class='cust rsw_v8'>
+                                        <div class="form rinput">
+                                            <table width="100%">
+                                                <tr>
+                                                    <td><strong>Pin</strong></td>
+                                                    <td><strong>Enable</strong></td>
+                                                    <td><strong>Output Names</strong></td>
+                                                    <td><strong>Energized State</strong></td>
+                                                    <td><strong>Not Energized State</strong></td>
+                                                </tr>
+
+                                                <?php for ($i = 1; $i <= 3; $i++): ?>
+                                                    <tr>
+                                                        <td>
+                                                            <?php echo $i; ?>
+                                                            <input type="hidden" name="ro_pin_number_<?php echo $i; ?>" id="ro_pin_number_<?php echo $i; ?>" value="<?php echo $i; ?>">
+                                                        </td>
+                                                        <td><input type="checkbox" class="rio_enable" name="ro_enabled_<?php echo $i; ?>" id="ro_enabled_<?php echo $i; ?>" ></td>
+
+                                                        <td><input disabled type="text" class="rsw_vr" name="ro_name_<?php echo $i ?>" id="ro_name_<?php echo $i ?>" placeholder="Output<?php echo $i; ?> Name"></td>
+                                                        <td>
+                                                            <input disabled type="text" class="rsw_vr" name="ro_asl_<?php echo $i; ?>" id="ro_asl_<?php echo $i; ?>" placeholder="Active Label">
+                                                                <div class="colorPicker">	 
+                                                                    <input class="noIndColor" value="#92cddc" name="ro_active_color_<?php echo $i; ?>"/>
+                                                                </div>
+                                                        </td>
+                                                        <td>
+                                                            <input disabled type="text" class="rsw_vr" name="ro_iasl_<?php echo $i; ?>" id="ro_iasl_<?php echo $i; ?>" placeholder="Inactive Label">
+                                                                <div class="colorPicker">	 
+                                                                    <input class="noIndColor" value="#92cddc" name="ro_inactive_color_<?php echo $i; ?>"/>
+                                                                </div>
+                                                        </td>
+                                                    </tr>
+                                                <?php endfor; ?>
+                                            </table>
+                                        </div>
+                                    </li>
+
+                                    <li class='cust'>
+                                        <div class="form rinput">
+                                            <table width="100%">
+                                                <tr>
+                                                    <th><strong>Pin</strong></th>
+                                                    <th><strong>Output Names</strong></th>
+                                                    <th><strong>Momentary</strong></th> 
+                                                    <th><strong>Initial State</strong></th>
+                                                    <th><strong>Pulse Width (sec)</strong></th>
+
+                                                </tr>
+                                                <?php for ($i = 1; $i <= 3; $i++): ?>
+                                                    <tr>
+                                                        <td><?php echo $i; ?></td>
+                                                        <td> <label id="ro_step2_name_<?php echo $i; ?>">Output<?php echo $i; ?></label> </td>
+                                                        <td><input type="checkbox" class="momentary-checkbox" pulsee-time="<?php echo $i; ?>" name="ro_momentary_<?php echo $i; ?>" id="ro_momentary_<?php echo $i; ?>"></td>
+                                                        <td>
+                                                            <input type="radio" value="1" id="ro_active_initialState_<?php echo $i; ?>" name="ro_initialState_<?php echo $i; ?>">&nbsp;<label id="ro_step2_active_label_<?php echo $i; ?>">Active </label>&nbsp;&nbsp;
+                                                                <input type="radio" value="0" checked id="ro_inactive_initialState_<?php echo $i; ?>" name="ro_initialState_<?php echo $i; ?>">&nbsp;<label id="ro_step2_inactive_label_<?php echo $i; ?>">Inactive</label>
+                                                                    </td>
+                                                                    <td><input type="text" value="1" disabled id="ro_step2_time_<?php echo $i; ?>" class="pulse-time"  name="ro_pulse_time_<?php echo $i; ?>"></td>
+
+                                                                    </tr>
+                                                                <?php endfor; ?>
+                                                                </table>
+                                                                </div>
+                                                                </li>
+
+                                                                <li class='cust'>
+                                                                    <div id="msg_tpl_1" style="padding-top: 100px;">
+                                                                        <p>We're are all done. Thanks to set a default Remotii setup for your users.</p>
+                                                                        <p><a href="javascript:void(0)" class="btn2" onclick="return checkSetUpRemotii();">Finish</a></p>
+                                                                    </div>
+                                                                    <div id="setup_finish" style="padding-top: 160px;display:none;"></div>
+                                                                </li>
+                                                                </div>
+                                                                <!-- Custom Setup END -->
+
+                                                                </ul>
+
+                                                                </div>
+                                                                <?php if (empty($modifyRemotiiId)): ?>
+                                                                    <!--  Recommended Service Provider Configuration  -->
+                                                                    <div class="rpdc" style="display: none;">
+                                                                        <li class='cust rpdc2'>
+                                                                            <div id="msg_tpl_1" style="padding-top: 100px;">
+                                                                                <p class="spcnfgmsg" style="display:none;">Default service provider settings are not available, 
+                                                                                    Please follow Custom Configuration step for Remotii Setup.</p>
+
+                                                                                <p class="spcnfgmsg2">We're are all done. Thanks to set a default Remotii setup for your users.</p>
+                                                                                <p class="spcnfgmsg2"><a href="javascript:void(0)" class="btn2" onclick="return checkSetUpRemotii();">Finish</a></p>
+                                                                            </div>
+                                                                            <div id="setup_finish" style="padding-top: 160px;display:none;"></div>
+                                                                        </li>
+                                                                    </div>
+                                                                <?php endif; ?>
+                                                                </div>
+
+                                                                </form>
+
+                                                                <script type="text/javascript" src="<?php echo BASE_URL . '/assets/c/js/spin.js' ?>"></script>
+                                                                <script>
+                function checkSetUpRemotii()
+                {
+                    target = document.getElementById('setup_finish');
+                    opts.top = -125;
+                    var spinner = new Spinner(opts);
+
+                    $("#msg_tpl_1").hide();
+                    $("#setup_finish").html('<span style="font-size:20px;">Checking....<span>');
+                    $("#setup_finish").show();
+                    spinner.spin(target);
+                    var form_serialized_data = $("#form_default_remotii_setup").serialize();
+
+                    jQuery.ajax({
+                        url: '<?php print BASE_URL ?>/client/checkremotiisetup',
+                        type: 'post',
+                        async: false,
+                        data: form_serialized_data,
+                        success: function(data) {
+
+                            if (data == true)
+                            {
+                                if (confirm("This configuration change conflicts with your Remotii schedule. Conflicting items in the schedule will be removed.  Are you sure you want to continue?"))
+                                {
+                                    setupRemotii();
+                                    spinner.stop(target);
+                                }
+                                else {
+                                    spinner.stop(target);
+                                    $("#msg_tpl_1").show();
+                                }
+
+                            }
+                            else
+                                setupRemotii();
+
+                        },
+                    },
+                            "json");
+                }
+                function setupRemotii()
+                {
+
+                    target = document.getElementById('setup_finish');
+                    opts.top = -125;
+                    var spinner = new Spinner(opts);
+                    $("#msg_tpl_1").hide();
+                    $("#setup_finish").html('<span style="font-size:20px;">Setting up remotii....<span>');
+                    $("#setup_finish").show();
+                    spinner.spin(target);
+                    var form_serialized_data = $("#form_default_remotii_setup").serialize();
+
+                    jQuery.ajax({
+                        url: '<?php print BASE_URL . '/client/remotii-setup'; ?>',
+                        type: 'post',
+                        async: false,
+                        data: form_serialized_data,
+                        success: function(response) {
+                            remotii_id = response;
+                            if (response == 'failed') {
+                                alert('Payment failed. Please try again...');
+                                window.top.location.href = "<?php print BASE_URL . '/client/my-remotii' ?>";
+                            } else {
+                                console.log(response);
+                                spinner.stop(target);
+
+                                $("#setup_finish").html('<span style="color:green;font-size:14px;">Your Remotii configuration has been saved.</span>');
+                                if (response) {
+                                    console.log(response);
+//  window.top.location.href = "<?php print BASE_URL . '/client/my-remotii/' ?>" + response;
+                                } else {
+                                    window.top.location.href = "<?php print BASE_URL . '/client/my-remotii' ?>";
+                                }
+                            }
+
+                            window.top.location.href = '<?php echo BASE_URL; ?>' + '/client/my-remotii/' + remotii_id;
+                        }//,
+//                                  complete:function(response){
+//                                    	console.log( data );
+//                                  }
+                    });
+
+                }
+
+                var opts = {
+                    lines: 13, // The number of lines to draw
+                    length: 20, // The length of each line
+                    width: 10, // The line thickness
+                    radius: 30, // The radius of the inner circle
+                    corners: 1, // Corner roundness (0..1)
+                    rotate: 0, // The rotation offset
+                    direction: 1, // 1: clockwise, -1: counterclockwise
+                    color: '#000', // #rgb or #rrggbb or array of colors
+                    speed: 1, // Rounds per second
+                    trail: 60, // Afterglow percentage
+                    shadow: false, // Whether to render a shadow
+                    hwaccel: false, // Whether to use hardware acceleration
+                    className: 'spinner', // The CSS class to assign to the spinner
+                    zIndex: 2e9, // The z-index (defaults to 2000000000)
+                    top: 'auto', // Top position relative to parent in px
+                    left: 'auto' // Left position relative to parent in px
+                };
+
+                                                                </script>

@@ -1,0 +1,38 @@
+<?php
+$this->headTitle($title);
+$base_url = BASE_URL . '/assets/b';
+?>
+
+<div class="pageInfo"><h1>End Users</h1></div>
+<!-- widget -->
+<?php if (!empty($response[0])) { ?>
+    <div id="response" class="<?php echo $response[0]['status']; ?>"><?php echo $response[0]['message']; ?></div>
+<?php } ?>
+
+<div class="widget users"> 
+
+    <table cellpadding="0" cellspacing="0" border="0" class="dTable" id="dynamic">
+                        <thead>
+                            <tr>
+                                <th>Username<span class="sorting" style="display: block;"></span></th>
+                                <th>Last Name/First Name</th>
+                                <th>Contact Number</th>
+                                <th>Email</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <?php 
+                       //_pr( $this->spUsers );
+                        foreach($this->spUsers as $spUser):?>
+                            <tr>
+                                <td><a href="<?php echo BASE_URL.'/sp/active-deactive-remotii/'.$spUser->user_id?>"><?php echo $spUser->username?></a></td>
+                                <td><?php echo $spUser->lname . '/' . $spUser->fname?> </td>
+                                <td><?php echo $spUser->phone;?></td>
+                                <td><?php echo $spUser->email;?></td>
+                            </tr>
+                         <?php endforeach;?>   
+                        </tbody>
+        </table>             
+
+</div>
+<!-- /widget --> 

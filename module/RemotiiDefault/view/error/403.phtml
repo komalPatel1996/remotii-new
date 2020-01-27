@@ -1,0 +1,24 @@
+<div class="tag-line">
+  <div class="wrapper">   
+    <h2><?php echo $this->translate('Unauthorized Access'); ?></h2>
+  </div>
+</div>
+
+<div class="wrapper mh_400">
+	<h2>A 403 error occurd</h2>	
+	<div class="box2">
+		<p>
+		    <?php if ($error == 'error-route-unauthorized') : ?>
+		        Identity (with roles <?=implode(',', $identity->getRoles());?>) is not authorized to access <?=$route;?>.
+		    <?php elseif ($error == 'error-controller-unauthorized') : ?>
+		        Identity (with roles <?=implode(',', $identity->getRoles());?>) is not authorized to access <?=$controller;?>
+		        <?php if ($action) : ?>
+		        ::<?=$action;?>Action()
+		        <?php endif;?>
+		        .
+		    <?php endif;?>
+		</p>
+
+	</div>
+</div>
+		

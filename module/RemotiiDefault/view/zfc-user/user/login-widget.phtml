@@ -1,0 +1,44 @@
+			
+			<?php
+				$form = $this->loginForm;
+				$form->prepare();
+				$form->setAttribute('action', $this->url('zfcuser/login'));
+				$form->setAttribute('method', 'post');
+				$form->get('submit')->setValue('Login')->setAttribute('class','submit-btn');
+				$form->get('remember_me')->setLabel('Keep me signed in');
+				$form->get('identity')->setAttribute('placeholder','Username');
+				$form->get('credential')->setAttribute('placeholder','Password');
+			?>
+			
+			<?php echo $this->form()->openTag($form) ?>
+			    <ul>
+			        <li class="error"><?php //echo $this->formElementErrors($form->get('identity')) ?></li>
+			
+			        <li><?php echo $this->formInput($form->get('identity')) ?></li>
+			        <li><?php echo $this->formInput($form->get('credential')) ?></li>
+			        <!-- <li><input type="checkbox"> <label>Remember Me</label></li> -->
+        			<li>
+        				<?php echo $this->formCheckbox($form->get('remember_me')) ?>
+        				<?php echo $this->formLabel($form->get('remember_me')) ?>
+        			</li>
+			        <li>
+			        	<a href="<?php echo $this->url('zfcuser/forgotpassword') ?>" class="forgot">Forgot your password?</a>
+			        </li>
+			    </ul>
+			    
+				<?php //if ($this->redirect): ?>
+			          <input type="hidden" name="redirect" value="<?php echo $this->redirect?$this->escapeHtml($this->redirect):$this->url('redirect-remotii') ?>" />
+			    <?php //endif ?>
+			    
+			    <?php echo $this->formInput($form->get('submit')) ?>
+			    
+			<?php echo $this->form()->closeTag() ?>
+			
+			<?php if ($this->enableRegistration) : ?>
+			<?php echo $this->translate('Not registered?'); ?> <a href="<?php echo $this->url('zfcuser/register') . ($this->redirect ? '?redirect='.$this->redirect : '') ?>"><?php echo $this->translate('Sign up!'); ?></a>
+			<?php endif; ?>
+
+
+
+
+

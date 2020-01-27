@@ -1,0 +1,48 @@
+@charset "utf-8";
+/* CSS Document */
+@import 'custom.css';
+/*---------face 2 style------------*/
+table.dataTable tbody tr .cname,table.dataTable tbody tr .cname_fw{position: relative;}
+.editCname, .editCnameFw{background: url(../images/edit-icon.png) 0 0 no-repeat; display: inline-block; width: 20px; height:20px;
+vertical-align: middle; position: absolute; right: -35px; top: 2px; z-index: 1000;}
+.cname select,.cname_fw input{border: 1px solid #333; width: 112px; border-radius: 0px; padding: 4px 2px;}
+.editok,.editok_fw{background: url(../images/right-icon.png) 50% 50% no-repeat;display: inline-block; width: 20px; height:20px;
+                   
+vertical-align: middle; position: absolute; right: -35px; top: 2px; z-index: 1000;}
+.editCnameFw{ right:-18px;}
+.dTable1 tr td:last-child > a {
+    display: inline-block;
+    width: 24px;
+}
+.cname_fw input{width: 70px;}
+table.dataTable tbody tr .cname, table.dataTable tbody tr .cname_fw{ width: 100px;}
+table.dataTable tr td:last-child a{ margin: 0 1px;}
+.editCancel_fw{background: url(../images/crose.png) 50% 50% no-repeat;display: inline-block; width: 20px; height:20px; position: absolute;
+right: 0px; top: 2px;}
+.editok_fw{ right:-20px;}
+
+table.dataTable td:last-child img{ margin-right: 0px;}
+.cname_fw{ min-height: 20px;}
+.all-remotii{}
+.all-remotii .box1.half:nth-child(even){ margin-left: 12px;}
+.box1.half{width:490px; display: inline-block; vertical-align: top;}
+.box1.half p{ padding: 5px 10px; border-bottom: 0; background: #1567A5; border-radius: 6px 6px 0 0; color: #fff; margin: 0;}
+ .box1.half p a{color: #fff;}
+.box1.half .remotii-wrap{ display: none;}
+.box1.closeaction .remotii-wrap{ display: block;}
+.box1.closeaction p{ border-bottom: 1px solid #DDDDDD;}
+.remotii-action{ background: url(../images/collaps-down.png) 0 0 no-repeat; display: inline-block; width: 21px; height: 21px;}
+.remotii-action:hover{opacity: 0.8;}
+.closeaction .remotii-action{ background: url(../images/collaps-up.png) 0 0 no-repeat;}
+.remotii-setup p.t{ margin-bottom: 10px;}
+.remotii-setup p.timingSet input[type="text"]{ width: 103px; margin-right: 10px; height: 28px; line-height: 28px;}
+.mlr5{ margin: 0 5px;}
+
+
+@media screen and (max-width: 1030px) {
+    .editCname, .editCnameFw, .editCname, .editCnameFw,.editok, .editok_fw{right:0;}
+    .cname select, .cname_fw input{width: 75px;}
+    #dynamic2 tr td:nth-child(5) .editok_fw{ top:20px; }
+   #dynamic2 tr td:nth-child(5) .editCancel_fw{top:-3px;}
+    
+}
